@@ -36,7 +36,7 @@ export default async function Home() {
 
   // 안전한 기본값
   const name = data?.name ?? "유창민";
-  const title = data?.title ?? "Java/Spring , 리눅스 , SQLD";
+  const title = data?.title ?? "Java/Spring , 리눅스 , SQL";
   const email = data?.email ?? "changchangdaero@naver.com";
   const github = data?.links?.github ?? "https://github.com/changchangdaero";
 
