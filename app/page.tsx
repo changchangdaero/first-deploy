@@ -164,7 +164,7 @@ export default function Home() {
             </li>
             <li className="flex gap-2">
               <span className="text-green-500 font-bold">▹</span>
-              <span>LG CNS AM INSPIRE CAMP 3th 최종프로젝트 'SentiStock' 우수상 수상</span>
+              <span>LG CNS AM INSPIRE CAMP 3th 최종프로젝트 SentiStock 우수상 수상</span>
             </li>
             <li className="flex gap-2">
               <span className="text-green-500 font-bold">▹</span>
