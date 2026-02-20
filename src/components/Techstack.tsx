@@ -20,7 +20,7 @@ const getIconUrl = (skill: string) => {
   export default function TechStack({ skills }: { skills: string[] }) {
     return (
       <section className="w-full">
-        <h2 className="text-xl font-semibold text-green-300 mb-4 text-left">Tech Experience</h2>
+        <h2 className="text-xl font-semibold text-green-300 mb-4 text-left">Tech Experience (한 번씩은 다 써봤어요)</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full">
           {skills.map((skill) => (
             <span key={skill} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-green-800/40 text-green-100 border border-green-700/50 hover:bg-green-700/60 transition-all">

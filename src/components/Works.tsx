@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Image from "next/image";
+import { Work } from '@/types/portfolio';
 
-export default function Works({ items }: { items: any[] }) {
+export default function Works({ items }: { items: Work[] }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <section className="w-full">

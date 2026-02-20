@@ -1,0 +1,23 @@
+{
+    "name": "유창민",
+    "title": "Java, Spring, Linux, SQL, Docker, Next.js, React, Grafana, Prometheus, Python, JavaScript, Jenkins",
+    "links": {
+      "github": "https://github.com/changchangdaero",
+      "brunch": "https://brunch.co.kr/@changchangdaero",
+      "instagram": "https://www.instagram.com/chang_y.u/"
+    },
+    "practice": [
+      {
+        "category": "Cloud & Infra",
+        "title": "Monitoring System Practice",
+        "description": "Prometheus와 Grafana를 연동하여 서버 리소스를 실시간으로 모니터링하고 시각화하는 환경을 구축했습니다.",
+        "tags": ["Prometheus", "Grafana", "Docker"]
+      },
+      {
+        "category": "DevOps",
+        "title": "Load Testing with nGrinder",
+        "description": "nGrinder를 활용해 로컬 서버에 부하 테스트를 진행하고 성능 병목 구간을 분석하는 실습을 완료했습니다.",
+        "tags": ["nGrinder", "Performance", "Optimization"]
+      }
+    ]
+  }
