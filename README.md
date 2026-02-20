@@ -1,7 +1,1 @@
-README.md엔 어떤 내용을 쓰는거지
-
-기술 스택 
-
-실행 방법
-
-등등
+changmin portfolio
