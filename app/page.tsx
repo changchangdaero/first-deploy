@@ -76,7 +76,7 @@ export default function Home() {
       url: "https://product.kyobobook.co.kr/detail/S000203156852",
     },
     {
-      title: "파도시집선 013<새벽>",
+      title: "파도시집선 014<새벽>",
       description: "<해야 할 일>이라는 작품으로 참여했습니다.",
       image: "/013.png",
       url: "https://product.kyobobook.co.kr/detail/S000211708914",
@@ -164,11 +164,11 @@ export default function Home() {
             </li>
             <li className="flex gap-2">
               <span className="text-green-500 font-bold">▹</span>
-              <span>LG CNS AM INSPIRE CAMP 3th 최종프로젝트 SentiStock 우수상 수상</span>
+              <span>LG CNS AM INSPIRE CAMP 3th 최종 팀프로젝트 SentiStock 우수상 수상</span>
             </li>
             <li className="flex gap-2">
               <span className="text-green-500 font-bold">▹</span>
-              <span>교보문고 시·에세이 주간베스트 도서 [사랑과 타박상] 저자</span>
+              <span>교보문고 시·에세이 분야 주간베스트 도서 [사랑과 타박상] 저자</span>
             </li>
             <li className="flex gap-2">
               <span className="text-green-500 font-bold">▹</span>
