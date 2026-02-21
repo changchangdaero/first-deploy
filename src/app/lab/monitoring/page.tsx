@@ -37,8 +37,7 @@ export default function MonitoringDetail() {
           <span className="text-xs font-mono text-green-500 tracking-tighter uppercase">Lab Record #01</span>
           <h1 className="text-3xl font-bold text-green-100 mt-2 italic">모니터링 시스템 구축 실습</h1>
           <p className="mt-4 text-sm text-green-200/60 leading-relaxed">
-            로컬 환경에서 Docker를 기반으로 모니터링 시스템을 구축하고, <br />
-            ngrinder 부하 테스트를 통해 데이터 수집(Prometheus)부터 시각화(Grafana)까지의 과정을 실습했습니다.
+            로컬 환경에서 Docker를 기반으로 모니터링 시스템을 구축하고, ngrinder 부하 테스트를 통해 데이터 수집(Prometheus)부터 시각화(Grafana)까지의 과정을 실습했습니다.
           </p>
         </header>
 
