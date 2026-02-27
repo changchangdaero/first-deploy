@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { getAndIncrViews } from '@/app/lib/redis';
+
 import Profile from '@/components/Profile';
 import AboutMe from '@/components/AboutMe';
 import TechStack from '@/components/TechStack';
@@ -11,8 +11,8 @@ import Contact from '@/components/Contact';
 import { ResumeInfo, Work, Activity } from '@/types/portfolio';
 
 export default async function Home() {
-  // 1. 조회수 가져오기
-  const views = await getAndIncrViews();
+  
+
 
   // 2. data.json 읽어오기 (서버에서 직접 읽기)
   let data: ResumeInfo | null = null;
@@ -51,10 +51,8 @@ export default async function Home() {
         <Contact />
 
         <footer className="w-full text-center mt-10 flex flex-col gap-2">
-          {/* 하단에 방문자 수 표시 */}
-          <p className="text-green-400 text-[11px] font-mono tracking-widest uppercase">
-            Total Visitors: {views.toLocaleString()}
-          </p>
+         
+          
           <p className="text-[10px] text-green-900/40">
             © 2026 {data?.name ?? "유창민"}. Written with Words, Built with Next.js & TypeScript
           </p>
