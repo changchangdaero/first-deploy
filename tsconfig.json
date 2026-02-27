@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",  // 👈 이 줄을 꼭 추가
+    "baseUrl": ".", // 👈 이 줄을 꼭 추가
     "target": "ES2017",
     "lib": [
       "dom",
@@ -16,7 +16,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
     "plugins": [
       {
