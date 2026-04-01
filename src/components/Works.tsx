@@ -7,20 +7,44 @@ export default function Works({ items }: { items: Work[] }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <section className="w-full">
-      <button onClick={() => setIsOpen(!isOpen)} className="flex items-center justify-between w-full p-4 rounded-xl border border-green-600/50 bg-green-900/30 hover:bg-green-800/40 transition-all">
-        <h2 className="text-xl font-semibold text-green-300">Works & Publications</h2>
-        <span className={`text-green-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="collapsible-trigger"
+        aria-expanded={isOpen}
+      >
+        <h2 className="section-title section-title--inline text-left">
+          Works & Publications
+        </h2>
+        <span
+          className={`collapsible-chevron text-lg leading-none ${isOpen ? "rotate-180" : ""}`}
+          aria-hidden
+        >
+          ▼
+        </span>
       </button>
       {isOpen && (
-        <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-2">
+        <div className="mt-4 space-y-4">
           {items.map((work, index) => (
-            <a key={index} href={work.url || "#"} target="_blank" className="flex gap-4 p-4 rounded-xl bg-white/5 border border-white/5 items-center hover:bg-white/10 transition-all">
-              <div className="w-16 h-24 bg-gray-800 rounded relative overflow-hidden">
-                {work.image && <Image src={work.image} alt={work.title} fill className="object-cover" />}
+            <a
+              key={index}
+              href={work.url || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex gap-4 p-4 rounded-[var(--radius-card)] bg-[var(--portfolio-surface)] border border-[var(--border-default)] shadow-[var(--shadow-sm)] items-center transition-[background,box-shadow,border-color] hover:bg-[var(--portfolio-surface-muted)] hover:shadow-[var(--shadow-md)] hover:border-[var(--border-strong)]"
+            >
+              <div className="w-16 h-24 bg-[var(--portfolio-surface-muted)] rounded-lg relative overflow-hidden shrink-0 border border-[var(--border-default)]">
+                {work.image && (
+                  <Image src={work.image} alt={work.title} fill className="object-cover" sizes="64px" />
+                )}
               </div>
-              <div className="flex flex-col text-left">
-                <h3 className="font-bold text-green-100 text-sm">{work.title}</h3>
-                <p className="text-[11px] text-green-200/70 mt-1">{work.description}</p>
+              <div className="flex flex-col text-left min-w-0">
+                <h3 className="font-semibold text-[var(--text-heading)] text-sm sm:text-base">
+                  {work.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1 leading-relaxed">
+                  {work.description}
+                </p>
               </div>
             </a>
           ))}

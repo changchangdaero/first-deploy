@@ -7,7 +7,6 @@ import Link from 'next/link';
  * 구성 중심의 레이아웃으로 변경되었습니다.
  */
 export default function MonitoringDetail() {
-  // 세 가지 화면 구성
   const labContents = [
     {
       title: "Docker 환경 구축",
@@ -27,16 +26,23 @@ export default function MonitoringDetail() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#062016] text-green-50 p-8">
+    <div className="portfolio-page font-sans">
       <main className="max-w-2xl mx-auto py-10">
-        <Link href="/lab" className="text-green-500 hover:text-green-300 transition-colors text-sm flex items-center gap-2 mb-10">
+        <Link
+          href="/lab"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors mb-10"
+        >
           ← Back to Index
         </Link>
 
         <header className="mb-16">
-          <span className="text-xs font-mono text-green-500 tracking-tighter uppercase">Lab Record #01</span>
-          <h1 className="text-3xl font-bold text-green-100 mt-2 italic">모니터링 시스템 구축 실습</h1>
-          <p className="mt-4 text-sm text-green-200/60 leading-relaxed">
+          <span className="text-xs font-mono text-[var(--text-faint)] tracking-tighter uppercase">
+            Lab Record #01
+          </span>
+          <h1 className="text-3xl font-bold text-[var(--text-heading)] mt-2 tracking-tight">
+            모니터링 시스템 구축 실습
+          </h1>
+          <p className="mt-4 text-sm text-[var(--text-muted)] leading-relaxed">
             로컬 환경에서 Docker를 기반으로 모니터링 시스템을 구축하고, ngrinder 부하 테스트를 통해 데이터 수집(Prometheus)부터 시각화(Grafana)까지의 과정을 실습했습니다.
           </p>
         </header>
@@ -44,41 +50,34 @@ export default function MonitoringDetail() {
         <div className="space-y-20">
           {labContents.map((content, i) => (
             <section key={i} className="space-y-6">
-              {/* 각 화면의 제목 */}
               <div className="flex items-center gap-3">
-                <span className="text-green-500 font-mono text-sm">0{i + 1}.</span>
-                <h2 className="text-xl font-semibold text-green-100">{content.title}</h2>
+                <span className="text-[var(--accent)] font-mono text-sm">0{i + 1}.</span>
+                <h2 className="text-xl font-semibold text-[var(--text-heading)]">{content.title}</h2>
               </div>
 
-              {/* 스크린샷 이미지 박스 */}
-              <div className="rounded-2xl border border-white/10 overflow-hidden bg-black/20 shadow-2xl">
-                <img 
-                  src={content.src} 
-                  alt={content.title} 
-                  className="w-full h-auto opacity-90 hover:opacity-100 transition-opacity duration-500" 
+              <div className="rounded-[var(--radius-card)] border border-[var(--border-default)] overflow-hidden bg-[var(--portfolio-surface-muted)] shadow-[var(--shadow-md)]">
+                <img
+                  src={content.src}
+                  alt={content.title}
+                  className="w-full h-auto opacity-95 hover:opacity-100 transition-opacity duration-500"
                 />
               </div>
 
-              {/* 하단 설명글 */}
-              <p className="text-sm text-green-200/70 leading-relaxed pl-4 border-l-2 border-green-800/40">
+              <p className="text-sm text-[var(--text-muted)] leading-relaxed pl-4 border-l-2 border-[var(--accent-muted)]">
                 {content.desc}
               </p>
             </section>
           ))}
         </div>
 
-        {/* 상세 페이지 하단부에 위치 */}
-        <section className="mt-20 p-6 rounded-2xl bg-white/5 border border-white/10">
-        <p className="text-sm text-yellow-200/60 italic leading-relaxed">
+        <section className="mt-20 section-card">
+          <p className="text-sm text-[var(--text-muted)] leading-relaxed">
             * Vusers 생각없이 계속 늘리다가 노트북 터질 뻔했습니다. CPU에 무리갈 수도 있으니 적당히 테스트해보세요!
-            </p>
-                </section>
-
-        {/* 하단 여백을 위한 푸터 */}
-        <footer className="mt-20 pt-10 border-t border-green-900/30 text-center">
-          <p className="text-[10px] text-green-800/40 italic">
-            Observed and Logged by Changmin
           </p>
+        </section>
+
+        <footer className="mt-20 pt-10 border-t border-[var(--border-default)] text-center">
+          <p className="portfolio-footer-copy italic">Observed and Logged by Changmin</p>
         </footer>
       </main>
     </div>

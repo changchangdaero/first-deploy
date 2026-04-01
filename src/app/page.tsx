@@ -3,6 +3,7 @@ import path from 'path';
 
 import Profile from '@/components/Profile';
 import AboutMe from '@/components/AboutMe';
+import Award from '@/components/Award';
 import TechStack from '@/components/TechStack';
 import Works from '@/components/Works';
 import Activities from '@/components/Activities'; 
@@ -40,10 +41,11 @@ export default async function Home() {
   ];
 
   return (
-    <div className="font-sans min-h-screen p-8 pb-20 bg-[#062016] text-green-50">
-      <main className="flex flex-col gap-14 items-center max-w-2xl mx-auto mt-10">
+    <div className="portfolio-page font-sans">
+      <main className="portfolio-main">
         <Profile name={data?.name ?? "유창민"} github={data?.links?.github ?? "https://github.com/changchangdaero"} />
         <AboutMe />
+        <Award />
         <TechStack skills={skills} />
         <Practice />
         <Works items={myWorks} />
@@ -53,7 +55,7 @@ export default async function Home() {
         <footer className="w-full text-center mt-10 flex flex-col gap-2">
          
           
-          <p className="text-[10px] text-green-900/40">
+          <p className="portfolio-footer-copy">
             © 2026 {data?.name ?? "유창민"}. Written with Words, Built with Next.js & TypeScript
           </p>
         </footer>

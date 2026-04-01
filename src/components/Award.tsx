@@ -1,15 +1,12 @@
-export default function AboutMe() {
+export default function Award() {
   const items = [
-    "명지대학교 정보통신공학 & 인공지능·ICT융합전공",
-    "교보문고 시·에세이 분야 주간베스트 도서 [사랑과 타박상] 저자",
-    "브런치스토리 작가",
-    "한국예술인복지재단 신진예술인"
+    "LG CNS AM INSPIRE CAMP 3th 최종 팀프로젝트 SentiStock 우수상 수상",
   ];
 
   return (
     <section className="w-full">
       <div className="section-card space-y-5">
-        <h2 className="section-title">About Me</h2>
+        <h2 className="section-title">Award</h2>
         <ul className="space-y-4">
           {items.map((item, i) => (
             <li key={i} className="flex items-start gap-3 text-sm text-[var(--text-body)] leading-relaxed">

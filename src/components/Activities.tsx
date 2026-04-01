@@ -7,24 +7,44 @@ export default function Activities({ items }: { items: Activity[] }) {
 
   return (
     <section className="w-full">
-      <button 
-        onClick={() => setIsOpen(!isOpen)} 
-        className="flex items-center justify-between w-full p-4 rounded-xl border border-green-600/50 bg-green-900/30 hover:bg-green-800/40 transition-all"
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="collapsible-trigger"
+        aria-expanded={isOpen}
       >
-        <h2 className="text-xl font-semibold text-green-300">Activities & Exhibition</h2>
-        <span className={`text-green-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+        <h2 className="section-title section-title--inline text-left">
+          Activities & Exhibition
+        </h2>
+        <span
+          className={`collapsible-chevron text-lg leading-none ${isOpen ? "rotate-180" : ""}`}
+          aria-hidden
+        >
+          ▼
+        </span>
       </button>
-      
+
       {isOpen && (
-        <div className="mt-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300 text-left">
+        <div className="mt-4 space-y-3 text-left">
           {items.map((act, index) => (
-            <div key={index} className="p-4 rounded-xl bg-white/5 border border-white/5 flex flex-col gap-1">
-              <div className="flex justify-between items-center">
-                <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-green-700/30 text-green-400 uppercase tracking-wider">{act.type}</span>
-                <span className="text-[9px] text-green-500/60 font-mono">{act.date}</span>
+            <div
+              key={index}
+              className="p-4 rounded-[var(--radius-card)] bg-[var(--portfolio-surface)] border border-[var(--border-default)] shadow-[var(--shadow-sm)] flex flex-col gap-1"
+            >
+              <div className="flex justify-between items-center gap-2">
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[var(--accent-muted)] text-[var(--accent)] uppercase tracking-wider">
+                  {act.type}
+                </span>
+                <span className="text-[10px] text-[var(--text-faint)] font-mono shrink-0">
+                  {act.date}
+                </span>
               </div>
-              <h3 className="font-bold text-green-100 mt-1">{act.title}</h3>
-              <p className="text-xs text-green-200/70 leading-relaxed">{act.description}</p>
+              <h3 className="font-semibold text-[var(--text-heading)] mt-1 text-sm sm:text-base">
+                {act.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
+                {act.description}
+              </p>
             </div>
           ))}
         </div>

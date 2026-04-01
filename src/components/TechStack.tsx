@@ -1,4 +1,6 @@
-'use client'; // 필수!
+'use client';
+
+const ICON_HEX = "4b5563";
 
 const getIconUrl = (skill: string) => {
   const s = skill.toLowerCase().trim();
@@ -16,23 +18,32 @@ const getIconUrl = (skill: string) => {
   else if (s === "prometheus") slug = "prometheus";
   else if (s === "linux") slug = "linux";
 
-  return `https://cdn.simpleicons.org/${slug}/white`;
+  return `https://cdn.simpleicons.org/${slug}/${ICON_HEX}`;
 };
 
 export default function TechStack({ skills }: { skills: string[] }) {
   return (
-    <section className="w-full">
-      <h2 className="text-xl font-semibold text-green-300 mb-4 text-left">Tech Experience (한 번씩은 다 써봤어요)</h2>
+    <section className="w-full space-y-4">
+      <h2 className="section-title">
+        Tech Experience{" "}
+        <span className="font-normal text-[var(--text-muted)] text-base">
+          
+        </span>
+      </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full">
         {skills.map((skill) => (
-          <span key={skill} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-green-800/40 text-green-100 border border-green-700/50 hover:bg-green-700/60 transition-all">
-            <img 
-              src={getIconUrl(skill)} 
-              alt={skill} 
-              className="w-4 h-4" 
-              onError={(e) => (e.currentTarget.style.display = 'none')} // 이 핸들러 때문에 클라이언트 컴포넌트여야 함
+          <span key={skill} className="skill-card">
+            <img
+              src={getIconUrl(skill)}
+              alt=""
+              width={18}
+              height={18}
+              className="w-[18px] h-[18px] shrink-0 object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
             />
-            {skill}
+            <span className="truncate">{skill}</span>
           </span>
         ))}
       </div>
