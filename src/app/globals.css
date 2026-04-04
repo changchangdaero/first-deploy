@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "highlight.js/styles/github.css";
 
 /* -------------------------------------------------------------------------- */
 /* Portfolio design tokens — light, minimal, maintainable                       */
@@ -197,4 +198,116 @@ body {
 .portfolio-footer-copy {
   font-size: 0.6875rem;
   color: var(--text-faint);
+}
+
+.markdown-content {
+  color: var(--text-body);
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.markdown-content > * + * {
+  margin-top: 1rem;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+  color: var(--text-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.markdown-content h1 {
+  font-size: 2rem;
+}
+
+.markdown-content h2 {
+  font-size: 1.5rem;
+}
+
+.markdown-content h3 {
+  font-size: 1.25rem;
+}
+
+.markdown-content p,
+.markdown-content li,
+.markdown-content blockquote {
+  color: var(--text-body);
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 1.5rem;
+}
+
+.markdown-content ul {
+  list-style: disc;
+}
+
+.markdown-content ol {
+  list-style: decimal;
+}
+
+.markdown-content a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.markdown-content .text-red {
+  color: #dc2626;
+}
+
+.markdown-content img {
+  display: block;
+  max-width: 100%;
+  border-radius: 1rem;
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-sm);
+}
+
+.markdown-content pre {
+  overflow-x: auto;
+  border-radius: 1rem;
+  border: 1px solid var(--border-default);
+  background: #0f172a;
+  padding: 1rem 1.25rem;
+}
+
+.markdown-content pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: #e5eefc;
+  font-size: 0.875rem;
+}
+
+.markdown-content code {
+  background: #eef2f7;
+  border-radius: 0.375rem;
+  padding: 0.15rem 0.35rem;
+  font-size: 0.875em;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid var(--accent);
+  background: var(--accent-muted);
+  padding: 0.875rem 1rem;
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-default);
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid var(--border-default);
+  padding: 0.75rem;
+  text-align: left;
 }

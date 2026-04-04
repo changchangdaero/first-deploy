@@ -14,9 +14,9 @@ export default function Practice() {
         </div>
 
         <Link
-          href="/lab"
+          href="/archive"
           className="inline-flex items-center justify-center shrink-0 w-12 h-12 rounded-full border border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] text-[var(--accent)] shadow-[var(--shadow-sm)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] transition-[background,color,border-color,transform,box-shadow] hover:scale-105 hover:shadow-[var(--shadow-md)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-ring)]"
-          aria-label="실습 기록 Lab으로 이동"
+          aria-label="실습 기록 archive으로 이동"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
