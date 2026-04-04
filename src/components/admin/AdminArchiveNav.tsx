@@ -15,7 +15,7 @@ export default function AdminArchiveNav() {
           <Link
             key={item.href}
             href={item.href}
-            className="px-4 py-2 rounded-full border text-sm hover:bg-gray-50 transition"
+            className="whitespace-nowrap px-4 py-2 rounded-full border text-sm hover:bg-gray-50 transition"
           >
             {item.label}
           </Link>
@@ -25,7 +25,7 @@ export default function AdminArchiveNav() {
       <form action={logoutAdminAction}>
         <button
           type="submit"
-          className="px-4 py-2 rounded-full border text-sm hover:bg-gray-50 transition"
+          className="whitespace-nowrap px-4 py-2 rounded-full border text-sm hover:bg-gray-50 transition"
         >
           로그아웃
         </button>

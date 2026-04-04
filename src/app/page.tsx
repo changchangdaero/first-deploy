@@ -9,7 +9,11 @@ import Works from '@/components/Works';
 import Activities from '@/components/Activities'; 
 import Practice from '@/components/practice/Practice';
 import Contact from '@/components/Contact';
+import VisitorStatsCard from '@/components/VisitorStatsCard';
+import { getVisitorStats } from '@/lib/visitors';
 import { ResumeInfo, Work, Activity } from '@/types/portfolio';
+
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   
@@ -40,10 +44,21 @@ export default async function Home() {
     { type: "Supporters", title: "딥앤와이드 출판사 서포터즈 9기", description: "딥앤와이드 출판사의 신간들을 읽고 서평 작성 및 SNS 홍보를 진행하였습니다.", date: "2025" }
   ];
 
+  let visitorStats = { today: 0, total: 0 };
+
+  try {
+    visitorStats = await getVisitorStats();
+  } catch (error) {
+    console.error('Visitor stats load error:', error);
+  }
+
   return (
     <div className="portfolio-page font-sans">
       <main className="portfolio-main">
-        <Profile name={data?.name ?? "유창민"} github={data?.links?.github ?? "https://github.com/changchangdaero"} />
+        <Profile
+          name={data?.name ?? "유창민"}
+          github={data?.links?.github ?? "https://github.com/changchangdaero"}
+        />
         <AboutMe />
         <Award />
         <TechStack skills={skills} />
@@ -53,10 +68,9 @@ export default async function Home() {
         <Contact />
 
         <footer className="w-full text-center mt-10 flex flex-col gap-2">
-         
-          
           <p className="portfolio-footer-copy">
             © 2026 {data?.name ?? "유창민"}. Written with Words, Built with Next.js & TypeScript
+            <VisitorStatsCard initialStats={visitorStats} />
           </p>
         </footer>
       </main>

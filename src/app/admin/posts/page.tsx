@@ -33,13 +33,13 @@ export default async function AdminPostsPage({
         </div>
         <div className="flex gap-3">
           {subcategoryId && (
-            <Link href="/admin/posts" className="px-5 py-3 rounded border">
+            <Link href="/admin/posts" className="whitespace-nowrap px-5 py-3 rounded border">
               전체 보기
             </Link>
           )}
           <Link
             href="/admin/posts/new"
-            className="px-5 py-3 rounded bg-black text-white"
+            className="whitespace-nowrap px-5 py-3 rounded bg-black text-white"
           >
             새 포스트
           </Link>
@@ -82,14 +82,14 @@ export default async function AdminPostsPage({
                     subcategorySlug: post.subcategory.slug,
                     postSlug: post.slug,
                   })}
-                  className="px-4 py-2 rounded border hover:bg-gray-50 transition"
+                  className="whitespace-nowrap px-4 py-2 rounded border hover:bg-gray-50 transition"
                 >
                   공개 보기
                 </Link>
               )}
               <Link
                 href={`/admin/posts/${post.id}/edit`}
-                className="px-4 py-2 rounded border hover:bg-gray-50 transition"
+                className="whitespace-nowrap px-4 py-2 rounded border hover:bg-gray-50 transition"
               >
                 수정
               </Link>
@@ -97,7 +97,7 @@ export default async function AdminPostsPage({
                 <input type="hidden" name="id" value={post.id} />
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded border text-red-600 hover:bg-red-50 transition"
+                  className="whitespace-nowrap px-4 py-2 rounded border text-red-600 hover:bg-red-50 transition"
                 >
                   삭제
                 </button>
