@@ -49,7 +49,7 @@ export async function loginAdminAction(
     recordAdminLoginFailure(ip);
     await sleep(LOGIN_FAILURE_DELAY_MS);
     return {
-      message: '관리자 입장 코드를 입력해주세요.',
+      message: '입장 코드를 입력해주세요.',
     };
   }
 
