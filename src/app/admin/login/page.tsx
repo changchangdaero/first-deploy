@@ -12,9 +12,9 @@ export default function AdminLoginPage() {
           메인페이지로 돌아가기
         </Link>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">관리자 로그인</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">창민 전용 로그인</h1>
         <p className="text-sm text-gray-600 mb-8">
-          관리자 입장 코드를 입력하면 `/admin` 페이지에 접근할 수 있습니다.
+          저만 들어갈 수 있어요!
         </p>
 
         <AdminLoginForm />

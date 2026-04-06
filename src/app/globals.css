@@ -271,7 +271,7 @@ body {
   overflow-x: auto;
   border-radius: 1rem;
   border: 1px solid var(--border-default);
-  background: #0f172a;
+  background: #f3f4f6;
   padding: 1rem 1.25rem;
 }
 
@@ -279,7 +279,7 @@ body {
   background: transparent;
   padding: 0;
   border-radius: 0;
-  color: #e5eefc;
+  color: #1f2937;
   font-size: 0.875rem;
 }
 
