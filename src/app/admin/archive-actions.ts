@@ -37,11 +37,14 @@ function getPostActionErrorMessage(error: unknown) {
   return '저장 중 알 수 없는 문제가 발생했습니다.';
 }
 
-async function findSlugConflict(subcategoryId: string, slug: string, postId?: string) {
+function isUniqueViolation(error: { code?: string } | null) {
+  return error?.code === '23505';
+}
+
+async function findPostSlugConflict(slug: string, postId?: string) {
   let query = supabase
     .from('posts')
     .select('id')
-    .eq('subcategory_id', subcategoryId)
     .eq('slug', slug)
     .limit(1);
 
@@ -130,15 +133,14 @@ async function buildUniqueSubcategorySlug(
 }
 
 async function buildUniquePostSlug(
-  subcategoryId: string,
   title: string,
   postId?: string
 ) {
   const baseSlug = createSlugCandidate(title, 'post');
   let slug = baseSlug;
-  let suffix = 2;
+  let suffix = 1;
 
-  while (await findSlugConflict(subcategoryId, slug, postId)) {
+  while (await findPostSlugConflict(slug, postId)) {
     slug = `${baseSlug}-${suffix}`;
     suffix += 1;
   }
@@ -330,7 +332,7 @@ export async function createPostAction(
     const relation = await getCategoryAndSubcategory(subcategoryId);
     category = relation.category;
     subcategory = relation.subcategory;
-    slug = await buildUniquePostSlug(subcategoryId, title);
+    slug = await buildUniquePostSlug(title);
   } catch (error) {
     return {
       message: getPostActionErrorMessage(error),
@@ -343,25 +345,42 @@ export async function createPostAction(
     };
   }
 
-  const { error } = await supabase.from('posts').insert({
-    subcategory_id: subcategoryId,
-    title,
-    slug,
-    excerpt: excerpt || null,
-    content,
-    tags,
-    published,
-  });
+  let insertError: { code?: string; message: string } | null = null;
 
-  if (error) {
-    if (error.code === '23505') {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const { error } = await supabase.from('posts').insert({
+      subcategory_id: subcategoryId,
+      title,
+      slug,
+      excerpt: excerpt || null,
+      content,
+      tags,
+      published,
+    });
+
+    if (!error) {
+      insertError = null;
+      break;
+    }
+
+    insertError = error;
+
+    if (!isUniqueViolation(error)) {
+      break;
+    }
+
+    slug = await buildUniquePostSlug(title);
+  }
+
+  if (insertError) {
+    if (isUniqueViolation(insertError)) {
       return {
-        message: '자동 URL 생성 중 충돌이 발생했습니다. 한 번 더 저장해주세요.',
+        message: '자동 URL을 고유하게 만들지 못했습니다. 제목을 조금 바꿔서 다시 시도해주세요.',
       };
     }
 
     return {
-      message: error.message,
+      message: insertError.message,
     };
   }
 
@@ -421,7 +440,7 @@ export async function updatePostAction(
     const relation = await getCategoryAndSubcategory(subcategoryId);
     category = relation.category;
     subcategory = relation.subcategory;
-    slug = await buildUniquePostSlug(subcategoryId, title, id);
+    slug = await buildUniquePostSlug(title, id);
   } catch (error) {
     return {
       message: getPostActionErrorMessage(error),
@@ -434,28 +453,45 @@ export async function updatePostAction(
     };
   }
 
-  const { error } = await supabase
-    .from('posts')
-    .update({
-      subcategory_id: subcategoryId,
-      title,
-      slug,
-      excerpt: excerpt || null,
-      content,
-      tags,
-      published,
-    })
-    .eq('id', id);
+  let updateError: { code?: string; message: string } | null = null;
 
-  if (error) {
-    if (error.code === '23505') {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const { error } = await supabase
+      .from('posts')
+      .update({
+        subcategory_id: subcategoryId,
+        title,
+        slug,
+        excerpt: excerpt || null,
+        content,
+        tags,
+        published,
+      })
+      .eq('id', id);
+
+    if (!error) {
+      updateError = null;
+      break;
+    }
+
+    updateError = error;
+
+    if (!isUniqueViolation(error)) {
+      break;
+    }
+
+    slug = await buildUniquePostSlug(title, id);
+  }
+
+  if (updateError) {
+    if (isUniqueViolation(updateError)) {
       return {
-        message: '자동 URL 생성 중 충돌이 발생했습니다. 한 번 더 저장해주세요.',
+        message: '자동 URL을 고유하게 만들지 못했습니다. 제목을 조금 바꿔서 다시 시도해주세요.',
       };
     }
 
     return {
-      message: error.message,
+      message: updateError.message,
     };
   }
 

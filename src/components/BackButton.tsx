@@ -18,7 +18,6 @@ export default function BackButton() {
 
     router.push('/');
   }
-
   return (
     <button
       type="button"
