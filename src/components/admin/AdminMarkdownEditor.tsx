@@ -134,9 +134,54 @@ export default function AdminMarkdownEditor({
     };
   }
 
+  function getSelectionSnapshot() {
+    const textarea = textareaRef.current;
+
+    if (!textarea) {
+      return {
+        start: selectionRef.current.start,
+        end: selectionRef.current.end,
+        scrollTop: 0,
+      };
+    }
+
+    const isTextareaFocused = document.activeElement === textarea;
+    const selection = isTextareaFocused
+      ? {
+          start: textarea.selectionStart,
+          end: textarea.selectionEnd,
+        }
+      : selectionRef.current;
+
+    return {
+      ...selection,
+      scrollTop: textarea.scrollTop,
+    };
+  }
+
+  function restoreSelection(start: number, end: number, scrollTop: number) {
+    requestAnimationFrame(() => {
+      const textarea = textareaRef.current;
+
+      if (!textarea) {
+        return;
+      }
+
+      textarea.focus();
+      textarea.setSelectionRange(start, end);
+      textarea.scrollTop = scrollTop;
+      selectionRef.current = { start, end };
+    });
+  }
+
+  function preventToolbarBlur(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    rememberSelection();
+  }
+
   function insertAtCursor(text: string) {
     const textarea = textareaRef.current;
-    const { start, end } = selectionRef.current;
+    const { start, end, scrollTop } = getSelectionSnapshot();
 
     if (!textarea) {
       onChange(`${content}${content.endsWith('\n') ? '' : '\n'}${text}`);
@@ -146,12 +191,8 @@ export default function AdminMarkdownEditor({
     const next = `${content.slice(0, start)}${text}${content.slice(end)}`;
     onChange(next);
 
-    requestAnimationFrame(() => {
-      textarea.focus();
-      const cursor = start + text.length;
-      textarea.setSelectionRange(cursor, cursor);
-      selectionRef.current = { start: cursor, end: cursor };
-    });
+    const cursor = start + text.length;
+    restoreSelection(cursor, cursor, scrollTop);
   }
 
   function applySelectionTransform(
@@ -171,21 +212,20 @@ export default function AdminMarkdownEditor({
       return;
     }
 
+    const { start, end, scrollTop } = getSelectionSnapshot();
     const result = transform({
       content,
-      selectionStart: textarea.selectionStart,
-      selectionEnd: textarea.selectionEnd,
+      selectionStart: start,
+      selectionEnd: end,
     });
 
     onChange(result.nextContent);
 
-    requestAnimationFrame(() => {
-      textarea.focus();
-      textarea.setSelectionRange(
-        result.nextSelectionStart,
-        result.nextSelectionEnd
-      );
-    });
+    restoreSelection(
+      result.nextSelectionStart,
+      result.nextSelectionEnd,
+      scrollTop
+    );
   }
 
   function handleWrapFormat(
@@ -354,6 +394,7 @@ export default function AdminMarkdownEditor({
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() => handleWrapFormat('**', '**', '굵은 텍스트')}
               className="link-pill"
             >
@@ -361,6 +402,7 @@ export default function AdminMarkdownEditor({
             </button>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() => handleWrapFormat('*', '*', '기울임 텍스트')}
               className="link-pill italic"
             >
@@ -368,6 +410,7 @@ export default function AdminMarkdownEditor({
             </button>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() =>
                 handleWrapFormat(
                   '<span class="text-red">',
@@ -381,6 +424,7 @@ export default function AdminMarkdownEditor({
             </button>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() => handleWrapFormat('<u>', '</u>', '밑줄 텍스트')}
               className="link-pill underline"
             >
@@ -388,6 +432,7 @@ export default function AdminMarkdownEditor({
             </button>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() => handleWrapFormat('~~', '~~', '취소선 텍스트')}
               className="link-pill line-through"
             >
@@ -395,6 +440,7 @@ export default function AdminMarkdownEditor({
             </button>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={handleLinkFormat}
               className="link-pill"
             >
@@ -402,6 +448,7 @@ export default function AdminMarkdownEditor({
             </button>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() =>
                 insertAtCursor('\n```ts\nconsole.log("example");\n```\n')
               }
@@ -411,6 +458,7 @@ export default function AdminMarkdownEditor({
             </button>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() =>
                 insertAtCursor('\n## 소제목\n\n본문 내용을 입력하세요.\n')
               }
@@ -430,6 +478,7 @@ export default function AdminMarkdownEditor({
             </label>
             <button
               type="button"
+              onMouseDown={preventToolbarBlur}
               onClick={() => setIsImageToolsOpen((isOpen) => !isOpen)}
               className="link-pill"
             >
