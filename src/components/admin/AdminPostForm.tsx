@@ -104,7 +104,7 @@ export default function AdminPostForm({
     <form action={formAction} className="space-y-8">
       {initialPost && <input type="hidden" name="id" value={initialPost.id} />}
 
-      <section className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
+      <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
         <aside className="section-card space-y-6 xl:sticky xl:top-6 xl:self-start">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
@@ -136,6 +136,23 @@ export default function AdminPostForm({
                 placeholder="예: Monitoring System Lab"
                 className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] px-4 py-3 text-[var(--text-heading)] shadow-sm"
                 required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="subtitle"
+                className="mb-2 block text-sm font-medium text-[var(--text-heading)]"
+              >
+                소제목
+              </label>
+              <input
+                id="subtitle"
+                name="subtitle"
+                type="text"
+                defaultValue={initialPost?.subtitle ?? ''}
+                placeholder="예: 융합기초프로그래밍 학기 과제"
+                className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] px-4 py-3 text-[var(--text-heading)] shadow-sm"
               />
             </div>
 

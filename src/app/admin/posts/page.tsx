@@ -57,6 +57,9 @@ export default async function AdminPostsPage({
                 {post.category.name} / {post.subcategory.name}
               </p>
               <h2 className="text-xl font-semibold mt-1">{post.title}</h2>
+              {post.subtitle && (
+                <p className="text-sm text-gray-600 mt-1">{post.subtitle}</p>
+              )}
               <p className="text-sm text-gray-500 mt-1">slug: {post.slug}</p>
               <p className="text-sm text-gray-500 mt-1">
                 작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}

@@ -110,8 +110,10 @@ export default function AdminMarkdownEditor({
   const [message, setMessage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [isImageToolsOpen, setIsImageToolsOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const selectionRef = useRef({ start: 0, end: 0 });
 
   const images = useMemo(() => parseImages(content), [content]);
   const selectedImage =
@@ -119,16 +121,28 @@ export default function AdminMarkdownEditor({
       ? null
       : images.find((image) => image.index === selectedImageIndex) ?? null;
 
+  function rememberSelection() {
+    const textarea = textareaRef.current;
+
+    if (!textarea) {
+      return;
+    }
+
+    selectionRef.current = {
+      start: textarea.selectionStart,
+      end: textarea.selectionEnd,
+    };
+  }
+
   function insertAtCursor(text: string) {
     const textarea = textareaRef.current;
+    const { start, end } = selectionRef.current;
 
     if (!textarea) {
       onChange(`${content}${content.endsWith('\n') ? '' : '\n'}${text}`);
       return;
     }
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
     const next = `${content.slice(0, start)}${text}${content.slice(end)}`;
     onChange(next);
 
@@ -136,6 +150,7 @@ export default function AdminMarkdownEditor({
       textarea.focus();
       const cursor = start + text.length;
       textarea.setSelectionRange(cursor, cursor);
+      selectionRef.current = { start: cursor, end: cursor };
     });
   }
 
@@ -235,6 +250,7 @@ export default function AdminMarkdownEditor({
       });
 
       insertAtCursor(`\n${tag}\n`);
+      setIsImageToolsOpen(true);
       setMessage('이미지가 업로드되어 본문에 삽입되었습니다.');
     } catch (error) {
       setMessage(
@@ -252,6 +268,7 @@ export default function AdminMarkdownEditor({
     const file = event.target.files?.[0];
 
     if (file) {
+      rememberSelection();
       void uploadImage(file);
     }
 
@@ -269,6 +286,7 @@ export default function AdminMarkdownEditor({
     }
 
     event.preventDefault();
+    rememberSelection();
     void uploadImage(files[0]);
   }
 
@@ -304,6 +322,7 @@ export default function AdminMarkdownEditor({
     }
 
     event.preventDefault();
+    rememberSelection();
     void uploadImage(file);
   }
 
@@ -409,12 +428,19 @@ export default function AdminMarkdownEditor({
                 disabled={isUploading}
               />
             </label>
+            <button
+              type="button"
+              onClick={() => setIsImageToolsOpen((isOpen) => !isOpen)}
+              className="link-pill"
+            >
+              이미지 도구
+            </button>
           </div>
         </div>
 
-        <div className="grid gap-0 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div>
           <div
-            className={`relative border-b border-[var(--border-default)] xl:border-b-0 xl:border-r ${
+            className={`relative ${
               isDragActive
                 ? 'bg-[color:var(--accent-muted)]'
                 : 'bg-[var(--portfolio-surface)]'
@@ -434,14 +460,25 @@ export default function AdminMarkdownEditor({
               id="content"
               name="content"
               value={content}
-              onChange={(event) => onChange(event.target.value)}
+              onChange={(event) => {
+                onChange(event.target.value);
+                selectionRef.current = {
+                  start: event.target.selectionStart,
+                  end: event.target.selectionEnd,
+                };
+              }}
+              onClick={rememberSelection}
+              onKeyUp={rememberSelection}
               onPaste={handlePaste}
-              className="min-h-[620px] w-full resize-y border-0 bg-transparent px-6 py-5 font-mono text-sm leading-7 text-[var(--text-heading)] outline-none"
+              onSelect={rememberSelection}
+              onBlur={rememberSelection}
+              className="min-h-[760px] w-full resize-y border-0 bg-transparent px-6 py-5 font-mono text-sm leading-7 text-[var(--text-heading)] outline-none"
               required
             />
           </div>
 
-          <aside className="space-y-4 bg-[var(--portfolio-surface-muted)] px-6 py-5">
+          {isImageToolsOpen && (
+          <div className="space-y-4 border-t border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] px-6 py-5">
             <div>
               <h4 className="text-sm font-semibold text-[var(--text-heading)]">
                 이미지 도구
@@ -582,7 +619,8 @@ export default function AdminMarkdownEditor({
                 </div>
               </div>
             )}
-          </aside>
+          </div>
+          )}
         </div>
       </div>
 
