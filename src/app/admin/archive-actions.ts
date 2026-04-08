@@ -248,11 +248,12 @@ export async function updateCategoryAction(formData: FormData) {
 export async function createSubcategoryAction(formData: FormData) {
   const categoryId = getRequiredText(formData, 'category_id', '상위 카테고리');
   const name = getRequiredText(formData, 'name', '서브카테고리 이름');
+  const subtitle = getOptionalText(formData, 'subtitle');
   const slug = await buildUniqueSubcategorySlug(categoryId, name);
 
   const { error } = await supabase
     .from('subcategories')
-    .insert({ category_id: categoryId, name, slug });
+    .insert({ category_id: categoryId, name, subtitle: subtitle || null, slug });
 
   if (error) {
     throw new Error(error.message);
@@ -273,6 +274,7 @@ export async function updateSubcategoryAction(formData: FormData) {
   const id = getRequiredText(formData, 'id', '서브카테고리 ID');
   const categoryId = getRequiredText(formData, 'category_id', '상위 카테고리');
   const name = getRequiredText(formData, 'name', '서브카테고리 이름');
+  const subtitle = getOptionalText(formData, 'subtitle');
   const slug = await buildUniqueSubcategorySlug(categoryId, name, id);
 
   const { data: existing, error: existingError } = await supabase
@@ -292,7 +294,7 @@ export async function updateSubcategoryAction(formData: FormData) {
 
   const { error } = await supabase
     .from('subcategories')
-    .update({ category_id: categoryId, name, slug })
+    .update({ category_id: categoryId, name, subtitle: subtitle || null, slug })
     .eq('id', id);
 
   if (error) {
@@ -312,7 +314,6 @@ export async function createPostAction(
   let categoryId: string;
   let subcategoryId: string;
   let title: string;
-  let subtitle: string;
   let slug: string;
   let content: string;
   let excerpt: string;
@@ -325,7 +326,6 @@ export async function createPostAction(
     categoryId = getRequiredText(formData, 'category_id', '카테고리');
     subcategoryId = getRequiredText(formData, 'subcategory_id', '서브카테고리');
     title = getRequiredText(formData, 'title', '제목');
-    subtitle = getOptionalText(formData, 'subtitle');
     content = getRequiredText(formData, 'content', '본문');
     excerpt = getOptionalText(formData, 'excerpt');
     tags = parseTags(formData);
@@ -353,7 +353,6 @@ export async function createPostAction(
     const { error } = await supabase.from('posts').insert({
       subcategory_id: subcategoryId,
       title,
-      subtitle: subtitle || null,
       slug,
       excerpt: excerpt || null,
       content,
@@ -411,7 +410,6 @@ export async function updatePostAction(
   let categoryId: string;
   let subcategoryId: string;
   let title: string;
-  let subtitle: string;
   let slug: string;
   let content: string;
   let excerpt: string;
@@ -426,7 +424,6 @@ export async function updatePostAction(
     categoryId = getRequiredText(formData, 'category_id', '카테고리');
     subcategoryId = getRequiredText(formData, 'subcategory_id', '서브카테고리');
     title = getRequiredText(formData, 'title', '제목');
-    subtitle = getOptionalText(formData, 'subtitle');
     content = getRequiredText(formData, 'content', '본문');
     excerpt = getOptionalText(formData, 'excerpt');
     tags = parseTags(formData);
@@ -466,7 +463,6 @@ export async function updatePostAction(
       .update({
         subcategory_id: subcategoryId,
         title,
-        subtitle: subtitle || null,
         slug,
         excerpt: excerpt || null,
         content,

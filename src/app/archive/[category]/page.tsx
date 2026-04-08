@@ -50,6 +50,11 @@ export default async function CategoryPage({ params }: PageProps) {
             className="section-card transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]"
           >
             <h2 className="text-xl font-semibold text-[var(--text-heading)]">{subcategory.name}</h2>
+            {subcategory.subtitle && (
+              <p className="mt-1 text-sm text-[var(--text-muted)]">
+                {subcategory.subtitle}
+              </p>
+            )}
             <p className="mt-1 text-sm text-[var(--text-muted)]">
               {formatCountLabel(subcategory.postCount, 'post')}
             </p>

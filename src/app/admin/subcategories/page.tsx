@@ -59,6 +59,9 @@ export default async function AdminSubcategoriesPage({
             >
               <p className="text-sm text-gray-500">{subcategory.category.name}</p>
               <h2 className="text-xl font-semibold mt-1">{subcategory.name}</h2>
+              {subcategory.subtitle && (
+                <p className="text-sm text-gray-600 mt-1">{subcategory.subtitle}</p>
+              )}
               <p className="text-sm text-gray-500 mt-1">slug: {subcategory.slug}</p>
               <p className="text-sm text-gray-500 mt-1">공개 글 {subcategory.postCount}개</p>
             </Link>

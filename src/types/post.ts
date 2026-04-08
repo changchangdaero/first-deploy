@@ -9,6 +9,7 @@ export type Subcategory = {
   id: string;
   category_id: string;
   name: string;
+  subtitle: string | null;
   slug: string;
   created_at: string;
 };
@@ -17,7 +18,6 @@ export type PostRow = {
   id: string;
   subcategory_id: string;
   title: string;
-  subtitle: string | null;
   slug: string;
   excerpt: string | null;
   content: string;

@@ -141,23 +141,6 @@ export default function AdminPostForm({
 
             <div>
               <label
-                htmlFor="subtitle"
-                className="mb-2 block text-sm font-medium text-[var(--text-heading)]"
-              >
-                소제목
-              </label>
-              <input
-                id="subtitle"
-                name="subtitle"
-                type="text"
-                defaultValue={initialPost?.subtitle ?? ''}
-                placeholder="예: 융합기초프로그래밍 학기 과제"
-                className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] px-4 py-3 text-[var(--text-heading)] shadow-sm"
-              />
-            </div>
-
-            <div>
-              <label
                 htmlFor="category_id"
                 className="mb-2 block text-sm font-medium text-[var(--text-heading)]"
               >

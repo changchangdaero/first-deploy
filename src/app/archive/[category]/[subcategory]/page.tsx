@@ -41,9 +41,6 @@ export default async function SubcategoryPage({ params }: PageProps) {
             className="section-card block transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]"
           >
             <h2 className="text-xl font-semibold text-[var(--text-heading)]">{post.title}</h2>
-            {post.subtitle && (
-              <p className="mt-1 text-sm text-[var(--text-muted)]">{post.subtitle}</p>
-            )}
             {post.excerpt && (
               <p className="mt-2 text-[var(--text-body)]">{post.excerpt}</p>
             )}

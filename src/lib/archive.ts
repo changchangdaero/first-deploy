@@ -141,7 +141,7 @@ export async function getPublishedCategorySummaries() {
 export async function getSubcategoryById(id: string) {
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, created_at')
     .eq('id', id)
     .single();
 
@@ -155,7 +155,7 @@ export async function getSubcategoryById(id: string) {
 export async function getAllSubcategories() {
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, created_at')
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -168,7 +168,7 @@ export async function getAllSubcategories() {
 export async function getSubcategoriesForCategory(categoryId: string) {
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, created_at')
     .eq('category_id', categoryId)
     .order('created_at', { ascending: true });
 
@@ -193,7 +193,7 @@ export async function getSubcategoryBySlugs(
 
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, created_at')
     .eq('category_id', category.id)
     .eq('slug', normalizedSubcategorySlug)
     .single();
@@ -293,7 +293,7 @@ export async function getAllPosts() {
   const { data, error } = await supabase
     .from('posts')
     .select(
-      'id, subcategory_id, title, subtitle, slug, excerpt, content, tags, published, created_at'
+      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
     )
     .order('created_at', { ascending: false });
 
@@ -308,7 +308,7 @@ export async function getPostById(id: string) {
   const { data, error } = await supabase
     .from('posts')
     .select(
-      'id, subcategory_id, title, subtitle, slug, excerpt, content, tags, published, created_at'
+      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
     )
     .eq('id', id)
     .single();
@@ -375,7 +375,7 @@ export async function getPostsForSubcategory(subcategoryId: string, publishedOnl
   let query = supabase
     .from('posts')
     .select(
-      'id, subcategory_id, title, subtitle, slug, excerpt, content, tags, published, created_at'
+      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
     )
     .eq('subcategory_id', subcategoryId)
     .order('created_at', { ascending: false });
@@ -428,7 +428,7 @@ export async function getPublishedPostBySlugs(
   const { data, error } = await supabase
     .from('posts')
     .select(
-      'id, subcategory_id, title, subtitle, slug, excerpt, content, tags, published, created_at'
+      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
     )
     .eq('subcategory_id', relation.subcategory.id)
     .eq('slug', normalizedPostSlug)

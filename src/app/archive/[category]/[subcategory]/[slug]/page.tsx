@@ -24,11 +24,6 @@ export default async function PostDetailPage({ params }: PageProps) {
           <h1 className="mt-3 text-4xl font-bold text-[var(--text-heading)]">
             {post.title}
           </h1>
-          {post.subtitle && (
-            <p className="mt-3 text-lg text-[var(--text-muted)]">
-              {post.subtitle}
-            </p>
-          )}
           <p className="mt-3 text-sm text-[var(--text-faint)]">
             {new Date(post.created_at).toLocaleDateString('ko-KR')}
           </p>

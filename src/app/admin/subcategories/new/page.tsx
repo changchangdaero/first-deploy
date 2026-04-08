@@ -76,6 +76,25 @@ export default async function NewSubcategoryPage() {
                 />
               </div>
 
+              <div>
+                <label
+                  htmlFor="subtitle"
+                  className="mb-2 block text-sm font-medium text-[var(--text-heading)]"
+                >
+                  소제목
+                </label>
+                <input
+                  id="subtitle"
+                  name="subtitle"
+                  type="text"
+                  placeholder="예: 융합기초프로그래밍 학기 과제"
+                  className="w-full rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] px-4 py-3 text-[var(--text-heading)] shadow-sm"
+                />
+                <p className="mt-2 text-xs text-[var(--text-muted)]">
+                  카드에서 서브카테고리 이름 아래 보조 설명으로 표시됩니다.
+                </p>
+              </div>
+
               <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] px-4 py-4 text-sm text-[var(--text-muted)]">
                 같은 카테고리 안에서 이름이 겹치면 번호를 붙여 고유한 URL을 만듭니다.
               </div>
