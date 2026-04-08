@@ -237,6 +237,10 @@ body {
   color: var(--text-body);
 }
 
+.markdown-content p {
+  white-space: pre-line;
+}
+
 .markdown-content ul,
 .markdown-content ol {
   padding-left: 1.5rem;
