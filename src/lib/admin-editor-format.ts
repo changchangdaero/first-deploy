@@ -26,13 +26,12 @@ export function applyWrapFormat({
   const targetText = selectedText || placeholder;
   const wrappedText = `${prefix}${targetText}${resolvedSuffix}`;
   const nextContent = `${content.slice(0, selectionStart)}${wrappedText}${content.slice(selectionEnd)}`;
-  const innerStart = selectionStart + prefix.length;
-  const innerEnd = innerStart + targetText.length;
+  const cursor = selectionStart + wrappedText.length;
 
   return {
     nextContent,
-    nextSelectionStart: innerStart,
-    nextSelectionEnd: innerEnd,
+    nextSelectionStart: cursor,
+    nextSelectionEnd: cursor,
   };
 }
 
@@ -55,12 +54,11 @@ export function applyLinkFormat({
   const linkText = selectedText || textPlaceholder;
   const wrappedText = `[${linkText}](${url})`;
   const nextContent = `${content.slice(0, selectionStart)}${wrappedText}${content.slice(selectionEnd)}`;
-  const innerStart = selectionStart + 1;
-  const innerEnd = innerStart + linkText.length;
+  const cursor = selectionStart + wrappedText.length;
 
   return {
     nextContent,
-    nextSelectionStart: innerStart,
-    nextSelectionEnd: innerEnd,
+    nextSelectionStart: cursor,
+    nextSelectionEnd: cursor,
   };
 }

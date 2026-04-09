@@ -245,6 +245,11 @@ export default function AdminMarkdownEditor({
     );
   }
 
+  function handleUnderlineFormat() {
+    rememberSelection();
+    handleWrapFormat('<u>', '</u>', '밑줄 텍스트');
+  }
+
   function handleLinkFormat() {
     const url =
       window.prompt('링크 URL을 입력하세요.', 'https://example.com')?.trim() ?? '';
@@ -425,7 +430,7 @@ export default function AdminMarkdownEditor({
             <button
               type="button"
               onMouseDown={preventToolbarBlur}
-              onClick={() => handleWrapFormat('<u>', '</u>', '밑줄 텍스트')}
+              onClick={handleUnderlineFormat}
               className="link-pill underline"
             >
               Underline
@@ -517,6 +522,7 @@ export default function AdminMarkdownEditor({
                 };
               }}
               onClick={rememberSelection}
+              onMouseUp={rememberSelection}
               onKeyUp={rememberSelection}
               onPaste={handlePaste}
               onSelect={rememberSelection}
