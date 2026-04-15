@@ -292,9 +292,7 @@ export async function getCategoryTree(): Promise<CategoryWithSubcategories[]> {
 export async function getAllPosts() {
   const { data, error } = await supabase
     .from('posts')
-    .select(
-      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
-    )
+    .select('*')
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -307,9 +305,7 @@ export async function getAllPosts() {
 export async function getPostById(id: string) {
   const { data, error } = await supabase
     .from('posts')
-    .select(
-      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
-    )
+    .select('*')
     .eq('id', id)
     .single();
 
@@ -374,9 +370,7 @@ export async function getAdminPosts() {
 export async function getPostsForSubcategory(subcategoryId: string, publishedOnly = false) {
   let query = supabase
     .from('posts')
-    .select(
-      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
-    )
+    .select('*')
     .eq('subcategory_id', subcategoryId)
     .order('created_at', { ascending: false });
 
@@ -427,9 +421,7 @@ export async function getPublishedPostBySlugs(
 
   const { data, error } = await supabase
     .from('posts')
-    .select(
-      'id, subcategory_id, title, slug, excerpt, content, tags, published, created_at'
-    )
+    .select('*')
     .eq('subcategory_id', relation.subcategory.id)
     .eq('slug', normalizedPostSlug)
     .eq('published', true)

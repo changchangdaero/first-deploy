@@ -21,6 +21,7 @@ export type PostRow = {
   slug: string;
   excerpt: string | null;
   content: string;
+  thumbnail_url?: string | null;
   tags: string[] | null;
   published: boolean;
   created_at: string;
