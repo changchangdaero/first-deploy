@@ -26,13 +26,38 @@ export function drawHandwritingStrokes(
     context.strokeStyle =
       stroke.tool === 'eraser' ? HANDWRITING_BACKGROUND : stroke.color;
     context.lineWidth = stroke.size;
+    context.fillStyle =
+      stroke.tool === 'eraser' ? HANDWRITING_BACKGROUND : stroke.color;
+
+    if (stroke.kind === 'line' && stroke.line) {
+      context.beginPath();
+      context.moveTo(stroke.line.x1, stroke.line.y1);
+      context.lineTo(stroke.line.x2, stroke.line.y2);
+      context.stroke();
+      context.restore();
+      continue;
+    }
+
+    if (stroke.kind === 'ellipse' && stroke.ellipse) {
+      context.beginPath();
+      context.ellipse(
+        stroke.ellipse.centerX,
+        stroke.ellipse.centerY,
+        stroke.ellipse.radiusX,
+        stroke.ellipse.radiusY,
+        stroke.ellipse.rotation ?? 0,
+        0,
+        Math.PI * 2
+      );
+      context.stroke();
+      context.restore();
+      continue;
+    }
 
     if (stroke.points.length === 1) {
       const [point] = stroke.points;
       context.beginPath();
       context.arc(point.x, point.y, stroke.size / 2, 0, Math.PI * 2);
-      context.fillStyle =
-        stroke.tool === 'eraser' ? HANDWRITING_BACKGROUND : stroke.color;
       context.fill();
       context.restore();
       continue;

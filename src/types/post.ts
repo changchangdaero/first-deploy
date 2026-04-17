@@ -33,12 +33,30 @@ export type HandwritingPoint = {
   pressure?: number;
 };
 
+export type HandwritingLineShape = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+export type HandwritingEllipseShape = {
+  centerX: number;
+  centerY: number;
+  radiusX: number;
+  radiusY: number;
+  rotation?: number;
+};
+
 export type HandwritingStroke = {
   id: string;
   tool: 'pen' | 'eraser';
   color: string;
   size: number;
   points: HandwritingPoint[];
+  kind?: 'freehand' | 'line' | 'ellipse';
+  line?: HandwritingLineShape;
+  ellipse?: HandwritingEllipseShape;
 };
 
 export type HandwritingBlockRow = {

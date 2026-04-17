@@ -7,6 +7,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { correctStrokeToShape } from '@/lib/handwriting-shape-correction';
 import {
   DEFAULT_HANDWRITING_HEIGHT,
   DEFAULT_HANDWRITING_WIDTH,
@@ -47,6 +48,7 @@ export default function AdminHandwritingBlockEditor({
   const [width, setWidth] = useState(DEFAULT_HANDWRITING_WIDTH);
   const [height, setHeight] = useState(DEFAULT_HANDWRITING_HEIGHT);
   const [strokes, setStrokes] = useState<HandwritingStroke[]>([]);
+  const [autoCorrectShapes, setAutoCorrectShapes] = useState(true);
 
   useEffect(() => {
     if (!block) {
@@ -142,6 +144,7 @@ export default function AdminHandwritingBlockEditor({
       color,
       size: activeSize,
       points: [getCanvasPoint(event)],
+      kind: 'freehand',
     };
 
     redrawWithCurrentStroke(currentStrokeRef.current);
@@ -165,9 +168,32 @@ export default function AdminHandwritingBlockEditor({
       return;
     }
 
-    const finalStroke = currentStrokeRef.current;
+    let finalStroke = currentStrokeRef.current;
     currentStrokeRef.current = null;
     pointerIdRef.current = null;
+
+    if (autoCorrectShapes && finalStroke.tool === 'pen') {
+      const correction = correctStrokeToShape(finalStroke);
+
+      if (correction?.kind === 'line') {
+        finalStroke = {
+          ...finalStroke,
+          kind: 'line',
+          line: correction.line,
+          ellipse: undefined,
+        };
+      }
+
+      if (correction?.kind === 'ellipse') {
+        finalStroke = {
+          ...finalStroke,
+          kind: 'ellipse',
+          ellipse: correction.ellipse,
+          line: undefined,
+        };
+      }
+    }
+
     setStrokes((current) => [...current, finalStroke]);
   }
 
@@ -224,6 +250,20 @@ export default function AdminHandwritingBlockEditor({
                   지우개
                 </button>
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] p-4">
+              <label className="flex items-center gap-3 text-sm font-medium text-[var(--text-heading)]">
+                <input
+                  type="checkbox"
+                  checked={autoCorrectShapes}
+                  onChange={(event) => setAutoCorrectShapes(event.target.checked)}
+                />
+                도형 자동 보정
+              </label>
+              <p className="mt-2 text-xs text-[var(--text-muted)]">
+                선과 원에 가까운 획은 그리기 완료 후 자동으로 정리됩니다.
+              </p>
             </div>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] p-4">
