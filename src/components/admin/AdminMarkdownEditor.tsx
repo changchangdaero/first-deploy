@@ -646,6 +646,7 @@ export default function AdminMarkdownEditor({
               id="content"
               name="content"
               value={content}
+              placeholder="내용을 입력해 주세요."
               onChange={(event) => {
                 onChange(event.target.value);
                 selectionRef.current = {

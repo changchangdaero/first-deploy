@@ -7,6 +7,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { doesStrokeIntersectPath } from '@/lib/handwriting-hit-test';
 import { correctStrokeToShape } from '@/lib/handwriting-shape-correction';
 import {
   DEFAULT_HANDWRITING_HEIGHT,
@@ -14,7 +15,7 @@ import {
   drawHandwritingStrokes,
   HANDWRITING_BACKGROUND,
 } from '@/lib/handwriting-render';
-import type { HandwritingBlockInput, HandwritingStroke } from '@/types/post';
+import type { HandwritingBlockInput, HandwritingPoint, HandwritingStroke } from '@/types/post';
 
 type AdminHandwritingBlockEditorProps = {
   block: HandwritingBlockInput | null;
@@ -31,6 +32,7 @@ const ERASER_PRESETS = [
 ];
 
 type DraftStroke = HandwritingStroke;
+type EraserMode = 'stroke' | 'partial';
 
 export default function AdminHandwritingBlockEditor({
   block,
@@ -40,8 +42,10 @@ export default function AdminHandwritingBlockEditor({
 }: AdminHandwritingBlockEditorProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const currentStrokeRef = useRef<DraftStroke | null>(null);
+  const erasedStrokeIdsRef = useRef<Set<string>>(new Set());
   const pointerIdRef = useRef<number | null>(null);
   const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
+  const [eraserMode, setEraserMode] = useState<EraserMode>('stroke');
   const [color, setColor] = useState(COLOR_PRESETS[0]);
   const [penSize, setPenSize] = useState(4);
   const [eraserSize, setEraserSize] = useState(24);
@@ -58,6 +62,7 @@ export default function AdminHandwritingBlockEditor({
     setStrokes(block.strokes);
     setWidth(block.width);
     setHeight(block.height);
+    erasedStrokeIdsRef.current = new Set();
 
     const lastPenStroke = [...block.strokes].reverse().find((item) => item.tool === 'pen');
     const lastEraserStroke = [...block.strokes]
@@ -112,7 +117,7 @@ export default function AdminHandwritingBlockEditor({
     };
   }
 
-  function redrawWithCurrentStroke(nextStroke?: DraftStroke | null) {
+  function redrawPreview(nextStrokes: HandwritingStroke[], nextStroke?: DraftStroke | null) {
     const canvas = canvasRef.current;
 
     if (!canvas) {
@@ -127,10 +132,30 @@ export default function AdminHandwritingBlockEditor({
 
     drawHandwritingStrokes(
       context,
-      nextStroke ? [...strokes, nextStroke] : strokes,
+      nextStroke ? [...nextStrokes, nextStroke] : nextStrokes,
       width,
       height
     );
+  }
+
+  function getStrokeErasedPreview(path: HandwritingPoint[]) {
+    const erasedIds = erasedStrokeIdsRef.current;
+
+    const nextErasedIds = new Set(erasedIds);
+
+    for (const stroke of strokes) {
+      if (stroke.tool !== 'pen' || nextErasedIds.has(stroke.id)) {
+        continue;
+      }
+
+      if (doesStrokeIntersectPath(stroke, path, eraserSize / 2)) {
+        nextErasedIds.add(stroke.id);
+      }
+    }
+
+    erasedStrokeIdsRef.current = nextErasedIds;
+
+    return strokes.filter((stroke) => !nextErasedIds.has(stroke.id));
   }
 
   function handlePointerDown(event: ReactPointerEvent<HTMLCanvasElement>) {
@@ -138,16 +163,24 @@ export default function AdminHandwritingBlockEditor({
     pointerIdRef.current = event.pointerId;
     event.currentTarget.setPointerCapture(event.pointerId);
 
+    const startPoint = getCanvasPoint(event);
+
     currentStrokeRef.current = {
       id: crypto.randomUUID(),
       tool,
       color,
       size: activeSize,
-      points: [getCanvasPoint(event)],
+      points: [startPoint],
       kind: 'freehand',
     };
 
-    redrawWithCurrentStroke(currentStrokeRef.current);
+    if (tool === 'eraser' && eraserMode === 'stroke') {
+      const previewStrokes = getStrokeErasedPreview([startPoint]);
+      redrawPreview(previewStrokes);
+      return;
+    }
+
+    redrawPreview(strokes, currentStrokeRef.current);
   }
 
   function handlePointerMove(event: ReactPointerEvent<HTMLCanvasElement>) {
@@ -160,7 +193,13 @@ export default function AdminHandwritingBlockEditor({
       points: [...currentStrokeRef.current.points, getCanvasPoint(event)],
     };
 
-    redrawWithCurrentStroke(currentStrokeRef.current);
+    if (tool === 'eraser' && eraserMode === 'stroke') {
+      const previewStrokes = getStrokeErasedPreview(currentStrokeRef.current.points);
+      redrawPreview(previewStrokes);
+      return;
+    }
+
+    redrawPreview(strokes, currentStrokeRef.current);
   }
 
   function finishStroke() {
@@ -172,6 +211,13 @@ export default function AdminHandwritingBlockEditor({
     currentStrokeRef.current = null;
     pointerIdRef.current = null;
 
+    if (tool === 'eraser' && eraserMode === 'stroke') {
+      const erasedIds = erasedStrokeIdsRef.current;
+      erasedStrokeIdsRef.current = new Set();
+      setStrokes((current) => current.filter((stroke) => !erasedIds.has(stroke.id)));
+      return;
+    }
+
     if (autoCorrectShapes && finalStroke.tool === 'pen') {
       const correction = correctStrokeToShape(finalStroke);
 
@@ -182,9 +228,7 @@ export default function AdminHandwritingBlockEditor({
           line: correction.line,
           ellipse: undefined,
         };
-      }
-
-      if (correction?.kind === 'ellipse') {
+      } else if (correction?.kind === 'ellipse') {
         finalStroke = {
           ...finalStroke,
           kind: 'ellipse',
@@ -301,6 +345,29 @@ export default function AdminHandwritingBlockEditor({
                 className="mt-3 w-full"
               />
               <p className="mt-2 text-xs text-[var(--text-muted)]">펜 {penSize}px</p>
+            </div>
+
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] p-4">
+              <p className="text-sm font-medium text-[var(--text-heading)]">지우개 방식</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEraserMode('stroke')}
+                  className={`link-pill ${eraserMode === 'stroke' ? 'bg-[var(--text-heading)] text-white' : ''}`}
+                >
+                  획 단위 지우개
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEraserMode('partial')}
+                  className={`link-pill ${eraserMode === 'partial' ? 'bg-[var(--text-heading)] text-white' : ''}`}
+                >
+                  부분 지우개
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-[var(--text-muted)]">
+                획 단위 지우개가 기본값이며, 닿은 선 전체를 지웁니다.
+              </p>
             </div>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] p-4">

@@ -28,23 +28,7 @@ const initialState: AdminPostFormState = {
   message: null,
 };
 
-const starterMarkdown = `## 작업 개요
-
-- 목표:
-- 배경:
-
-## 진행 내용
-
-### 1. 구성
-
-\`\`\`ts
-console.log('code block');
-\`\`\`
-
-## 결과
-
-<img src="https://example.com/image.png" alt="이미지 설명" width="720" />
-`;
+const starterMarkdown = '';
 
 export default function AdminPostForm({
   categories,
@@ -118,14 +102,14 @@ export default function AdminPostForm({
         <aside className="section-card space-y-6 xl:sticky xl:top-6 xl:self-start">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-              Post Meta
+              글 정보
             </p>
             <h2 className="mt-2 text-2xl font-bold text-[var(--text-heading)]">
               {initialPost ? '글 수정' : '새 글 작성'}
             </h2>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
-              제목을 기준으로 URL 슬러그는 자동 생성됩니다. 메타 정보를 정리한 뒤
-              본문은 마크다운으로 작성하세요.
+              제목을 기준으로 URL 슬러그가 자동 생성됩니다. 카테고리와 메타 정보를 정리한
+              뒤 본문을 작성해 주세요.
             </p>
           </div>
 
@@ -143,7 +127,7 @@ export default function AdminPostForm({
                 type="text"
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="예: Monitoring System Lab"
+                placeholder="예: Signals and Systems 정리"
                 className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] px-4 py-3 text-[var(--text-heading)] shadow-sm"
                 required
               />
@@ -165,7 +149,7 @@ export default function AdminPostForm({
                 required
               >
                 <option value="" disabled>
-                  카테고리를 선택하세요
+                  카테고리를 선택해 주세요
                 </option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
@@ -193,8 +177,8 @@ export default function AdminPostForm({
               >
                 <option value="" disabled>
                   {selectedCategoryId
-                    ? '서브카테고리를 선택하세요'
-                    : '먼저 카테고리를 선택하세요'}
+                    ? '서브카테고리를 선택해 주세요'
+                    : '먼저 카테고리를 선택해 주세요'}
                 </option>
                 {availableSubcategories.map((subcategory) => (
                   <option key={subcategory.id} value={subcategory.id}>
@@ -204,14 +188,14 @@ export default function AdminPostForm({
               </select>
               {!selectedCategoryId && (
                 <p className="mt-2 text-xs text-[var(--text-muted)]">
-                  먼저 카테고리를 선택하면 연결된 서브카테고리를 고를 수 있습니다.
+                  카테고리를 선택하면 연결된 서브카테고리를 고를 수 있습니다.
                 </p>
               )}
             </div>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] px-4 py-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-faint)]">
-                Auto URL
+                자동 URL
               </p>
               <p className="mt-2 break-all font-mono text-sm text-[var(--text-body)]">
                 {archivePreviewPath ??
@@ -231,7 +215,7 @@ export default function AdminPostForm({
                 name="tags"
                 type="text"
                 defaultValue={initialPost?.tags.join(', ') ?? ''}
-                placeholder="예: OpenCV, YOLO, Wafer"
+                placeholder="예: signals, notes, theory"
                 className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] px-4 py-3 text-[var(--text-heading)] shadow-sm"
               />
             </div>
