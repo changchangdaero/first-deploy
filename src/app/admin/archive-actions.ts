@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { buildArchivePath, getPostWithRelationsById } from '@/lib/archive';
 import { parseHandwritingBlocksInput } from '@/lib/handwriting-blocks';
 import { createSlugCandidate } from '@/lib/slug';
+import { createAdminSupabase } from '@/lib/supabase/admin';
 import { supabase } from '@/lib/supabase/server';
 import type {
   AdminActionState,
@@ -184,8 +185,14 @@ async function syncHandwritingBlocks(
   postId: string,
   blocks: HandwritingBlockInput[]
 ) {
+  // Handwriting blocks are admin-only content writes. Use the service-role client
+  // from the server action so custom app auth does not depend on Supabase RLS.
+  const adminSupabase = createAdminSupabase();
   const blockIds = blocks.map((block) => block.id);
-  const deleteQuery = supabase.from('handwriting_blocks').delete().eq('post_id', postId);
+  const deleteQuery = adminSupabase
+    .from('handwriting_blocks')
+    .delete()
+    .eq('post_id', postId);
   const { error: deleteError } =
     blockIds.length > 0
       ? await deleteQuery.not(
@@ -203,7 +210,7 @@ async function syncHandwritingBlocks(
     return;
   }
 
-  const { error: upsertError } = await supabase
+  const { error: upsertError } = await adminSupabase
     .from('handwriting_blocks')
     .upsert(
       blocks.map((block) => ({
