@@ -1,3 +1,4 @@
+import { createAdminSupabase } from '@/lib/supabase/admin';
 import { supabase } from '@/lib/supabase/server';
 import type {
   CategoryWithSubcategories,
@@ -25,8 +26,11 @@ function toPostWithRelations(
   };
 }
 
-export async function getHandwritingBlocksForPost(postId: string) {
-  const { data, error } = await supabase
+async function getHandwritingBlocksForPostWithClient(
+  postId: string,
+  client: typeof supabase
+) {
+  const { data, error } = await client
     .from('handwriting_blocks')
     .select('*')
     .eq('post_id', postId)
@@ -37,6 +41,43 @@ export async function getHandwritingBlocksForPost(postId: string) {
   }
 
   return (data ?? []) as HandwritingBlockRow[];
+}
+
+async function getHandwritingBlocksForPostsWithClient(
+  postIds: string[],
+  client: typeof supabase
+) {
+  if (postIds.length === 0) {
+    return new Map<string, HandwritingBlockRow[]>();
+  }
+
+  const { data, error } = await client
+    .from('handwriting_blocks')
+    .select('*')
+    .in('post_id', postIds)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const blocksByPostId = new Map<string, HandwritingBlockRow[]>();
+
+  for (const block of (data ?? []) as HandwritingBlockRow[]) {
+    const current = blocksByPostId.get(block.post_id) ?? [];
+    current.push(block);
+    blocksByPostId.set(block.post_id, current);
+  }
+
+  return blocksByPostId;
+}
+
+export async function getHandwritingBlocksForPost(postId: string) {
+  return getHandwritingBlocksForPostWithClient(postId, supabase);
+}
+
+export async function getAdminHandwritingBlocksForPost(postId: string) {
+  return getHandwritingBlocksForPostWithClient(postId, createAdminSupabase());
 }
 
 export function buildArchivePath(params: {
@@ -352,7 +393,7 @@ export async function getPostWithRelationsById(id: string) {
     return null;
   }
 
-  const handwritingBlocks = await getHandwritingBlocksForPost(post.id);
+  const handwritingBlocks = await getAdminHandwritingBlocksForPost(post.id);
 
   return toPostWithRelations(post, subcategory, category, handwritingBlocks);
 }
@@ -417,11 +458,20 @@ export async function getPublishedPostsForSubcategory(
   }
 
   const posts = await getPostsForSubcategory(relation.subcategory.id, true);
+  const handwritingBlocksByPostId = await getHandwritingBlocksForPostsWithClient(
+    posts.map((post) => post.id),
+    supabase
+  );
 
   return {
     ...relation,
     posts: posts.map((post) =>
-      toPostWithRelations(post, relation.subcategory, relation.category)
+      toPostWithRelations(
+        post,
+        relation.subcategory,
+        relation.category,
+        handwritingBlocksByPostId.get(post.id) ?? []
+      )
     ),
   };
 }

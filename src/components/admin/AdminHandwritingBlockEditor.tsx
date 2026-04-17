@@ -28,19 +28,18 @@ type AdminHandwritingBlockEditorProps = {
   onSave: (block: HandwritingBlockInput) => Promise<void> | void;
 };
 
+type DraftStroke = HandwritingStroke;
+type EraserMode = 'stroke' | 'partial';
+type InputMode = 'pen-only' | 'allow-touch';
+
 const COLOR_PRESETS = ['#111827', '#1d4ed8', '#b91c1c', '#15803d', '#7c3aed'];
 const ERASER_PRESETS = [
   { label: '작게', value: 12 },
   { label: '보통', value: 24 },
   { label: '크게', value: 40 },
 ];
-
 const MIN_STROKE_DISTANCE = 8;
 const MIN_STROKE_BOUND = 4;
-
-type DraftStroke = HandwritingStroke;
-type EraserMode = 'stroke' | 'partial';
-type InputMode = 'pen-only' | 'allow-touch';
 
 function getDistance(a: HandwritingPoint, b: HandwritingPoint) {
   return Math.hypot(a.x - b.x, a.y - b.y);
@@ -124,7 +123,9 @@ export default function AdminHandwritingBlockEditor({
     activePointerTypeRef.current = null;
     currentStrokeRef.current = null;
 
-    const lastPenStroke = [...block.strokes].reverse().find((item) => item.tool === 'pen');
+    const lastPenStroke = [...block.strokes]
+      .reverse()
+      .find((item) => item.tool === 'pen');
     const lastEraserStroke = [...block.strokes]
       .reverse()
       .find((item) => item.tool === 'eraser');
@@ -158,7 +159,10 @@ export default function AdminHandwritingBlockEditor({
   }, [height, strokes, width]);
 
   const canUndo = strokes.length > 0;
-  const drawingSummary = useMemo(() => `선 ${strokes.length}개`, [strokes.length]);
+  const drawingSummary = useMemo(
+    () => `획 ${strokes.length}개`,
+    [strokes.length]
+  );
   const activeSize = tool === 'pen' ? penSize : eraserSize;
 
   if (!block) {
@@ -177,7 +181,10 @@ export default function AdminHandwritingBlockEditor({
     };
   }
 
-  function redrawPreview(nextStrokes: HandwritingStroke[], nextStroke?: DraftStroke | null) {
+  function redrawPreview(
+    nextStrokes: HandwritingStroke[],
+    nextStroke?: DraftStroke | null
+  ) {
     const canvas = canvasRef.current;
 
     if (!canvas) {
@@ -198,8 +205,14 @@ export default function AdminHandwritingBlockEditor({
     );
   }
 
+  function clearActivePointerState() {
+    currentStrokeRef.current = null;
+    pointerIdRef.current = null;
+    activePointerTypeRef.current = null;
+  }
+
   function shouldAcceptPointer(event: ReactPointerEvent<HTMLCanvasElement>) {
-    if (pointerIdRef.current !== null) {
+    if (!event.isPrimary || pointerIdRef.current !== null) {
       return false;
     }
 
@@ -207,12 +220,15 @@ export default function AdminHandwritingBlockEditor({
       return event.pointerType === 'pen';
     }
 
-    return event.pointerType === 'pen' || event.pointerType === 'touch' || event.pointerType === 'mouse';
+    return (
+      event.pointerType === 'pen' ||
+      event.pointerType === 'touch' ||
+      event.pointerType === 'mouse'
+    );
   }
 
   function getStrokeErasedPreview(path: HandwritingPoint[]) {
-    const erasedIds = erasedStrokeIdsRef.current;
-    const nextErasedIds = new Set(erasedIds);
+    const nextErasedIds = new Set(erasedStrokeIdsRef.current);
 
     for (const stroke of strokes) {
       if (stroke.tool !== 'pen' || nextErasedIds.has(stroke.id)) {
@@ -234,10 +250,7 @@ export default function AdminHandwritingBlockEditor({
       return;
     }
 
-    if (event.pointerType === 'pen') {
-      event.preventDefault();
-    }
-
+    event.preventDefault();
     pointerIdRef.current = event.pointerId;
     activePointerTypeRef.current = event.pointerType;
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -257,6 +270,7 @@ export default function AdminHandwritingBlockEditor({
       return;
     }
 
+    event.preventDefault();
     currentStrokeRef.current = {
       ...currentStrokeRef.current,
       points: [...currentStrokeRef.current.points, getCanvasPoint(event)],
@@ -275,28 +289,29 @@ export default function AdminHandwritingBlockEditor({
     redrawPreview(strokes, currentStrokeRef.current);
   }
 
-  function finishStroke() {
-    if (!currentStrokeRef.current) {
-      pointerIdRef.current = null;
-      activePointerTypeRef.current = null;
-      return;
-    }
+  function finishStroke(commit: boolean) {
+    const activeStroke = currentStrokeRef.current;
+    const erasedIds = erasedStrokeIdsRef.current;
 
-    let finalStroke = currentStrokeRef.current;
-    currentStrokeRef.current = null;
-    pointerIdRef.current = null;
-    activePointerTypeRef.current = null;
+    clearActivePointerState();
+    erasedStrokeIdsRef.current = new Set();
 
-    if (!hasMeaningfulMovement(finalStroke.points)) {
-      erasedStrokeIdsRef.current = new Set();
+    if (!activeStroke) {
       redrawPreview(strokes);
       return;
     }
 
-    if (tool === 'eraser' && eraserMode === 'stroke') {
-      const erasedIds = erasedStrokeIdsRef.current;
-      erasedStrokeIdsRef.current = new Set();
-      setStrokes((current) => current.filter((stroke) => !erasedIds.has(stroke.id)));
+    if (!commit || !hasMeaningfulMovement(activeStroke.points)) {
+      redrawPreview(strokes);
+      return;
+    }
+
+    let finalStroke = activeStroke;
+
+    if (finalStroke.tool === 'eraser' && eraserMode === 'stroke') {
+      setStrokes((current) =>
+        current.filter((stroke) => !erasedIds.has(stroke.id))
+      );
       return;
     }
 
@@ -323,12 +338,36 @@ export default function AdminHandwritingBlockEditor({
     setStrokes((current) => [...current, finalStroke]);
   }
 
-  function handlePointerCancel() {
-    currentStrokeRef.current = null;
-    pointerIdRef.current = null;
-    activePointerTypeRef.current = null;
-    erasedStrokeIdsRef.current = new Set();
-    redrawPreview(strokes);
+  function handlePointerUp(event: ReactPointerEvent<HTMLCanvasElement>) {
+    if (pointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    finishStroke(true);
+  }
+
+  function handlePointerCancel(event: ReactPointerEvent<HTMLCanvasElement>) {
+    if (pointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    finishStroke(false);
+  }
+
+  function handleLostPointerCapture(event: ReactPointerEvent<HTMLCanvasElement>) {
+    if (pointerIdRef.current !== event.pointerId || !currentStrokeRef.current) {
+      return;
+    }
+
+    finishStroke(true);
   }
 
   async function handleSave() {
@@ -405,7 +444,7 @@ export default function AdminHandwritingBlockEditor({
                 </button>
               </div>
               <p className="mt-2 text-xs text-[var(--text-muted)]">
-                기본값은 펜만 입력이며, 손바닥이나 손가락 닿음으로 생기는 오입력을 줄입니다.
+                기본값은 펜만 입력이며, 손바닥이나 손가락 접촉으로 생기는 오입력을 줄입니다.
               </p>
             </div>
 
@@ -479,7 +518,7 @@ export default function AdminHandwritingBlockEditor({
                 </button>
               </div>
               <p className="mt-2 text-xs text-[var(--text-muted)]">
-                획 단위 지우개가 기본값이며, 닿은 선 전체를 지웁니다.
+                기본값은 획 단위 지우개이며, 닿은 획 전체를 지웁니다.
               </p>
             </div>
 
@@ -512,7 +551,9 @@ export default function AdminHandwritingBlockEditor({
                 }}
                 className="mt-3 w-full"
               />
-              <p className="mt-2 text-xs text-[var(--text-muted)]">지우개 {eraserSize}px</p>
+              <p className="mt-2 text-xs text-[var(--text-muted)]">
+                지우개 {eraserSize}px
+              </p>
             </div>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface)] p-4">
@@ -572,21 +613,20 @@ export default function AdminHandwritingBlockEditor({
                 ref={canvasRef}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
-                onPointerUp={finishStroke}
+                onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerCancel}
-                onPointerLeave={finishStroke}
+                onLostPointerCapture={handleLostPointerCapture}
                 className="block w-full rounded-2xl border border-[var(--border-default)] bg-white"
                 style={{
                   backgroundColor: HANDWRITING_BACKGROUND,
-                  touchAction:
-                    inputMode === 'pen-only' ? 'pan-x pan-y pinch-zoom' : 'none',
+                  touchAction: 'none',
                 }}
               />
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-[var(--text-muted)]">
-                펜만 입력 모드에서는 터치로 그려지지 않으며, 짧은 탭도 자동으로 무시합니다.
+                펜만 입력 모드에서는 터치로 그려지지 않으며, 짧은 탭은 자동으로 무시합니다.
               </p>
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={onClose} className="link-pill">

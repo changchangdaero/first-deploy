@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import type { PostWithRelations } from '@/types/post';
 import { extractFirstImageFromMarkdown } from '@/lib/extract-first-image-from-markdown';
+import { splitContentWithHandwritingBlocks } from '@/lib/handwriting-blocks';
 
 type ArchivePostListItemProps = {
   href: string;
@@ -17,7 +18,32 @@ function getPostThumbnailUrl(post: PostWithRelations) {
     return thumbnailUrl;
   }
 
-  return extractFirstImageFromMarkdown(post.content);
+  const firstMarkdownImage = extractFirstImageFromMarkdown(post.content);
+  const handwritingMap = new Map(
+    post.handwritingBlocks.map((block) => [block.id, block])
+  );
+  const segments = splitContentWithHandwritingBlocks(post.content);
+
+  for (const segment of segments) {
+    if (segment.type === 'markdown') {
+      const imageUrl = extractFirstImageFromMarkdown(segment.value);
+
+      if (imageUrl) {
+        return imageUrl;
+      }
+
+      continue;
+    }
+
+    const handwritingBlock = handwritingMap.get(segment.blockId);
+    const previewImageUrl = handwritingBlock?.preview_image_url?.trim();
+
+    if (previewImageUrl) {
+      return previewImageUrl;
+    }
+  }
+
+  return firstMarkdownImage;
 }
 
 function stripMarkdown(content: string) {

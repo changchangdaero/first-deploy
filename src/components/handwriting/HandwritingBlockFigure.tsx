@@ -1,11 +1,17 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { drawHandwritingStrokes, HANDWRITING_BACKGROUND } from '@/lib/handwriting-render';
+import { useEffect, useRef, useState } from 'react';
+import {
+  drawHandwritingStrokes,
+  HANDWRITING_BACKGROUND,
+} from '@/lib/handwriting-render';
 import type { HandwritingBlockRow } from '@/types/post';
 
 type HandwritingBlockFigureProps = {
-  block: Pick<HandwritingBlockRow, 'id' | 'strokes' | 'preview_image_url' | 'width' | 'height'>;
+  block: Pick<
+    HandwritingBlockRow,
+    'id' | 'strokes' | 'preview_image_url' | 'width' | 'height'
+  >;
   className?: string;
 };
 
@@ -14,9 +20,16 @@ export default function HandwritingBlockFigure({
   className = '',
 }: HandwritingBlockFigureProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [useCanvasFallback, setUseCanvasFallback] = useState(
+    !block.preview_image_url
+  );
 
   useEffect(() => {
-    if (block.preview_image_url) {
+    setUseCanvasFallback(!block.preview_image_url);
+  }, [block.id, block.preview_image_url]);
+
+  useEffect(() => {
+    if (!useCanvasFallback) {
       return;
     }
 
@@ -35,23 +48,24 @@ export default function HandwritingBlockFigure({
     }
 
     drawHandwritingStrokes(context, block.strokes, block.width, block.height);
-  }, [block]);
+  }, [block, useCanvasFallback]);
 
   return (
     <figure
       className={`my-6 overflow-hidden rounded-2xl border border-[var(--border-default)] bg-white ${className}`.trim()}
     >
-      {block.preview_image_url ? (
+      {block.preview_image_url && !useCanvasFallback ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={block.preview_image_url}
           alt={`손글씨 블록 ${block.id}`}
           className="h-auto w-full bg-white"
+          onError={() => setUseCanvasFallback(true)}
         />
       ) : (
         <canvas
           ref={canvasRef}
-          className="block w-full h-auto"
+          className="block h-auto w-full"
           style={{ backgroundColor: HANDWRITING_BACKGROUND }}
         />
       )}
