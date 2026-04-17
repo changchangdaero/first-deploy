@@ -1,41 +1,66 @@
 @import "tailwindcss";
 @import "highlight.js/styles/github.css";
 
-/* -------------------------------------------------------------------------- */
-/* Portfolio design tokens — light, minimal, maintainable                       */
-/* -------------------------------------------------------------------------- */
 :root {
-  /* Page */
   --portfolio-bg: #f8f9fa;
   --portfolio-surface: #ffffff;
   --portfolio-surface-muted: #f3f4f6;
 
-  /* Text */
   --text-heading: #111827;
   --text-body: #374151;
   --text-muted: #6b7280;
   --text-faint: #9ca3af;
 
-  /* Borders & dividers */
   --border-default: #e5e7eb;
   --border-strong: #d1d5db;
 
-  /* Accent — single calm point color (teal, not neon) */
   --accent: #0f766e;
   --accent-hover: #0d9488;
   --accent-muted: rgba(15, 118, 110, 0.08);
   --accent-ring: rgba(15, 118, 110, 0.25);
 
-  /* Elevation */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06),
     0 2px 4px -2px rgba(0, 0, 0, 0.05);
   --shadow-card: var(--shadow-sm);
   --shadow-card-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.08);
 
-  /* Radius */
   --radius-card: 14px;
   --radius-pill: 9999px;
+
+  --code-bg: #f3f4f6;
+  --code-inline-bg: #eef2f7;
+  --code-text: #1f2937;
+  --selection-bg: rgba(15, 118, 110, 0.14);
+}
+
+:root[data-theme='dark'] {
+  --portfolio-bg: #181c20;
+  --portfolio-surface: #232930;
+  --portfolio-surface-muted: #1d2329;
+
+  --text-heading: #f3f4f6;
+  --text-body: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-faint: #6b7280;
+
+  --border-default: #34404c;
+  --border-strong: #455366;
+
+  --accent: #5eead4;
+  --accent-hover: #99f6e4;
+  --accent-muted: rgba(94, 234, 212, 0.1);
+  --accent-ring: rgba(94, 234, 212, 0.28);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.22);
+  --shadow-card: 0 10px 24px rgba(0, 0, 0, 0.18);
+  --shadow-card-hover: 0 16px 36px rgba(0, 0, 0, 0.24);
+
+  --code-bg: #14181d;
+  --code-inline-bg: #2a313a;
+  --code-text: #e5e7eb;
+  --selection-bg: rgba(94, 234, 212, 0.2);
 }
 
 @theme inline {
@@ -45,26 +70,66 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  background: var(--portfolio-bg);
+}
+
 body {
   background: var(--portfolio-bg);
   color: var(--text-body);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Layout                                                                     */
-/* -------------------------------------------------------------------------- */
+::selection {
+  background: var(--selection-bg);
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.site-header {
+  position: fixed;
+  inset: 1rem 1rem auto 1rem;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.site-header__left,
+.site-header__right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+@media (min-width: 640px) {
+  .site-header {
+    inset: 1.5rem 1.5rem auto 1.5rem;
+  }
+}
+
 .portfolio-page {
   min-height: 100vh;
   background: var(--portfolio-bg);
   color: var(--text-body);
-  padding: 2rem 1.25rem 5rem;
+  padding: 5rem 1.25rem 5rem;
 }
 
 @media (min-width: 640px) {
   .portfolio-page {
     padding-left: 2rem;
     padding-right: 2rem;
+    padding-top: 5.5rem;
   }
 }
 
@@ -76,12 +141,9 @@ body {
   max-width: 42rem;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 2.5rem;
+  margin-top: 1rem;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Sections & cards                                                           */
-/* -------------------------------------------------------------------------- */
 .section-card {
   width: 100%;
   padding: 1.5rem 1.5rem;
@@ -103,9 +165,6 @@ body {
   margin-bottom: 0;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Profile — link pills                                                       */
-/* -------------------------------------------------------------------------- */
 .link-pill {
   display: inline-flex;
   align-items: center;
@@ -114,10 +173,11 @@ body {
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--text-body);
-  background: var(--portfolio-surface);
+  background: color-mix(in srgb, var(--portfolio-surface) 92%, transparent);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
   transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease,
     box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -134,9 +194,6 @@ body {
   outline-offset: 2px;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Collapsible section triggers (Works, Activities)                           */
-/* -------------------------------------------------------------------------- */
 .collapsible-trigger {
   display: flex;
   align-items: center;
@@ -168,9 +225,6 @@ body {
   transition: transform 0.25s ease;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Tech stack skill card                                                      */
-/* -------------------------------------------------------------------------- */
 .skill-card {
   display: inline-flex;
   align-items: center;
@@ -192,9 +246,6 @@ body {
   box-shadow: var(--shadow-card-hover);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Footer                                                                     */
-/* -------------------------------------------------------------------------- */
 .portfolio-footer-copy {
   font-size: 0.6875rem;
   color: var(--text-faint);
@@ -275,7 +326,7 @@ body {
   overflow-x: auto;
   border-radius: 1rem;
   border: 1px solid var(--border-default);
-  background: #f3f4f6;
+  background: var(--code-bg);
   padding: 1rem 1.25rem;
 }
 
@@ -283,15 +334,16 @@ body {
   background: transparent;
   padding: 0;
   border-radius: 0;
-  color: #1f2937;
+  color: var(--code-text);
   font-size: 0.875rem;
 }
 
 .markdown-content code {
-  background: #eef2f7;
+  background: var(--code-inline-bg);
   border-radius: 0.375rem;
   padding: 0.15rem 0.35rem;
   font-size: 0.875em;
+  color: var(--code-text);
 }
 
 .markdown-content blockquote {
@@ -314,4 +366,94 @@ body {
   border: 1px solid var(--border-default);
   padding: 0.75rem;
   text-align: left;
+}
+
+:root[data-theme='dark'] .hljs {
+  background: var(--code-bg);
+  color: #dbe4ee;
+}
+
+:root[data-theme='dark'] .hljs-comment,
+:root[data-theme='dark'] .hljs-quote {
+  color: #8b9bb0;
+}
+
+:root[data-theme='dark'] .hljs-keyword,
+:root[data-theme='dark'] .hljs-selector-tag,
+:root[data-theme='dark'] .hljs-subst {
+  color: #f59e0b;
+}
+
+:root[data-theme='dark'] .hljs-string,
+:root[data-theme='dark'] .hljs-doctag,
+:root[data-theme='dark'] .hljs-title,
+:root[data-theme='dark'] .hljs-section,
+:root[data-theme='dark'] .hljs-selector-id {
+  color: #86efac;
+}
+
+:root[data-theme='dark'] .hljs-number,
+:root[data-theme='dark'] .hljs-literal,
+:root[data-theme='dark'] .hljs-variable,
+:root[data-theme='dark'] .hljs-template-variable,
+:root[data-theme='dark'] .hljs-type {
+  color: #93c5fd;
+}
+
+:root[data-theme='dark'] .hljs-attr,
+:root[data-theme='dark'] .hljs-attribute,
+:root[data-theme='dark'] .hljs-name,
+:root[data-theme='dark'] .hljs-regexp,
+:root[data-theme='dark'] .hljs-link {
+  color: #fda4af;
+}
+
+:root[data-theme='dark'] .text-gray-500,
+:root[data-theme='dark'] .text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+:root[data-theme='dark'] .text-gray-800,
+:root[data-theme='dark'] .text-gray-900 {
+  color: var(--text-heading) !important;
+}
+
+:root[data-theme='dark'] .bg-white,
+:root[data-theme='dark'] .bg-gray-50 {
+  background-color: var(--portfolio-surface) !important;
+}
+
+:root[data-theme='dark'] .bg-black {
+  background-color: var(--text-heading) !important;
+}
+
+:root[data-theme='dark'] .text-white {
+  color: #111827 !important;
+}
+
+:root[data-theme='dark'] .border,
+:root[data-theme='dark'] .border-gray-200,
+:root[data-theme='dark'] .border-gray-300 {
+  border-color: var(--border-default) !important;
+}
+
+:root[data-theme='dark'] .hover\:bg-gray-50:hover,
+:root[data-theme='dark'] .hover\:bg-red-50:hover {
+  background-color: var(--portfolio-surface-muted) !important;
+}
+
+:root[data-theme='dark'] .shadow-sm,
+:root[data-theme='dark'] .shadow {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+input,
+textarea,
+select {
+  color: var(--text-heading);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
 }
