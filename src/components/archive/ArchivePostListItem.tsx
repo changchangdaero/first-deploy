@@ -82,7 +82,7 @@ export default function ArchivePostListItem({
             {post.title}
           </h2>
           {previewText && (
-            <p className="mt-3 line-clamp-5 text-base leading-7 text-[var(--text-muted)] sm:line-clamp-3 sm:leading-8">
+            <p className="mt-3 line-clamp-10 text-base leading-7 text-[var(--text-muted)] sm:line-clamp-3 sm:leading-8">
               {previewText}
             </p>
           )}
