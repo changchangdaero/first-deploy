@@ -8,7 +8,7 @@ type ArchivePostListItemProps = {
   post: PostWithRelations;
 };
 
-const PREVIEW_MAX_LENGTH = 180;
+const PREVIEW_MAX_LENGTH = 280;
 
 function getPostThumbnailUrl(post: PostWithRelations) {
   const thumbnailUrl = post.thumbnail_url?.trim();
@@ -82,7 +82,7 @@ export default function ArchivePostListItem({
             {post.title}
           </h2>
           {previewText && (
-            <p className="mt-3 line-clamp-3 text-base leading-8 text-[var(--text-muted)]">
+            <p className="mt-3 line-clamp-5 text-base leading-7 text-[var(--text-muted)] sm:line-clamp-3 sm:leading-8">
               {previewText}
             </p>
           )}
