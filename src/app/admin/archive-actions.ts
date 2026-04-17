@@ -3,15 +3,20 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { buildArchivePath, getPostWithRelationsById } from '@/lib/archive';
+import { parseHandwritingBlocksInput } from '@/lib/handwriting-blocks';
 import { createSlugCandidate } from '@/lib/slug';
 import { supabase } from '@/lib/supabase/server';
-import type { AdminActionState, AdminPostFormState } from '@/types/post';
+import type {
+  AdminActionState,
+  AdminPostFormState,
+  HandwritingBlockInput,
+} from '@/types/post';
 
 function getRequiredText(formData: FormData, key: string, label: string) {
   const value = formData.get(key)?.toString().trim() ?? '';
 
   if (!value) {
-    throw new Error(`${label}은(는) 필수입니다.`);
+    throw new Error(`${label}?(?? ?꾩닔?낅땲??`);
   }
 
   return value;
@@ -34,7 +39,7 @@ function getPostActionErrorMessage(error: unknown) {
     return error.message;
   }
 
-  return '저장 중 알 수 없는 문제가 발생했습니다.';
+  return '???以??????녿뒗 臾몄젣媛 諛쒖깮?덉뒿?덈떎.';
 }
 
 function isUniqueViolation(error: { code?: string } | null) {
@@ -132,10 +137,7 @@ async function buildUniqueSubcategorySlug(
   return slug;
 }
 
-async function buildUniquePostSlug(
-  title: string,
-  postId?: string
-) {
+async function buildUniquePostSlug(title: string, postId?: string) {
   const baseSlug = createSlugCandidate(title, 'post');
   let slug = baseSlug;
   let suffix = 1;
@@ -156,7 +158,7 @@ async function getCategoryAndSubcategory(subcategoryId: string) {
     .single();
 
   if (subcategoryError || !subcategory) {
-    throw new Error('선택한 서브카테고리를 찾을 수 없습니다.');
+    throw new Error('?좏깮???쒕툕移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.');
   }
 
   const { data: category, error: categoryError } = await supabase
@@ -166,7 +168,7 @@ async function getCategoryAndSubcategory(subcategoryId: string) {
     .single();
 
   if (categoryError || !category) {
-    throw new Error('선택한 카테고리를 찾을 수 없습니다.');
+    throw new Error('?좏깮??移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.');
   }
 
   return { category, subcategory };
@@ -178,7 +180,53 @@ function revalidateAdminPages() {
   revalidatePath('/admin/posts');
 }
 
-function revalidateArchivePages(categorySlug?: string, subcategorySlug?: string, postSlug?: string) {
+async function syncHandwritingBlocks(
+  postId: string,
+  blocks: HandwritingBlockInput[]
+) {
+  const blockIds = blocks.map((block) => block.id);
+  const deleteQuery = supabase.from('handwriting_blocks').delete().eq('post_id', postId);
+  const { error: deleteError } =
+    blockIds.length > 0
+      ? await deleteQuery.not(
+          'id',
+          'in',
+          `(${blockIds.map((id) => `"${id}"`).join(',')})`
+        )
+      : await deleteQuery;
+
+  if (deleteError) {
+    throw new Error(deleteError.message);
+  }
+
+  if (blocks.length === 0) {
+    return;
+  }
+
+  const { error: upsertError } = await supabase
+    .from('handwriting_blocks')
+    .upsert(
+      blocks.map((block) => ({
+        id: block.id,
+        post_id: postId,
+        strokes: block.strokes,
+        preview_image_url: block.preview_image_url,
+        width: block.width,
+        height: block.height,
+      })),
+      { onConflict: 'id' }
+    );
+
+  if (upsertError) {
+    throw new Error(upsertError.message);
+  }
+}
+
+function revalidateArchivePages(
+  categorySlug?: string,
+  subcategorySlug?: string,
+  postSlug?: string
+) {
   revalidatePath('/archive');
 
   if (!categorySlug) {
@@ -194,14 +242,12 @@ function revalidateArchivePages(categorySlug?: string, subcategorySlug?: string,
   revalidatePath(buildArchivePath({ categorySlug, subcategorySlug }));
 
   if (postSlug) {
-    revalidatePath(
-      buildArchivePath({ categorySlug, subcategorySlug, postSlug })
-    );
+    revalidatePath(buildArchivePath({ categorySlug, subcategorySlug, postSlug }));
   }
 }
 
 export async function createCategoryAction(formData: FormData) {
-  const name = getRequiredText(formData, 'name', '카테고리 이름');
+  const name = getRequiredText(formData, 'name', '移댄뀒怨좊━ ?대쫫');
   const slug = await buildUniqueCategorySlug(name);
 
   const { error } = await supabase.from('categories').insert({ name, slug });
@@ -216,8 +262,8 @@ export async function createCategoryAction(formData: FormData) {
 }
 
 export async function updateCategoryAction(formData: FormData) {
-  const id = getRequiredText(formData, 'id', '카테고리 ID');
-  const name = getRequiredText(formData, 'name', '카테고리 이름');
+  const id = getRequiredText(formData, 'id', '移댄뀒怨좊━ ID');
+  const name = getRequiredText(formData, 'name', '移댄뀒怨좊━ ?대쫫');
   const slug = await buildUniqueCategorySlug(name, id);
 
   const { data: existing, error: existingError } = await supabase
@@ -227,7 +273,7 @@ export async function updateCategoryAction(formData: FormData) {
     .single();
 
   if (existingError || !existing) {
-    throw new Error('수정할 카테고리를 찾을 수 없습니다.');
+    throw new Error('?섏젙??移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.');
   }
 
   const { error } = await supabase
@@ -246,8 +292,8 @@ export async function updateCategoryAction(formData: FormData) {
 }
 
 export async function createSubcategoryAction(formData: FormData) {
-  const categoryId = getRequiredText(formData, 'category_id', '상위 카테고리');
-  const name = getRequiredText(formData, 'name', '서브카테고리 이름');
+  const categoryId = getRequiredText(formData, 'category_id', '?곸쐞 移댄뀒怨좊━');
+  const name = getRequiredText(formData, 'name', '?쒕툕移댄뀒怨좊━ ?대쫫');
   const subtitle = getOptionalText(formData, 'subtitle');
   const slug = await buildUniqueSubcategorySlug(categoryId, name);
 
@@ -271,9 +317,9 @@ export async function createSubcategoryAction(formData: FormData) {
 }
 
 export async function updateSubcategoryAction(formData: FormData) {
-  const id = getRequiredText(formData, 'id', '서브카테고리 ID');
-  const categoryId = getRequiredText(formData, 'category_id', '상위 카테고리');
-  const name = getRequiredText(formData, 'name', '서브카테고리 이름');
+  const id = getRequiredText(formData, 'id', '?쒕툕移댄뀒怨좊━ ID');
+  const categoryId = getRequiredText(formData, 'category_id', '?곸쐞 移댄뀒怨좊━');
+  const name = getRequiredText(formData, 'name', '?쒕툕移댄뀒怨좊━ ?대쫫');
   const subtitle = getOptionalText(formData, 'subtitle');
   const slug = await buildUniqueSubcategorySlug(categoryId, name, id);
 
@@ -284,7 +330,7 @@ export async function updateSubcategoryAction(formData: FormData) {
     .single();
 
   if (existingError || !existing) {
-    throw new Error('수정할 서브카테고리를 찾을 수 없습니다.');
+    throw new Error('?섏젙???쒕툕移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.');
   }
 
   const [oldCategoryResult, newCategoryResult] = await Promise.all([
@@ -318,17 +364,21 @@ export async function createPostAction(
   let content: string;
   let excerpt: string;
   let tags: string[];
+  let handwritingBlocks: HandwritingBlockInput[];
   let published: boolean;
   let category: { id: string; slug: string };
   let subcategory: { id: string; slug: string; category_id: string };
 
   try {
-    categoryId = getRequiredText(formData, 'category_id', '카테고리');
-    subcategoryId = getRequiredText(formData, 'subcategory_id', '서브카테고리');
-    title = getRequiredText(formData, 'title', '제목');
-    content = getRequiredText(formData, 'content', '본문');
+    categoryId = getRequiredText(formData, 'category_id', '移댄뀒怨좊━');
+    subcategoryId = getRequiredText(formData, 'subcategory_id', '?쒕툕移댄뀒怨좊━');
+    title = getRequiredText(formData, 'title', '?쒕ぉ');
+    content = getRequiredText(formData, 'content', '蹂몃Ц');
     excerpt = getOptionalText(formData, 'excerpt');
     tags = parseTags(formData);
+    handwritingBlocks = parseHandwritingBlocksInput(
+      formData.get('handwriting_blocks')
+    );
     published = formData.get('published') === 'on';
 
     const relation = await getCategoryAndSubcategory(subcategoryId);
@@ -343,24 +393,30 @@ export async function createPostAction(
 
   if (category.id !== categoryId) {
     return {
-      message: '선택한 카테고리와 서브카테고리 조합이 올바르지 않습니다.',
+      message: '?좏깮??移댄뀒怨좊━? ?쒕툕移댄뀒怨좊━ 議고빀???щ컮瑜댁? ?딆뒿?덈떎.',
     };
   }
 
   let insertError: { code?: string; message: string } | null = null;
+  let createdPostId: string | null = null;
 
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    const { error } = await supabase.from('posts').insert({
-      subcategory_id: subcategoryId,
-      title,
-      slug,
-      excerpt: excerpt || null,
-      content,
-      tags,
-      published,
-    });
+    const { data, error } = await supabase
+      .from('posts')
+      .insert({
+        subcategory_id: subcategoryId,
+        title,
+        slug,
+        excerpt: excerpt || null,
+        content,
+        tags,
+        published,
+      })
+      .select('id')
+      .single();
 
     if (!error) {
+      createdPostId = data.id;
       insertError = null;
       break;
     }
@@ -377,12 +433,20 @@ export async function createPostAction(
   if (insertError) {
     if (isUniqueViolation(insertError)) {
       return {
-        message: '자동 URL을 고유하게 만들지 못했습니다. 제목을 조금 바꿔서 다시 시도해주세요.',
+        message: '?먮룞 URL??怨좎쑀?섍쾶 留뚮뱾吏 紐삵뻽?듬땲?? ?쒕ぉ??議곌툑 諛붽퓭???ㅼ떆 ?쒕룄?댁＜?몄슂.',
       };
     }
 
     return {
       message: insertError.message,
+    };
+  }
+
+  try {
+    await syncHandwritingBlocks(createdPostId!, handwritingBlocks);
+  } catch (error) {
+    return {
+      message: getPostActionErrorMessage(error),
     };
   }
 
@@ -414,26 +478,30 @@ export async function updatePostAction(
   let content: string;
   let excerpt: string;
   let tags: string[];
+  let handwritingBlocks: HandwritingBlockInput[];
   let published: boolean;
   let category: { id: string; slug: string };
   let subcategory: { id: string; slug: string; category_id: string };
   let existing: NonNullable<Awaited<ReturnType<typeof getPostWithRelationsById>>>;
 
   try {
-    id = getRequiredText(formData, 'id', '포스트 ID');
-    categoryId = getRequiredText(formData, 'category_id', '카테고리');
-    subcategoryId = getRequiredText(formData, 'subcategory_id', '서브카테고리');
-    title = getRequiredText(formData, 'title', '제목');
-    content = getRequiredText(formData, 'content', '본문');
+    id = getRequiredText(formData, 'id', '?ъ뒪??ID');
+    categoryId = getRequiredText(formData, 'category_id', '移댄뀒怨좊━');
+    subcategoryId = getRequiredText(formData, 'subcategory_id', '?쒕툕移댄뀒怨좊━');
+    title = getRequiredText(formData, 'title', '?쒕ぉ');
+    content = getRequiredText(formData, 'content', '蹂몃Ц');
     excerpt = getOptionalText(formData, 'excerpt');
     tags = parseTags(formData);
+    handwritingBlocks = parseHandwritingBlocksInput(
+      formData.get('handwriting_blocks')
+    );
     published = formData.get('published') === 'on';
 
     const post = await getPostWithRelationsById(id);
 
     if (!post) {
       return {
-        message: '수정할 포스트를 찾을 수 없습니다.',
+        message: '?섏젙???ъ뒪?몃? 李얠쓣 ???놁뒿?덈떎.',
       };
     }
 
@@ -451,7 +519,7 @@ export async function updatePostAction(
 
   if (category.id !== categoryId) {
     return {
-      message: '선택한 카테고리와 서브카테고리 조합이 올바르지 않습니다.',
+      message: '?좏깮??移댄뀒怨좊━? ?쒕툕移댄뀒怨좊━ 議고빀???щ컮瑜댁? ?딆뒿?덈떎.',
     };
   }
 
@@ -488,12 +556,20 @@ export async function updatePostAction(
   if (updateError) {
     if (isUniqueViolation(updateError)) {
       return {
-        message: '자동 URL을 고유하게 만들지 못했습니다. 제목을 조금 바꿔서 다시 시도해주세요.',
+        message: '?먮룞 URL??怨좎쑀?섍쾶 留뚮뱾吏 紐삵뻽?듬땲?? ?쒕ぉ??議곌툑 諛붽퓭???ㅼ떆 ?쒕룄?댁＜?몄슂.',
       };
     }
 
     return {
       message: updateError.message,
+    };
+  }
+
+  try {
+    await syncHandwritingBlocks(id, handwritingBlocks);
+  } catch (error) {
+    return {
+      message: getPostActionErrorMessage(error),
     };
   }
 
@@ -519,11 +595,11 @@ export async function updatePostAction(
 }
 
 export async function deletePostAction(formData: FormData) {
-  const id = getRequiredText(formData, 'id', '포스트 ID');
+  const id = getRequiredText(formData, 'id', '?ъ뒪??ID');
   const existing = await getPostWithRelationsById(id);
 
   if (!existing) {
-    throw new Error('삭제할 포스트를 찾을 수 없습니다.');
+    throw new Error('??젣???ъ뒪?몃? 李얠쓣 ???놁뒿?덈떎.');
   }
 
   const { error } = await supabase.from('posts').delete().eq('id', id);
@@ -545,7 +621,7 @@ export async function deleteCategoryAction(
   _state: AdminActionState,
   formData: FormData
 ): Promise<AdminActionState> {
-  const id = getRequiredText(formData, 'id', '카테고리 ID');
+  const id = getRequiredText(formData, 'id', '移댄뀒怨좊━ ID');
 
   const { data: category, error: categoryError } = await supabase
     .from('categories')
@@ -555,7 +631,7 @@ export async function deleteCategoryAction(
 
   if (categoryError || !category) {
     return {
-      message: '삭제할 카테고리를 찾을 수 없습니다.',
+      message: '??젣??移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.',
     };
   }
 
@@ -572,7 +648,7 @@ export async function deleteCategoryAction(
 
   if ((subcategoryCount ?? 0) > 0) {
     return {
-      message: '연결된 서브카테고리가 있어 삭제할 수 없습니다. 먼저 하위 서브카테고리와 포스트를 정리해주세요.',
+      message: '?곌껐???쒕툕移댄뀒怨좊━媛 ?덉뼱 ??젣?????놁뒿?덈떎. 癒쇱? ?섏쐞 ?쒕툕移댄뀒怨좊━? ?ъ뒪?몃? ?뺣━?댁＜?몄슂.',
     };
   }
 
@@ -603,7 +679,7 @@ export async function deleteCategoryAction(
 
     if ((postCount ?? 0) > 0) {
       return {
-        message: '연결된 포스트가 있어 삭제할 수 없습니다.',
+        message: '?곌껐???ъ뒪?멸? ?덉뼱 ??젣?????놁뒿?덈떎.',
       };
     }
   }
@@ -625,7 +701,7 @@ export async function deleteSubcategoryAction(
   _state: AdminActionState,
   formData: FormData
 ): Promise<AdminActionState> {
-  const id = getRequiredText(formData, 'id', '서브카테고리 ID');
+  const id = getRequiredText(formData, 'id', '?쒕툕移댄뀒怨좊━ ID');
 
   const { data: subcategory, error: subcategoryError } = await supabase
     .from('subcategories')
@@ -635,7 +711,7 @@ export async function deleteSubcategoryAction(
 
   if (subcategoryError || !subcategory) {
     return {
-      message: '삭제할 서브카테고리를 찾을 수 없습니다.',
+      message: '??젣???쒕툕移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.',
     };
   }
 
@@ -652,7 +728,7 @@ export async function deleteSubcategoryAction(
 
   if ((postCount ?? 0) > 0) {
     return {
-      message: '연결된 포스트가 있어 삭제할 수 없습니다. 먼저 하위 포스트를 삭제하거나 이동해주세요.',
+      message: '?곌껐???ъ뒪?멸? ?덉뼱 ??젣?????놁뒿?덈떎. 癒쇱? ?섏쐞 ?ъ뒪?몃? ??젣?섍굅???대룞?댁＜?몄슂.',
     };
   }
 
@@ -664,7 +740,7 @@ export async function deleteSubcategoryAction(
 
   if (categoryError || !category) {
     return {
-      message: '상위 카테고리를 찾을 수 없습니다.',
+      message: '?곸쐞 移댄뀒怨좊━瑜?李얠쓣 ???놁뒿?덈떎.',
     };
   }
 

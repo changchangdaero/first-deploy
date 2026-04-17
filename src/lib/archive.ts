@@ -3,6 +3,7 @@ import type {
   CategoryWithSubcategories,
   Category,
   CategorySummary,
+  HandwritingBlockRow,
   PostRow,
   PostWithRelations,
   Subcategory,
@@ -12,14 +13,30 @@ import type {
 function toPostWithRelations(
   post: PostRow,
   subcategory: Subcategory,
-  category: Category
+  category: Category,
+  handwritingBlocks: HandwritingBlockRow[] = []
 ): PostWithRelations {
   return {
     ...post,
     tags: post.tags ?? [],
     subcategory,
     category,
+    handwritingBlocks,
   };
+}
+
+export async function getHandwritingBlocksForPost(postId: string) {
+  const { data, error } = await supabase
+    .from('handwriting_blocks')
+    .select('*')
+    .eq('post_id', postId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as HandwritingBlockRow[];
 }
 
 export function buildArchivePath(params: {
@@ -335,7 +352,9 @@ export async function getPostWithRelationsById(id: string) {
     return null;
   }
 
-  return toPostWithRelations(post, subcategory, category);
+  const handwritingBlocks = await getHandwritingBlocksForPost(post.id);
+
+  return toPostWithRelations(post, subcategory, category, handwritingBlocks);
 }
 
 export async function getAdminPosts() {
@@ -431,5 +450,13 @@ export async function getPublishedPostBySlugs(
     return null;
   }
 
-  return toPostWithRelations(data as PostRow, relation.subcategory, relation.category);
+  const post = data as PostRow;
+  const handwritingBlocks = await getHandwritingBlocksForPost(post.id);
+
+  return toPostWithRelations(
+    post,
+    relation.subcategory,
+    relation.category,
+    handwritingBlocks
+  );
 }

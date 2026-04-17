@@ -3,10 +3,12 @@
 import { useActionState, useMemo, useState, type ChangeEvent } from 'react';
 import AdminMarkdownEditor from '@/components/admin/AdminMarkdownEditor';
 import { buildArchivePath } from '@/lib/archive';
+import { serializeHandwritingBlocks } from '@/lib/handwriting-blocks';
 import { createSlugCandidate } from '@/lib/slug';
 import type {
   AdminPostFormState,
   CategoryWithSubcategories,
+  HandwritingBlockInput,
   PostWithRelations,
 } from '@/types/post';
 
@@ -59,6 +61,9 @@ export default function AdminPostForm({
     initialPost?.subcategory_id ?? ''
   );
   const [content, setContent] = useState(initialPost?.content ?? starterMarkdown);
+  const [handwritingBlocks, setHandwritingBlocks] = useState<HandwritingBlockInput[]>(
+    initialPost?.handwritingBlocks ?? []
+  );
 
   const availableSubcategories = useMemo(() => {
     return (
@@ -103,6 +108,11 @@ export default function AdminPostForm({
   return (
     <form action={formAction} className="space-y-8">
       {initialPost && <input type="hidden" name="id" value={initialPost.id} />}
+      <input
+        type="hidden"
+        name="handwriting_blocks"
+        value={serializeHandwritingBlocks(handwritingBlocks)}
+      />
 
       <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
         <aside className="section-card space-y-6 xl:sticky xl:top-6 xl:self-start">
@@ -266,7 +276,12 @@ export default function AdminPostForm({
           </button>
         </aside>
 
-        <AdminMarkdownEditor content={content} onChange={setContent} />
+        <AdminMarkdownEditor
+          content={content}
+          onChange={setContent}
+          handwritingBlocks={handwritingBlocks}
+          onHandwritingBlocksChange={setHandwritingBlocks}
+        />
       </section>
     </form>
   );

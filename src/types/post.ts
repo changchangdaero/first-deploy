@@ -27,6 +27,36 @@ export type PostRow = {
   created_at: string;
 };
 
+export type HandwritingPoint = {
+  x: number;
+  y: number;
+  pressure?: number;
+};
+
+export type HandwritingStroke = {
+  id: string;
+  tool: 'pen' | 'eraser';
+  color: string;
+  size: number;
+  points: HandwritingPoint[];
+};
+
+export type HandwritingBlockRow = {
+  id: string;
+  post_id: string;
+  strokes: HandwritingStroke[];
+  preview_image_url: string | null;
+  width: number;
+  height: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type HandwritingBlockInput = Omit<
+  HandwritingBlockRow,
+  'post_id' | 'created_at' | 'updated_at'
+>;
+
 export type CategorySummary = Category & {
   postCount: number;
   subcategoryCount: number;
@@ -44,6 +74,7 @@ export type PostWithRelations = PostRow & {
   tags: string[];
   category: Category;
   subcategory: Subcategory;
+  handwritingBlocks: HandwritingBlockRow[];
 };
 
 export type CategoryWithSubcategories = Category & {

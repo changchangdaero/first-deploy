@@ -30,7 +30,10 @@ export default async function PostDetailPage({ params }: PageProps) {
         </header>
 
         <article className="section-card max-w-none">
-          <MarkdownContent content={post.content} />
+          <MarkdownContent
+            content={post.content}
+            handwritingBlocks={post.handwritingBlocks}
+          />
         </article>
       </div>
     </main>
