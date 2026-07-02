@@ -1,3 +1,4 @@
+// 관리자 라우트 보호: 인증되지 않은 방문자를 로그인 페이지로 보내 "/admin" 화면을 보호합니다.
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import {

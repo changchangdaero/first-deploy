@@ -1,5 +1,6 @@
 'use client';
 
+// 홈 버튼: 방문자를 사이트 루트로 보내는 재사용 바로가기 버튼입니다.
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

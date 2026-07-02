@@ -1,3 +1,4 @@
+// Markdown 보안 필터: 공개 아카이브 글에서 렌더링 가능한 HTML 태그와 속성을 제한합니다.
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 
 const allowedTags = new Set([...(defaultSchema.tagNames ?? []), 'img', 'span', 'u']);

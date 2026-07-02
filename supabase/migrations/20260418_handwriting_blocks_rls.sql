@@ -1,3 +1,4 @@
+-- 손글씨 블록 정책: 공개 읽기와 관리자 편집을 위한 행 수준 보안 규칙을 적용합니다.
 alter table public.handwriting_blocks enable row level security;
 
 drop policy if exists "temp_read_all_handwriting_blocks" on public.handwriting_blocks;

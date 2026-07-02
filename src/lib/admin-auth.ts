@@ -1,3 +1,4 @@
+// 관리자 인증 유틸: 세션 쿠키 이름, 접근 코드 검증, 관리자 요청 인증 확인을 담당합니다.
 import type { NextRequest } from 'next/server';
 
 export const ADMIN_SESSION_COOKIE = 'admin_session';

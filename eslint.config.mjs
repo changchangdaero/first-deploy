@@ -1,3 +1,4 @@
+// ESLint 설정: 사이트 UI를 구성하는 Next.js와 TypeScript 코드를 검사합니다.
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";

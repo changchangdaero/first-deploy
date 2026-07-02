@@ -1,3 +1,4 @@
+// 관리자 로그인 화면: "/admin/login"에서 소유자 전용 접근 코드를 입력받습니다.
 import Link from 'next/link';
 import AdminLoginForm from '@/components/admin/AdminLoginForm';
 

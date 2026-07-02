@@ -1,3 +1,4 @@
+// Markdown 렌더러: 저장된 글 Markdown을 코드, 이미지, 손글씨 블록이 포함된 공개 본문으로 바꿉니다.
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';

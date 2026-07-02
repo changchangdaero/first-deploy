@@ -1,3 +1,4 @@
+// 관리자 카테고리 목록: "/admin/categories"에서 아카이브 카테고리를 확인, 수정, 삭제합니다.
 import Link from 'next/link';
 import { deleteCategoryAction } from '@/app/admin/archive-actions';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';

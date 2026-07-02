@@ -1,3 +1,4 @@
+// 관리자 편집기 서식 도우미: 글 편집기 툴바에서 Markdown 감싸기와 링크 삽입을 처리합니다.
 type ApplyWrapFormatParams = {
   content: string;
   selectionStart: number;

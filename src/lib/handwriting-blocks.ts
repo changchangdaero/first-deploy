@@ -1,3 +1,4 @@
+// 손글씨 블록 파서: Markdown 글 안에 그린 블록을 배치하는 인라인 토큰을 읽고 씁니다.
 import type {
   HandwritingBlockInput,
   HandwritingBlockRow,

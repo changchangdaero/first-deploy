@@ -1,3 +1,4 @@
+// 방문자 통계 API: 공개 사이트에 표시되는 오늘/전체 방문자 카운터를 제공합니다.
 import { NextResponse } from 'next/server';
 import { getVisitorStats, recordVisitorVisit } from '@/lib/visitors';
 

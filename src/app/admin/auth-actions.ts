@@ -1,5 +1,6 @@
 'use server';
 
+// 관리자 인증 액션: 로그인 폼을 검증하고 관리자 세션 쿠키를 만들거나 삭제합니다.
 import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';

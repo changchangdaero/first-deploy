@@ -1,3 +1,4 @@
+// 관리자 하위 카테고리 목록: "/admin/subcategories"에서 하위 카테고리와 글 수를 관리합니다.
 import Link from 'next/link';
 import { deleteSubcategoryAction } from '@/app/admin/archive-actions';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';

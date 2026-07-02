@@ -1,3 +1,4 @@
+// 아카이브 데이터 계층: 공개 아카이브 화면과 관리자 관리 화면에서 쓰는 Supabase 조회와 URL 생성을 담당합니다.
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { supabase } from '@/lib/supabase/server';
 import type {

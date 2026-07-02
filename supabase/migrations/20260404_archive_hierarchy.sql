@@ -1,3 +1,4 @@
+-- 아카이브 계층 스키마: 공개 아카이브 화면과 관리자 화면에서 쓰는 카테고리, 하위 카테고리, 글 테이블을 만듭니다.
 begin;
 
 create extension if not exists pgcrypto;

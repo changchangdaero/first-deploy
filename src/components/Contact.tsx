@@ -1,21 +1,21 @@
 'use client';
 
+// 연락 링크 섹션: 포트폴리오 페이지에서 재사용하는 이메일/GitHub/이력서 링크 블록입니다.
 export default function Contact() {
-  const email = "changchangdaero@naver.com";
+  const email = 'changchangdaero@naver.com';
 
   return (
-    <section className="w-full space-y-4">
-      <h2 className="section-title">Contact</h2>
+    <section className="content-section">
+      <div className="section-heading">
+        <p className="section-eyebrow">Contact</p>
+        <h2 className="section-title">연결 지점</h2>
+        <p className="section-description">
+          기록과 작업은 이곳에 남겨둡니다. 필요한 이야기는 메일로 이어가도 좋습니다.
+        </p>
+      </div>
 
       <div className="section-card">
-        <p className="text-sm text-[var(--text-muted)] mb-5 leading-relaxed">
-          글쓰기/개발 관련 제안 및 문의는 여기로 보내주세요!
-        </p>
-
-        <a
-          href={`mailto:${email}`}
-          className="text-lg font-medium text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors break-words underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-[var(--accent)]"
-        >
+        <a className="text-link" href={`mailto:${email}`}>
           {email}
         </a>
       </div>

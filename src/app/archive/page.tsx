@@ -1,48 +1,48 @@
+// 아카이브 첫 화면: "/archive"에서 공개 기술 글의 카테고리 그리드를 보여줍니다.
 import Link from 'next/link';
+
+import PublicAdminEntryLink from '@/components/admin/PublicAdminEntryLink';
 import { buildArchivePath, getPublishedCategorySummaries } from '@/lib/archive';
 import { formatCountLabel } from '@/lib/count-label';
-import PublicAdminEntryLink from '@/components/admin/PublicAdminEntryLink';
 
 export default async function ArchivePage() {
   const categories = await getPublishedCategorySummaries();
 
   return (
     <main className="portfolio-page">
-      <div className="portfolio-main max-w-4xl">
-      <div className="flex w-full items-center justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-faint)]">
-            Archive
-          </p>
-          <h1 className="mt-3 text-3xl font-bold text-[var(--text-heading)]">실습기록</h1>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            카테고리별로 정리한 기술 기록과 실습 노트를 모아둔 공간입니다.
-          </p>
-        </div>
-        <PublicAdminEntryLink />
-      </div>
-
-      <div className="grid w-full gap-4">
-        {categories.map((category) => (
-          <Link
-            key={category.id}
-            href={buildArchivePath({ categorySlug: category.slug })}
-            className="section-card transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-card-hover)]"
-          >
-            <h2 className="text-xl font-semibold text-[var(--text-heading)]">{category.name}</h2>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
-              {formatCountLabel(category.subcategoryCount, 'subcategory')} /{' '}
-              {formatCountLabel(category.postCount, 'post')}
+      <div className="archive-shell">
+        <header className="archive-header">
+          <div>
+            <p className="section-eyebrow">Archive</p>
+            <h1>기술 기록 Archive</h1>
+            <p>
+              {'<기술 학습, 트러블슈팅, 실험 회고, 배포 기록, 성능 테스트 기록을 정리하는 설명>'}
             </p>
-          </Link>
-        ))}
-
-        {categories.length === 0 && (
-          <div className="section-card text-[var(--text-muted)]">
-            아직 공개된 아카이브가 없습니다.
           </div>
-        )}
-      </div>
+          <PublicAdminEntryLink />
+        </header>
+
+        <section className="archive-grid" aria-label="기술 기록 카테고리">
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              href={buildArchivePath({ categorySlug: category.slug })}
+              className="archive-card"
+            >
+              <h2>{category.name}</h2>
+              <p>
+                {formatCountLabel(category.subcategoryCount, 'subcategory')} /{' '}
+                {formatCountLabel(category.postCount, 'post')}
+              </p>
+            </Link>
+          ))}
+
+          {categories.length === 0 && (
+            <div className="section-card text-[var(--text-muted)]">
+              아직 공개된 기술 기록이 없습니다.
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );

@@ -1,3 +1,4 @@
+// 관리자 아카이브 내비게이션: 카테고리, 하위 카테고리, 글 관리 화면에서 쓰는 공통 이동 링크입니다.
 import Link from 'next/link';
 import { logoutAdminAction } from '@/app/admin/auth-actions';
 

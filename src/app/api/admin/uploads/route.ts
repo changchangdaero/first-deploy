@@ -1,3 +1,4 @@
+// 관리자 이미지 업로드 API: Markdown 편집기에서 삽입한 이미지를 Supabase Storage에 저장합니다.
 import { NextResponse } from 'next/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { cookies } from 'next/headers';

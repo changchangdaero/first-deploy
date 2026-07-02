@@ -1,3 +1,4 @@
+// 아카이브 하위 카테고리 화면: "/archive/[category]/[subcategory]"에서 글 목록을 보여줍니다.
 import { notFound } from 'next/navigation';
 import { buildArchivePath, getPublishedPostsForSubcategory } from '@/lib/archive';
 import ArchivePostListItem from '@/components/archive/ArchivePostListItem';
@@ -16,20 +17,16 @@ export default async function SubcategoryPage({ params }: PageProps) {
 
   return (
     <main className="portfolio-page">
-      <div className="portfolio-main max-w-4xl">
-        <div className="w-full">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-faint)]">
-            {result.category.name}
-          </p>
-          <h1 className="mt-3 text-3xl font-bold text-[var(--text-heading)]">
-            {result.subcategory.name}
-          </h1>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            이 서브카테고리에 공개된 포스트 목록입니다.
-          </p>
-        </div>
+      <div className="archive-shell">
+        <header className="archive-header">
+          <div>
+            <p className="section-eyebrow">{result.category.name}</p>
+            <h1>{result.subcategory.name}</h1>
+            <p>공개된 기록을 최신순으로 정리했습니다.</p>
+          </div>
+        </header>
 
-        <div className="w-full divide-y divide-[var(--border-default)] border-t border-[var(--border-default)]">
+        <section className="archive-list" aria-label="글 목록">
           {result.posts.map((post) => (
             <ArchivePostListItem
               key={post.id}
@@ -47,7 +44,7 @@ export default async function SubcategoryPage({ params }: PageProps) {
               아직 공개된 글이 없습니다.
             </div>
           )}
-        </div>
+        </section>
       </div>
     </main>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+// 테마 전환 버튼: 헤더에서 포트폴리오 전체를 밝은/어두운 테마로 바꿉니다.
 import { useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'portfolio-theme';
@@ -30,23 +31,19 @@ export default function ThemeToggle() {
   }, []);
 
   function handleToggle() {
-    const updatedTheme = nextTheme;
-    applyTheme(updatedTheme);
-    setTheme(updatedTheme);
+    applyTheme(nextTheme);
+    setTheme(nextTheme);
   }
 
   return (
     <button
       type="button"
       onClick={handleToggle}
-      className="link-pill min-w-[108px]"
-      aria-label={`테마 전환: ${nextTheme === 'dark' ? '다크 모드' : '라이트 모드'}`}
-      title={`테마 전환: ${nextTheme === 'dark' ? '다크 모드' : '라이트 모드'}`}
+      className="link-pill theme-toggle"
+      aria-label={`${nextTheme === 'dark' ? '어두운' : '밝은'} 테마로 전환`}
+      title={`${nextTheme === 'dark' ? '어두운' : '밝은'} 테마로 전환`}
     >
-      <span aria-hidden="true" className="mr-2 text-sm">
-        {theme === 'dark' ? '🌙' : '☀'}
-      </span>
-      {theme === 'dark' ? '라이트 모드' : '다크 모드'}
+      {theme === 'dark' ? 'Light' : 'Dark'}
     </button>
   );
 }

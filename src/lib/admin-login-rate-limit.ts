@@ -1,3 +1,4 @@
+// 관리자 로그인 시도 제한: 접근 코드 실패 기록을 추적해 무차별 대입을 어렵게 만듭니다.
 const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 const MAX_LOGIN_ATTEMPTS = 5;
 

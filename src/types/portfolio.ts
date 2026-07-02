@@ -1,4 +1,5 @@
 // 실습 정보 정의의
+// 포트폴리오 데이터 타입: 예전 프로필, 연습, 작업물, 활동 섹션에서 쓰는 데이터 구조입니다.
 export interface PracticeItem {
     category: string;
     title: string;

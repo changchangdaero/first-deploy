@@ -1,5 +1,6 @@
 'use client';
 
+// 공개 손글씨 그림: 저장된 손글씨 JSON을 아카이브 글 안의 이미지형 블록으로 렌더링합니다.
 import { useEffect, useRef, useState } from 'react';
 import {
   drawHandwritingStrokes,

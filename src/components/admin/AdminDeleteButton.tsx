@@ -1,5 +1,6 @@
 'use client';
 
+// 관리자 삭제 버튼: 카테고리, 하위 카테고리, 글을 삭제할 때 쓰는 공통 확인 폼 버튼입니다.
 import { useActionState } from 'react';
 import type { AdminActionState } from '@/types/post';
 

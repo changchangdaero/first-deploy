@@ -1,5 +1,6 @@
 'use client';
 
+// 관리자 Markdown 편집기: 글 본문 작성, 이미지 업로드, 미리보기, 손글씨 블록 삽입을 담당합니다.
 import {
   useMemo,
   useRef,

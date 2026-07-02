@@ -1,3 +1,4 @@
+// 관리자 글 수정 화면: "/admin/posts/[id]/edit"에서 기존 글 내용을 편집기에 불러옵니다.
 import { notFound } from 'next/navigation';
 import { updatePostAction } from '@/app/admin/archive-actions';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';

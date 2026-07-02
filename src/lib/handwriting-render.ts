@@ -1,3 +1,4 @@
+// 손글씨 렌더러: 저장된 획 데이터를 관리자 미리보기와 공개 글의 캔버스에 그립니다.
 import type { HandwritingStroke } from '@/types/post';
 
 export const DEFAULT_HANDWRITING_WIDTH = 960;

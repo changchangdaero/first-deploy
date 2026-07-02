@@ -1,5 +1,6 @@
 'use client';
 
+// 방문자 통계 표시: 오늘/전체 방문자 수를 가져와 애니메이션으로 보여줍니다.
 import { useEffect, useRef, useState } from 'react';
 import type { VisitorStats } from '@/types/visitor';
 

@@ -1,75 +1,109 @@
-'use client';
+// 기술 스택 섹션: 홈페이지에 기술 아이콘과 이름을 그리드로 보여줍니다.
+import Image from 'next/image';
+import Link from 'next/link';
 
-const ICON_HEX = '4b5563';
+import SectionHeader from '@/components/SectionHeader';
 
-const getIconUrl = (skill: string) => {
-  const s = skill.toLowerCase().trim();
-  let slug = s;
-
-  if (s === 'java') slug = 'openjdk';
-  else if (s === 'next.js') slug = 'nextdotjs';
-  else if (s === 'spring') slug = 'springboot';
-  else if (s === 'javascript') slug = 'javascript';
-  else if (s === 'sql') slug = 'sqlite';
-  else if (s === 'jenkins') slug = 'jenkins';
-  else if (s === 'python') slug = 'python';
-  else if (s === 'docker') slug = 'docker';
-  else if (s === 'react') slug = 'react';
-  else if (s === 'grafana') slug = 'grafana';
-  else if (s === 'prometheus') slug = 'prometheus';
-  else if (s === 'linux') slug = 'linux';
-
-  return `https://cdn.simpleicons.org/${slug}/${ICON_HEX}`;
+type Skill = {
+  name: string;
+  icon: string;
 };
 
-function SkillGrid({ skills }: { skills: string[] }) {
+type TechCta = {
+  title: string;
+  subtitle: string;
+  href: string;
+  ariaLabel: string;
+};
+
+const languageFrameworks: Skill[] = [
+  { name: 'Java', icon: '/tech-icons/java.svg' },
+  { name: 'Spring', icon: '/tech-icons/spring.svg' },
+  { name: 'SQL', icon: '/tech-icons/sql.svg' },
+  { name: 'React', icon: '/tech-icons/react.svg' },
+  { name: 'JavaScript', icon: '/tech-icons/javascript.svg' },
+  { name: 'Python', icon: '/tech-icons/python.svg' },
+];
+
+const toolsInfra: Skill[] = [
+  { name: 'Linux', icon: '/tech-icons/linux.svg' },
+  { name: 'Docker', icon: '/tech-icons/docker.svg' },
+  { name: 'AWS', icon: '/tech-icons/aws.svg' },
+];
+
+const techCtas: TechCta[] = [
+  {
+    title: 'Projects',
+    subtitle: '프로젝트 기록',
+    href: '/projects',
+    ariaLabel: 'Projects 페이지로 이동',
+  },
+  {
+    title: 'Technical Archive',
+    subtitle: '실습기록',
+    href: '/archive',
+    ariaLabel: 'Technical Archive 페이지로 이동',
+  },
+];
+
+function SkillCard({ skill }: { skill: Skill }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full">
+    <span className="tech-skill-card">
+      <Image
+        src={skill.icon}
+        alt=""
+        width={28}
+        height={28}
+        className="tech-skill-card__icon"
+        aria-hidden="true"
+      />
+      <span>{skill.name}</span>
+    </span>
+  );
+}
+
+function SkillGrid({ skills }: { skills: Skill[] }) {
+  return (
+    <div className="tech-skill-grid">
       {skills.map((skill) => (
-        <span key={skill} className="skill-card">
-          <img
-            src={getIconUrl(skill)}
-            alt={skill}
-            width={18}
-            height={18}
-            className="w-[18px] h-[18px] shrink-0 object-contain"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-          <span className="truncate">{skill}</span>
-        </span>
+        <SkillCard key={skill.name} skill={skill} />
       ))}
     </div>
   );
 }
 
-export default function TechStack({ skills }: { skills: string[] }) {
-  const coreOrder = ['Java', 'Spring', 'SQL', 'React', 'Next.js', 'JavaScript'];
-  const toolOrder = ['Linux', 'Docker', 'Jenkins', 'Grafana', 'Prometheus', 'Python'];
-
-  const skillSet = new Set(skills);
-
-  const coreSkills = coreOrder.filter((skill) => skillSet.has(skill));
-  const toolSkills = toolOrder.filter((skill) => skillSet.has(skill));
-
+export default function TechStack() {
   return (
-    <section className="w-full space-y-6">
-      <h2 className="section-title">Tech Stack</h2>
-
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-          Languages / Frameworks
-        </h3>
-        <SkillGrid skills={coreSkills} />
+    <section className="content-section tech-stack-section" aria-labelledby="tech-stack-title">
+      <SectionHeader eyebrow="Tech Stack" title="Tech Stack" titleId="tech-stack-title" />
+      <div className="tech-stack-group">
+        <h3>Languages / Frameworks</h3>
+        <SkillGrid skills={languageFrameworks} />
       </div>
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-          Tools / Infra
-        </h3>
-        <SkillGrid skills={toolSkills} />
+      <div className="tech-stack-group">
+        <h3>Tools / Infra</h3>
+        <SkillGrid skills={toolsInfra} />
       </div>
+
+      <nav className="tech-cta-list" aria-label="포트폴리오 주요 페이지">
+        {techCtas.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="tech-cta-card"
+            aria-label={item.ariaLabel}
+          >
+            <span className="tech-cta-card__text">
+              <span className="tech-cta-card__title">{item.title}</span>
+              <span className="tech-cta-card__subtitle">{item.subtitle}</span>
+            </span>
+            <span className="tech-cta-card__icon" aria-hidden="true">
+              →
+            </span>
+          </Link>
+        ))}
+      </nav>
     </section>
   );
 }

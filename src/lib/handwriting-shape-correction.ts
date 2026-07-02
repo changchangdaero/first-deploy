@@ -1,3 +1,4 @@
+// 손글씨 도형 보정: 손글씨 블록 저장 전에 선, 사각형, 타원을 더 깔끔한 도형으로 정리합니다.
 import type {
   HandwritingEllipseShape,
   HandwritingLineShape,

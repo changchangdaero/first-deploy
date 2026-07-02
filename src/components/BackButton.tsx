@@ -1,5 +1,6 @@
 'use client';
 
+// 뒤로가기 버튼: 브라우저 이전 기록으로 돌아가는 재사용 클라이언트 버튼입니다.
 import { useRouter, usePathname } from 'next/navigation';
 
 export default function BackButton() {
@@ -29,5 +30,3 @@ export default function BackButton() {
     </button>
   );
 }
-
-

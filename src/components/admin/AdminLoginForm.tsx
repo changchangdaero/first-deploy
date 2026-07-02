@@ -1,5 +1,6 @@
 'use client';
 
+// 관리자 로그인 폼: "/admin/login" 접근 코드 화면의 입력 상태와 제출 버튼을 담당합니다.
 import { useActionState } from 'react';
 import { loginAdminAction, type AdminLoginState } from '@/app/admin/auth-actions';
 

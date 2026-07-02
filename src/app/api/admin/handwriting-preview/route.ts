@@ -1,3 +1,4 @@
+// 관리자 손글씨 미리보기 API: 손글씨 블록에서 생성한 PNG 미리보기 이미지를 저장합니다.
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createAdminSupabase } from '@/lib/supabase/admin';

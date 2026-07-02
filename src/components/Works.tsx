@@ -1,4 +1,5 @@
 'use client';
+// 작업물 아코디언: 출판물이나 작업물을 썸네일 카드 목록으로 접고 펼칩니다.
 import { useState } from 'react';
 import Image from "next/image";
 import { Work } from '@/types/portfolio';

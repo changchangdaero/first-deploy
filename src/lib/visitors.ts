@@ -1,3 +1,4 @@
+// 방문자 통계 데이터 계층: 일별 고유 방문을 기록하고 공개 카운터의 오늘/전체 수치를 읽습니다.
 import 'server-only';
 
 import { createAdminSupabase } from '@/lib/supabase/admin';

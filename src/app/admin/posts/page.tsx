@@ -1,3 +1,4 @@
+// 관리자 글 목록: "/admin/posts"에서 아카이브 글을 묶어서 보여주고 수정/삭제 버튼을 제공합니다.
 import Link from 'next/link';
 import { deletePostAction } from '@/app/admin/archive-actions';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';

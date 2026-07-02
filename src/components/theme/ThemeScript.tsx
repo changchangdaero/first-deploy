@@ -1,3 +1,4 @@
+// 테마 초기화 스크립트: React가 붙기 전에 저장된 밝은/어두운 테마를 적용해 화면 깜빡임을 줄입니다.
 const themeScript = `
 (() => {
   const storageKey = 'portfolio-theme';

@@ -1,3 +1,4 @@
+// 관리자 카테고리 수정 화면: "/admin/categories/[id]/edit"에서 카테고리 정보를 수정합니다.
 import { notFound } from 'next/navigation';
 import { updateCategoryAction } from '@/app/admin/archive-actions';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';

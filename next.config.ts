@@ -1,3 +1,4 @@
+// Next.js 사이트 설정: 포트폴리오 앱의 이미지 처리와 빌드 동작을 관리합니다.
 /** @type {import('next').NextConfig} */
 const nextConfig = {
  

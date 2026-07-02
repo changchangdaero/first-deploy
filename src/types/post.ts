@@ -1,3 +1,4 @@
+// 아카이브 글 타입: 카테고리, 하위 카테고리, 글, 손글씨 블록에서 공유하는 데이터 구조입니다.
 export type Category = {
   id: string;
   name: string;

@@ -1,3 +1,4 @@
+-- 방문자 통계 스키마: 공개 오늘/전체 카운터에서 쓰는 일별 방문 테이블을 만듭니다.
 begin;
 
 create table if not exists public.visitor_daily_visits (

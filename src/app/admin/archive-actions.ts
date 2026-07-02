@@ -1,5 +1,6 @@
 'use server';
 
+// 관리자 아카이브 서버 액션: 카테고리와 글 관리 화면 뒤에서 생성, 수정, 삭제, 공개 반영을 처리합니다.
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { buildArchivePath, getPostWithRelationsById } from '@/lib/archive';
@@ -185,8 +186,8 @@ async function syncHandwritingBlocks(
   postId: string,
   blocks: HandwritingBlockInput[]
 ) {
-  // Handwriting blocks are admin-only content writes. Use the service-role client
-  // from the server action so custom app auth does not depend on Supabase RLS.
+  // 손글씨 블록은 관리자만 저장하는 콘텐츠입니다. 앱 자체 인증이 Supabase RLS에
+  // 의존하지 않도록 서버 액션에서 서비스 역할 클라이언트를 사용합니다.
   const adminSupabase = createAdminSupabase();
   const blockIds = blocks.map((block) => block.id);
   const deleteQuery = adminSupabase

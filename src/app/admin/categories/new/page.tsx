@@ -1,3 +1,4 @@
+// 관리자 카테고리 생성 화면: "/admin/categories/new"에서 최상위 아카이브 카테고리를 만듭니다.
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';
 import { createCategoryAction } from '@/app/admin/archive-actions';
 

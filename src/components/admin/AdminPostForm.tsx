@@ -1,5 +1,6 @@
 'use client';
 
+// 관리자 글 폼: 아카이브 분류 정보, 공개 설정, Markdown 편집기를 묶은 작성/수정 폼입니다.
 import { useActionState, useMemo, useState, type ChangeEvent } from 'react';
 import AdminMarkdownEditor from '@/components/admin/AdminMarkdownEditor';
 import { buildArchivePath } from '@/lib/archive';

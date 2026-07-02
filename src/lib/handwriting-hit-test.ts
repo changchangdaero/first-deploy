@@ -1,3 +1,4 @@
+// 손글씨 충돌 검사: 관리자 캔버스 편집기에서 지우개 경로가 획과 만나는지 판단합니다.
 import type { HandwritingPoint, HandwritingStroke } from '@/types/post';
 
 function getDistance(a: HandwritingPoint, b: HandwritingPoint) {

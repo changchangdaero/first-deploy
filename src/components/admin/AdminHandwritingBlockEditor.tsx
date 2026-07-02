@@ -1,5 +1,6 @@
 'use client';
 
+// 관리자 손글씨 편집기: Markdown 편집기 안에서 손글씨 블록을 그리고 수정하는 캔버스 모달입니다.
 import {
   useEffect,
   useMemo,

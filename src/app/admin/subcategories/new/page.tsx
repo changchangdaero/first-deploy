@@ -1,3 +1,4 @@
+// 관리자 하위 카테고리 생성 화면: "/admin/subcategories/new"에서 카테고리 아래 새 섹션을 추가합니다.
 import Link from 'next/link';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';
 import { createSubcategoryAction } from '@/app/admin/archive-actions';

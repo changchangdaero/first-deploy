@@ -1,3 +1,4 @@
+-- 방문자 통계 정렬 마이그레이션: 방문자 카운터 코드에 맞게 일별 방문 테이블 구조를 조정합니다.
 begin;
 
 alter table public.visitor_daily_visits

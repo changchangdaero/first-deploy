@@ -1,3 +1,4 @@
+-- 손글씨 블록 스키마: Markdown 아카이브 글에 삽입되는 캔버스 그림 데이터를 저장합니다.
 create table if not exists public.handwriting_blocks (
   id text primary key,
   post_id uuid not null references public.posts(id) on delete cascade,

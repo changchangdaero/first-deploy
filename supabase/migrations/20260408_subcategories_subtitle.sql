@@ -1,3 +1,4 @@
+-- 아카이브 하위 카테고리 부제목 마이그레이션: 카테고리/하위 카테고리 카드에 보일 부제목을 추가합니다.
 begin;
 
 alter table public.subcategories

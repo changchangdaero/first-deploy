@@ -1,4 +1,5 @@
 'use client';
+// 활동 아코디언: 외부 활동, 수상, 경력 이벤트를 접고 펼치는 목록입니다.
 import { useState } from 'react';
 import { Activity } from '@/types/portfolio';
 

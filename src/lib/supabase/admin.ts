@@ -1,3 +1,4 @@
+// Supabase 관리자 클라이언트: 관리자 쓰기와 업로드에 쓰는 서버 전용 service role 클라이언트입니다.
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

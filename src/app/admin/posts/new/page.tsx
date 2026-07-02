@@ -1,3 +1,4 @@
+// 관리자 글 작성 화면: "/admin/posts/new"에서 Markdown 글 작성 폼을 보여줍니다.
 import Link from 'next/link';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';
 import AdminPostForm from '@/components/admin/AdminPostForm';

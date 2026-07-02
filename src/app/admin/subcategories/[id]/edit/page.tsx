@@ -1,3 +1,4 @@
+// 관리자 하위 카테고리 수정 화면: "/admin/subcategories/[id]/edit"에서 부모 카테고리와 부제목을 수정합니다.
 import { notFound } from 'next/navigation';
 import { updateSubcategoryAction } from '@/app/admin/archive-actions';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';
