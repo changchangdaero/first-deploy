@@ -23,14 +23,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Changmin.dev',
-  description: '개발자 포트폴리오와 기술 기록 아카이브입니다.',
+  description: 'Hello changmin World!',
   openGraph: {
     title: 'Changmin.dev',
-    description: '개발자 포트폴리오와 기술 기록 아카이브입니다.',
+    description: 'Hello changmin World!',
   },
   twitter: {
     title: 'Changmin.dev',
-    description: '개발자 포트폴리오와 기술 기록 아카이브입니다.',
+    description: 'Hello changmin World!',
   },
   icons: {
     icon: [
