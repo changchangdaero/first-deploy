@@ -101,6 +101,23 @@ export default async function EditSubcategoryPage({
               같은 카테고리 안에서 슬러그가 겹치면 번호가 붙은 새 URL이 자동으로 생성됩니다.
             </div>
 
+            <label className="flex items-start gap-3 rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] px-4 py-4 text-sm text-[var(--text-body)]">
+              <input
+                type="checkbox"
+                name="published"
+                defaultChecked={subcategory.published}
+                className="mt-1 h-4 w-4 accent-[var(--primary)]"
+              />
+              <span>
+                <span className="block font-semibold text-[var(--text-heading)]">
+                  공개 상태로 표시
+                </span>
+                <span className="mt-1 block text-[var(--text-muted)]">
+                  꺼두면 archive의 카테고리 상세와 공개 서브카테고리 URL에서 숨깁니다.
+                </span>
+              </span>
+            </label>
+
             <button
               type="submit"
               className="rounded-full bg-[var(--text-heading)] px-5 py-3 font-medium text-white transition hover:bg-[var(--accent)]"

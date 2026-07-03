@@ -37,20 +37,34 @@ export default async function AdminCategoriesPage() {
               href={`/admin/subcategories?categoryId=${category.id}`}
               className="block flex-1 rounded-lg hover:bg-gray-50 transition -m-2 p-2"
             >
-              <h2 className="text-xl font-semibold">{category.name}</h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-xl font-semibold">{category.name}</h2>
+                <span
+                  className={
+                    category.published
+                      ? 'admin-status-badge admin-status-badge--published'
+                      : 'admin-status-badge admin-status-badge--private'
+                  }
+                >
+                  {category.published ? '공개' : '비공개'}
+                </span>
+              </div>
               <p className="text-sm text-gray-500 mt-1">slug: {category.slug}</p>
               <p className="text-sm text-gray-500 mt-1">
-                서브카테고리 {category.subcategoryCount}개 / 공개 글 {category.postCount}개
+                공개 서브카테고리 {category.subcategoryCount}개 / 공개 글{' '}
+                {category.postCount}개
               </p>
             </Link>
 
             <div className="flex flex-wrap items-start gap-3">
-              <Link
-                href={`/archive/${category.slug}`}
-                className="px-4 py-2 rounded border hover:bg-gray-50 transition"
-              >
-                공개 보기
-              </Link>
+              {category.published && (
+                <Link
+                  href={`/archive/${category.slug}`}
+                  className="px-4 py-2 rounded border hover:bg-gray-50 transition"
+                >
+                  공개 보기
+                </Link>
+              )}
               <Link
                 href={`/admin/categories/${category.id}/edit`}
                 className="px-4 py-2 rounded border hover:bg-gray-50 transition"

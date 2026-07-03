@@ -56,6 +56,23 @@ export default async function EditCategoryPage({
               기존 이름과 같은 슬러그가 이미 있다면 자동으로 번호가 붙습니다.
             </div>
 
+            <label className="flex items-start gap-3 rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] px-4 py-4 text-sm text-[var(--text-body)]">
+              <input
+                type="checkbox"
+                name="published"
+                defaultChecked={category.published}
+                className="mt-1 h-4 w-4 accent-[var(--primary)]"
+              />
+              <span>
+                <span className="block font-semibold text-[var(--text-heading)]">
+                  공개 상태로 표시
+                </span>
+                <span className="mt-1 block text-[var(--text-muted)]">
+                  꺼두면 archive 목록과 공개 카테고리 URL에서 숨깁니다.
+                </span>
+              </span>
+            </label>
+
             <button
               type="submit"
               className="rounded-full bg-[var(--text-heading)] px-5 py-3 font-medium text-white transition hover:bg-[var(--accent)]"

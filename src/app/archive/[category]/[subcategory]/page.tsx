@@ -22,7 +22,7 @@ export default async function SubcategoryPage({ params }: PageProps) {
           <div>
             <p className="section-eyebrow">{result.category.name}</p>
             <h1>{result.subcategory.name}</h1>
-            <p>공개된 기록을 최신순으로 정리했습니다.</p>
+           
           </div>
         </header>
 

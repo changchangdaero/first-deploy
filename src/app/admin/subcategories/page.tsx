@@ -85,7 +85,8 @@ export default async function AdminSubcategoriesPage({
                   {group.category.name}
                 </h2>
                 <p className="mt-1 text-sm text-[var(--text-muted)]">
-                  서브카테고리 {group.items.length}개
+                  서브카테고리 {group.items.length}개 ·{' '}
+                  {group.category.published ? '상위 카테고리 공개' : '상위 카테고리 비공개'}
                 </p>
               </div>
 
@@ -107,9 +108,20 @@ export default async function AdminSubcategoriesPage({
                     href={`/admin/posts?subcategoryId=${subcategory.id}`}
                     className="block flex-1 rounded-lg hover:bg-gray-50 transition -m-2 p-2"
                   >
-                    <h3 className="text-xl font-semibold text-[var(--text-heading)]">
-                      {subcategory.name}
-                    </h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-xl font-semibold text-[var(--text-heading)]">
+                        {subcategory.name}
+                      </h3>
+                      <span
+                        className={
+                          subcategory.published
+                            ? 'admin-status-badge admin-status-badge--published'
+                            : 'admin-status-badge admin-status-badge--private'
+                        }
+                      >
+                        {subcategory.published ? '공개' : '비공개'}
+                      </span>
+                    </div>
                     {subcategory.subtitle && (
                       <p className="text-sm text-[var(--text-muted)] mt-1">
                         {subcategory.subtitle}
@@ -124,12 +136,14 @@ export default async function AdminSubcategoriesPage({
                   </Link>
 
                   <div className="flex flex-wrap items-start gap-3">
-                    <Link
-                      href={`/archive/${subcategory.category.slug}/${subcategory.slug}`}
-                      className="px-4 py-2 rounded border hover:bg-gray-50 transition"
-                    >
-                      공개 보기
-                    </Link>
+                    {subcategory.category.published && subcategory.published && (
+                      <Link
+                        href={`/archive/${subcategory.category.slug}/${subcategory.slug}`}
+                        className="px-4 py-2 rounded border hover:bg-gray-50 transition"
+                      >
+                        공개 보기
+                      </Link>
+                    )}
                     <Link
                       href={`/admin/subcategories/${subcategory.id}/edit`}
                       className="px-4 py-2 rounded border hover:bg-gray-50 transition"

@@ -112,7 +112,7 @@ export function normalizeRouteSlug(slug: string) {
 export async function getCategoryById(id: string) {
   const { data, error } = await supabase
     .from('categories')
-    .select('id, name, slug, created_at')
+    .select('id, name, slug, published, created_at')
     .eq('id', id)
     .single();
 
@@ -127,7 +127,7 @@ export async function getCategoryBySlug(slug: string) {
   const normalizedSlug = normalizeRouteSlug(slug);
   const { data, error } = await supabase
     .from('categories')
-    .select('id, name, slug, created_at')
+    .select('id, name, slug, published, created_at')
     .eq('slug', normalizedSlug)
     .single();
 
@@ -141,7 +141,7 @@ export async function getCategoryBySlug(slug: string) {
 export async function getAllCategories() {
   const { data, error } = await supabase
     .from('categories')
-    .select('id, name, slug, created_at')
+    .select('id, name, slug, published, created_at')
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -173,14 +173,15 @@ export async function getCategorySummaries(): Promise<CategorySummary[]> {
       const categorySubcategories = subcategories.filter(
         (subcategory) => subcategory.category_id === category.id
       );
-      const postCount = categorySubcategories.reduce(
+      const publishedSubcategories = categorySubcategories.filter(
+        (subcategory) => subcategory.published
+      );
+      const postCount = publishedSubcategories.reduce(
         (count, subcategory) =>
           count + (postCountBySubcategory.get(subcategory.id) ?? 0),
         0
       );
-      const subcategoryCount = categorySubcategories.filter(
-        (subcategory) => (postCountBySubcategory.get(subcategory.id) ?? 0) > 0
-      ).length;
+      const subcategoryCount = publishedSubcategories.length;
 
       return {
         ...category,
@@ -194,13 +195,13 @@ export async function getCategorySummaries(): Promise<CategorySummary[]> {
 export async function getPublishedCategorySummaries() {
   const categories = await getCategorySummaries();
 
-  return categories.filter((category) => category.postCount > 0);
+  return categories.filter((category) => category.published);
 }
 
 export async function getSubcategoryById(id: string) {
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, subtitle, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, published, created_at')
     .eq('id', id)
     .single();
 
@@ -214,7 +215,7 @@ export async function getSubcategoryById(id: string) {
 export async function getAllSubcategories() {
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, subtitle, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, published, created_at')
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -227,7 +228,7 @@ export async function getAllSubcategories() {
 export async function getSubcategoriesForCategory(categoryId: string) {
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, subtitle, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, published, created_at')
     .eq('category_id', categoryId)
     .order('created_at', { ascending: true });
 
@@ -252,7 +253,7 @@ export async function getSubcategoryBySlugs(
 
   const { data, error } = await supabase
     .from('subcategories')
-    .select('id, category_id, name, subtitle, slug, created_at')
+    .select('id, category_id, name, subtitle, slug, published, created_at')
     .eq('category_id', category.id)
     .eq('slug', normalizedSubcategorySlug)
     .single();
@@ -317,7 +318,9 @@ export async function getPublishedSubcategorySummaries(categorySlug: string) {
 
   return relation.filter(
     (subcategory) =>
-      subcategory.category.slug === normalizedCategorySlug && subcategory.postCount > 0
+      subcategory.category.slug === normalizedCategorySlug &&
+      subcategory.category.published &&
+      subcategory.published
   );
 }
 
@@ -458,6 +461,10 @@ export async function getPublishedPostsForSubcategory(
     return null;
   }
 
+  if (!relation.category.published || !relation.subcategory.published) {
+    return null;
+  }
+
   const posts = await getPostsForSubcategory(relation.subcategory.id, true);
   const handwritingBlocksByPostId = await getHandwritingBlocksForPostsWithClient(
     posts.map((post) => post.id),
@@ -489,6 +496,10 @@ export async function getPublishedPostBySlugs(
     return null;
   }
 
+  if (!relation.category.published || !relation.subcategory.published) {
+    return null;
+  }
+
   const { data, error } = await supabase
     .from('posts')
     .select('*')
@@ -503,6 +514,40 @@ export async function getPublishedPostBySlugs(
 
   const post = data as PostRow;
   const handwritingBlocks = await getHandwritingBlocksForPost(post.id);
+
+  return toPostWithRelations(
+    post,
+    relation.subcategory,
+    relation.category,
+    handwritingBlocks
+  );
+}
+
+export async function getAdminPostBySlugs(
+  categorySlug: string,
+  subcategorySlug: string,
+  postSlug: string
+) {
+  const normalizedPostSlug = normalizeRouteSlug(postSlug);
+  const relation = await getSubcategoryBySlugs(categorySlug, subcategorySlug);
+
+  if (!relation) {
+    return null;
+  }
+
+  const { data, error } = await createAdminSupabase()
+    .from('posts')
+    .select('*')
+    .eq('subcategory_id', relation.subcategory.id)
+    .eq('slug', normalizedPostSlug)
+    .single();
+
+  if (error) {
+    return null;
+  }
+
+  const post = data as PostRow;
+  const handwritingBlocks = await getAdminHandwritingBlocksForPost(post.id);
 
   return toPostWithRelations(
     post,

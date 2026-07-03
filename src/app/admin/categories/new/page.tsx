@@ -41,6 +41,23 @@ export default function NewCategoryPage() {
               같은 이름이 이미 있으면 뒤에 번호를 붙여 고유한 URL을 자동으로 만듭니다.
             </div>
 
+            <label className="flex items-start gap-3 rounded-2xl border border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] px-4 py-4 text-sm text-[var(--text-body)]">
+              <input
+                type="checkbox"
+                name="published"
+                defaultChecked
+                className="mt-1 h-4 w-4 accent-[var(--primary)]"
+              />
+              <span>
+                <span className="block font-semibold text-[var(--text-heading)]">
+                  공개 상태로 표시
+                </span>
+                <span className="mt-1 block text-[var(--text-muted)]">
+                  게시물이 없어도 archive 첫 화면에 이 카테고리를 보여줍니다.
+                </span>
+              </span>
+            </label>
+
             <button
               type="submit"
               className="rounded-full bg-[var(--text-heading)] px-5 py-3 font-medium text-white transition hover:bg-[var(--accent)]"

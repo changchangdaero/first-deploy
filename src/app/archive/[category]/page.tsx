@@ -21,7 +21,7 @@ export default async function CategoryPage({ params }: PageProps) {
     getPublishedSubcategorySummaries(categorySlug),
   ]);
 
-  if (!categoryInfo) {
+  if (!categoryInfo || !categoryInfo.published) {
     notFound();
   }
 
@@ -32,7 +32,7 @@ export default async function CategoryPage({ params }: PageProps) {
           <div>
             <p className="section-eyebrow">Category</p>
             <h1>{categoryInfo.name}</h1>
-            <p>이 주제 안에서 이어진 하위 기록을 모았습니다.</p>
+          
           </div>
         </header>
 
@@ -54,7 +54,7 @@ export default async function CategoryPage({ params }: PageProps) {
 
           {subcategories.length === 0 && (
             <div className="section-card text-[var(--text-muted)]">
-              아직 공개된 글이 있는 하위 카테고리가 없습니다.
+              아직 공개된 하위 카테고리가 없습니다.
             </div>
           )}
         </section>

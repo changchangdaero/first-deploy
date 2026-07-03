@@ -1,8 +1,15 @@
-// 관리자 글 목록: "/admin/posts"에서 아카이브 글을 묶어서 보여주고 수정/삭제 버튼을 제공합니다.
+// 관리자 글 목록: "/admin/posts"에서 아카이브 글을 글 목록 카드로 보여줍니다.
 import Link from 'next/link';
-import { deletePostAction } from '@/app/admin/archive-actions';
 import AdminArchiveNav from '@/components/admin/AdminArchiveNav';
 import { buildArchivePath, getAdminPosts } from '@/lib/archive';
+
+function formatAdminPostDate(date: string) {
+  return new Date(date).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+}
 
 export default async function AdminPostsPage({
   searchParams,
@@ -127,64 +134,49 @@ export default async function AdminPostsPage({
                   </div>
 
                   <div className="grid gap-4">
-                    {subcategoryGroup.items.map((post) => (
-                      <div
-                        key={post.id}
-                        className="border rounded-xl p-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
-                      >
-                        <div>
-                          <p className="text-sm text-gray-500">
-                            {post.category.name} / {post.subcategory.name}
-                          </p>
-                          <h3 className="text-xl font-semibold mt-1">{post.title}</h3>
-                          <p className="text-sm text-gray-500 mt-1">slug: {post.slug}</p>
-                          <p className="text-sm text-gray-500 mt-1">
-                            작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}
-                          </p>
-                          <p className="text-sm text-gray-500 mt-1">
-                            상태: {post.published ? '공개' : '비공개'}
-                          </p>
-                          <p className="text-sm text-gray-500 mt-1 break-all">
-                            URL:{' '}
-                            {buildArchivePath({
-                              categorySlug: post.category.slug,
-                              subcategorySlug: post.subcategory.slug,
-                              postSlug: post.slug,
-                            })}
-                          </p>
-                        </div>
+                    {subcategoryGroup.items.map((post) => {
+                      const postHref = buildArchivePath({
+                        categorySlug: post.category.slug,
+                        subcategorySlug: post.subcategory.slug,
+                        postSlug: post.slug,
+                      });
 
-                        <div className="flex gap-3">
-                          {post.published && (
-                            <Link
-                              href={buildArchivePath({
-                                categorySlug: post.category.slug,
-                                subcategorySlug: post.subcategory.slug,
-                                postSlug: post.slug,
-                              })}
-                              className="whitespace-nowrap px-4 py-2 rounded border hover:bg-gray-50 transition"
+                      return (
+                        <Link
+                          key={post.id}
+                          href={postHref}
+                          className="admin-post-card"
+                          aria-label={`${post.title} 상세 보기`}
+                        >
+                          <div>
+                            <p className="admin-post-card__eyebrow">
+                              {post.category.name} / {post.subcategory.name}
+                            </p>
+                            <h3 className="admin-post-card__title">{post.title}</h3>
+                            {post.excerpt && (
+                              <p className="admin-post-card__excerpt">
+                                {post.excerpt}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="admin-post-card__footer">
+                            <time dateTime={post.created_at}>
+                              {formatAdminPostDate(post.created_at)}
+                            </time>
+                            <span
+                              className={
+                                post.published
+                                  ? 'admin-status-badge admin-status-badge--published'
+                                  : 'admin-status-badge admin-status-badge--private'
+                              }
                             >
-                              공개 보기
-                            </Link>
-                          )}
-                          <Link
-                            href={`/admin/posts/${post.id}/edit`}
-                            className="whitespace-nowrap px-4 py-2 rounded border hover:bg-gray-50 transition"
-                          >
-                            수정
-                          </Link>
-                          <form action={deletePostAction}>
-                            <input type="hidden" name="id" value={post.id} />
-                            <button
-                              type="submit"
-                              className="whitespace-nowrap px-4 py-2 rounded border text-red-600 hover:bg-red-50 transition"
-                            >
-                              삭제
-                            </button>
-                          </form>
-                        </div>
-                      </div>
-                    ))}
+                              {post.published ? '공개' : '비공개'}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               ))}

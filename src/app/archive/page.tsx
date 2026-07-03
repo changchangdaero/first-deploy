@@ -14,9 +14,9 @@ export default async function ArchivePage() {
         <header className="archive-header">
           <div>
             <p className="section-eyebrow">Archive</p>
-            <h1>기술 기록 Archive</h1>
+            <h1>Field Notes</h1>
             <p>
-              {'<기술 학습, 트러블슈팅, 실험 회고, 배포 기록, 성능 테스트 기록을 정리하는 설명>'}
+              {'| 배우고 고치고 실험한 것들'}
             </p>
           </div>
           <PublicAdminEntryLink />

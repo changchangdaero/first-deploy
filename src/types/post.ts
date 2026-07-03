@@ -3,6 +3,7 @@ export type Category = {
   id: string;
   name: string;
   slug: string;
+  published: boolean;
   created_at: string;
 };
 
@@ -12,6 +13,7 @@ export type Subcategory = {
   name: string;
   subtitle: string | null;
   slug: string;
+  published: boolean;
   created_at: string;
 };
 

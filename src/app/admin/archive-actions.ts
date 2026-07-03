@@ -4,6 +4,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { buildArchivePath, getPostWithRelationsById } from '@/lib/archive';
+import { requireAdminAuthenticated } from '@/lib/admin-server-auth';
 import { parseHandwritingBlocksInput } from '@/lib/handwriting-blocks';
 import { createSlugCandidate } from '@/lib/slug';
 import { createAdminSupabase } from '@/lib/supabase/admin';
@@ -255,10 +256,15 @@ function revalidateArchivePages(
 }
 
 export async function createCategoryAction(formData: FormData) {
+  await requireAdminAuthenticated();
+
   const name = getRequiredText(formData, 'name', '移댄뀒怨좊━ ?대쫫');
+  const published = formData.get('published') === 'on';
   const slug = await buildUniqueCategorySlug(name);
 
-  const { error } = await supabase.from('categories').insert({ name, slug });
+  const { error } = await supabase
+    .from('categories')
+    .insert({ name, slug, published });
 
   if (error) {
     throw new Error(error.message);
@@ -270,8 +276,11 @@ export async function createCategoryAction(formData: FormData) {
 }
 
 export async function updateCategoryAction(formData: FormData) {
+  await requireAdminAuthenticated();
+
   const id = getRequiredText(formData, 'id', '移댄뀒怨좊━ ID');
   const name = getRequiredText(formData, 'name', '移댄뀒怨좊━ ?대쫫');
+  const published = formData.get('published') === 'on';
   const slug = await buildUniqueCategorySlug(name, id);
 
   const { data: existing, error: existingError } = await supabase
@@ -286,7 +295,7 @@ export async function updateCategoryAction(formData: FormData) {
 
   const { error } = await supabase
     .from('categories')
-    .update({ name, slug })
+    .update({ name, slug, published })
     .eq('id', id);
 
   if (error) {
@@ -300,14 +309,23 @@ export async function updateCategoryAction(formData: FormData) {
 }
 
 export async function createSubcategoryAction(formData: FormData) {
+  await requireAdminAuthenticated();
+
   const categoryId = getRequiredText(formData, 'category_id', '?곸쐞 移댄뀒怨좊━');
   const name = getRequiredText(formData, 'name', '?쒕툕移댄뀒怨좊━ ?대쫫');
   const subtitle = getOptionalText(formData, 'subtitle');
+  const published = formData.get('published') === 'on';
   const slug = await buildUniqueSubcategorySlug(categoryId, name);
 
   const { error } = await supabase
     .from('subcategories')
-    .insert({ category_id: categoryId, name, subtitle: subtitle || null, slug });
+    .insert({
+      category_id: categoryId,
+      name,
+      subtitle: subtitle || null,
+      slug,
+      published,
+    });
 
   if (error) {
     throw new Error(error.message);
@@ -325,10 +343,13 @@ export async function createSubcategoryAction(formData: FormData) {
 }
 
 export async function updateSubcategoryAction(formData: FormData) {
+  await requireAdminAuthenticated();
+
   const id = getRequiredText(formData, 'id', '?쒕툕移댄뀒怨좊━ ID');
   const categoryId = getRequiredText(formData, 'category_id', '?곸쐞 移댄뀒怨좊━');
   const name = getRequiredText(formData, 'name', '?쒕툕移댄뀒怨좊━ ?대쫫');
   const subtitle = getOptionalText(formData, 'subtitle');
+  const published = formData.get('published') === 'on';
   const slug = await buildUniqueSubcategorySlug(categoryId, name, id);
 
   const { data: existing, error: existingError } = await supabase
@@ -348,7 +369,13 @@ export async function updateSubcategoryAction(formData: FormData) {
 
   const { error } = await supabase
     .from('subcategories')
-    .update({ category_id: categoryId, name, subtitle: subtitle || null, slug })
+    .update({
+      category_id: categoryId,
+      name,
+      subtitle: subtitle || null,
+      slug,
+      published,
+    })
     .eq('id', id);
 
   if (error) {
@@ -378,6 +405,7 @@ export async function createPostAction(
   let subcategory: { id: string; slug: string; category_id: string };
 
   try {
+    await requireAdminAuthenticated();
     categoryId = getRequiredText(formData, 'category_id', '移댄뀒怨좊━');
     subcategoryId = getRequiredText(formData, 'subcategory_id', '?쒕툕移댄뀒怨좊━');
     title = getRequiredText(formData, 'title', '?쒕ぉ');
@@ -493,6 +521,7 @@ export async function updatePostAction(
   let existing: NonNullable<Awaited<ReturnType<typeof getPostWithRelationsById>>>;
 
   try {
+    await requireAdminAuthenticated();
     id = getRequiredText(formData, 'id', '?ъ뒪??ID');
     categoryId = getRequiredText(formData, 'category_id', '移댄뀒怨좊━');
     subcategoryId = getRequiredText(formData, 'subcategory_id', '?쒕툕移댄뀒怨좊━');
@@ -603,6 +632,8 @@ export async function updatePostAction(
 }
 
 export async function deletePostAction(formData: FormData) {
+  await requireAdminAuthenticated();
+
   const id = getRequiredText(formData, 'id', '?ъ뒪??ID');
   const existing = await getPostWithRelationsById(id);
 
@@ -629,6 +660,8 @@ export async function deleteCategoryAction(
   _state: AdminActionState,
   formData: FormData
 ): Promise<AdminActionState> {
+  await requireAdminAuthenticated();
+
   const id = getRequiredText(formData, 'id', '移댄뀒怨좊━ ID');
 
   const { data: category, error: categoryError } = await supabase
@@ -709,6 +742,8 @@ export async function deleteSubcategoryAction(
   _state: AdminActionState,
   formData: FormData
 ): Promise<AdminActionState> {
+  await requireAdminAuthenticated();
+
   const id = getRequiredText(formData, 'id', '?쒕툕移댄뀒怨좊━ ID');
 
   const { data: subcategory, error: subcategoryError } = await supabase
