@@ -11,7 +11,7 @@ export default function ProjectsPage() {
       <div className="portfolio-main">
         <header className="page-intro">
           <p className="section-eyebrow">Projects</p>
-          <h1>개발 프로젝트</h1>
+          <h1>Project</h1>
           <p>{'<프로젝트별 문제, 역할, 기술, 결과, 회고를 정리하는 페이지 설명>'}</p>
         </header>
 

@@ -10,7 +10,7 @@ export const profile = {
   direction: '<개발자로서의 방향성 요약>',
   highlights: [
     '명지대학교 정보통신공학 & 인공지능·ICT융합전공',
-    'LG CNS AM INSPIRE CAMP DevOps 과정 수료',
+    'LG CNS AM INSPIRE CAMP 3th DevOps 과정 수료',
     '교보문고 시·에세이 분야 주간베스트 도서 [사랑과 타박상] 저자',
     '브런치스토리 작가',
     '한국예술인복지재단 신진예술인',

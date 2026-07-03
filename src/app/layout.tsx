@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import ThemeScript from '@/components/theme/ThemeScript';
 import './globals.css';
@@ -45,6 +46,7 @@ export default function RootLayout({
         <ThemeScript />
         <SiteHeader />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

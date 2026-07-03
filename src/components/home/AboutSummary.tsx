@@ -7,7 +7,7 @@ import { profile } from '@/data/portfolio';
 export default function AboutSummary() {
   return (
     <section id="about" className="content-section">
-      <SectionHeader eyebrow="About" title="About Me" />
+      <SectionHeader eyebrow="PROFILE" title="About Me" />
       <div className="about-summary">
         <div className="about-summary__image">
           <Image src={profile.image} alt={`${profile.name} 프로필 사진`} width={180} height={180} />

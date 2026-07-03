@@ -1,7 +1,7 @@
 'use client';
 
-// 테마 전환 버튼: 헤더에서 포트폴리오 전체를 밝은/어두운 테마로 바꿉니다.
 import { useEffect, useState } from 'react';
+import { FiMoon, FiSun } from 'react-icons/fi';
 
 const STORAGE_KEY = 'portfolio-theme';
 
@@ -24,10 +24,14 @@ function applyTheme(theme: Theme) {
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>('light');
+  const [mounted, setMounted] = useState(false);
   const nextTheme = theme === 'dark' ? 'light' : 'dark';
+  const Icon = theme === 'dark' ? FiMoon : FiSun;
+  const label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
 
   useEffect(() => {
     setTheme(getResolvedTheme());
+    setMounted(true);
   }, []);
 
   function handleToggle() {
@@ -36,14 +40,12 @@ export default function ThemeToggle() {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleToggle}
-      className="link-pill theme-toggle"
-      aria-label={`${nextTheme === 'dark' ? '어두운' : '밝은'} 테마로 전환`}
-      title={`${nextTheme === 'dark' ? '어두운' : '밝은'} 테마로 전환`}
-    >
-      {theme === 'dark' ? 'Light' : 'Dark'}
+    <button type="button" onClick={handleToggle} className="theme-toggle" aria-label={label} title={label}>
+      {mounted ? (
+        <Icon className="theme-toggle__icon" aria-hidden="true" focusable="false" />
+      ) : (
+        <span className="theme-toggle__placeholder" aria-hidden="true" />
+      )}
     </button>
   );
 }

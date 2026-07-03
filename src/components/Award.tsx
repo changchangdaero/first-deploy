@@ -6,7 +6,7 @@ export default function Award() {
 
   return (
     <section className="content-section" aria-labelledby="award-title">
-      <SectionHeader eyebrow="Award" title="Award" titleId="award-title" />
+      <SectionHeader eyebrow="ACHIEVEMENT" title="Award" titleId="award-title" />
       <div className="award-card">
         <ul className="award-list">
           {items.map((item) => (
