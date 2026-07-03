@@ -15,7 +15,11 @@ const sectionNavItems = [
 
 const archiveNavItem = { label: 'Archive', href: '/archive' };
 
-export default function SiteHeader() {
+type SiteHeaderProps = {
+  initialTheme?: 'light' | 'dark';
+};
+
+export default function SiteHeader({ initialTheme = 'light' }: SiteHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -55,7 +59,7 @@ export default function SiteHeader() {
         </nav>
 
         <div className="site-header__actions">
-          <ThemeToggle />
+          <ThemeToggle initialTheme={initialTheme} />
           <button
             type="button"
             className="site-menu-toggle"

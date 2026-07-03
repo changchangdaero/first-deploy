@@ -132,7 +132,7 @@ function VisitorCountValue({ value }: { value?: number }) {
 export default function VisitorStatsCard({
   initialStats = null,
 }: VisitorStatsCardProps) {
-  const [stats, setStats] = useState<VisitorStats | null>(initialStats);
+  const [stats, setStats] = useState<VisitorStats | null>(null);
 
   useEffect(() => {
     const visitorId = getVisitorId();

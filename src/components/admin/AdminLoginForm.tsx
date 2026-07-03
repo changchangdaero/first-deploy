@@ -15,11 +15,11 @@ export default function AdminLoginForm() {
   );
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} className="mt-6 grid gap-3.5 sm:mt-8 sm:gap-4">
       <div>
         <label
           htmlFor="code"
-          className="block text-sm font-medium text-gray-800 mb-2"
+          className="mb-2 block text-sm font-semibold text-[var(--text-heading)]"
         >
           관리자 입장 코드
         </label>
@@ -29,13 +29,13 @@ export default function AdminLoginForm() {
           type="password"
           placeholder="입장 코드를 입력하세요"
           autoComplete="current-password"
-          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-400 shadow-sm outline-none focus:border-gray-900"
+          className="w-full rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--portfolio-surface-muted)] px-4 py-2.5 text-[0.95rem] text-[var(--text-heading)] shadow-[var(--shadow-sm)] outline-none placeholder:text-[var(--text-faint)] focus:border-[var(--primary)] focus:shadow-[0_0_0_3px_var(--accent-ring)] sm:py-3"
           required
         />
       </div>
 
       {state.message && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-[var(--radius-card)] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm leading-6 text-red-700 [html[data-theme='dark']_&]:text-red-200">
           {state.message}
         </div>
       )}
@@ -43,7 +43,7 @@ export default function AdminLoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rounded-lg bg-black px-5 py-3 font-medium text-white disabled:opacity-60"
+        className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-full border border-[var(--text-heading)] bg-[var(--text-heading)] px-5 py-2.5 font-bold text-[var(--portfolio-bg)] transition hover:border-[var(--primary)] hover:bg-[var(--primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent-ring)] disabled:cursor-wait disabled:opacity-60 sm:min-h-12 sm:py-3"
       >
         {isPending ? '확인 중...' : '로그인'}
       </button>
