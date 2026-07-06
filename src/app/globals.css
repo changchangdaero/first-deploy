@@ -1075,7 +1075,7 @@ select {
   text-decoration: none;
 }
 
-.archive-post-link:hover h2 {
+.archive-post-link:hover .archive-post-title {
   color: var(--primary-dark);
 }
 
@@ -1099,7 +1099,7 @@ select {
   min-width: 0;
 }
 
-.archive-post-link h2 {
+.archive-post-title {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
@@ -1131,6 +1131,7 @@ select {
 .archive-post-thumbnail {
   width: 100%;
   aspect-ratio: 16 / 9;
+  justify-self: end;
   overflow: hidden;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-card);
@@ -2131,29 +2132,42 @@ textarea::placeholder {
   }
 
   .archive-post-layout.has-thumbnail {
-    grid-template-columns: minmax(0, 1fr) clamp(6rem, 26vw, 7.75rem);
+    grid-template-columns: minmax(0, 1fr) 96px;
     gap: 1rem;
     align-items: flex-start;
   }
 
-  .archive-post-link h2 {
-    font-size: 1.08rem;
-    line-height: 1.42;
+  .archive-post-layout.no-thumbnail {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-post-title {
+    font-size: 1.04rem;
+    line-height: 1.38;
   }
 
   .archive-post-excerpt {
-    margin-top: 0.45rem;
-    -webkit-line-clamp: 3;
+    margin-top: 0.5rem;
     font-size: 0.86rem;
-    line-height: 1.65;
+    line-height: 1.6;
+  }
+
+  .archive-post-layout.has-thumbnail .archive-post-excerpt {
+    -webkit-line-clamp: 3;
+  }
+
+  .archive-post-layout.no-thumbnail .archive-post-excerpt {
+    -webkit-line-clamp: 4;
   }
 
   .archive-post-date {
-    margin-top: 0.65rem;
+    margin-top: 0.75rem;
   }
 
   .archive-post-thumbnail {
+    width: 96px;
     aspect-ratio: 1 / 1;
+    align-self: flex-start;
     border-radius: var(--radius-small);
   }
 
@@ -2264,7 +2278,7 @@ textarea::placeholder {
     letter-spacing: -0.03em;
   }
 
-  .archive-post-excerpt {
+  .archive-post-layout.no-thumbnail .archive-post-excerpt {
     -webkit-line-clamp: 4;
   }
 

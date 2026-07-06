@@ -75,7 +75,7 @@ export default function ArchivePostListItem({
         }`}
       >
         <div className="archive-post-content">
-          <h2>{post.title}</h2>
+          <h2 className="archive-post-title">{post.title}</h2>
           {previewText && <p className="archive-post-excerpt">{previewText}</p>}
           <time className="archive-post-date">{formattedDate}</time>
         </div>
