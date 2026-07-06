@@ -15,9 +15,7 @@ export default async function ArchivePage() {
           <div>
             <p className="section-eyebrow">Archive</p>
             <h1>Field Notes</h1>
-            <p>
-              {'| 배우고 고치고 실험한 것들'}
-            </p>
+            
           </div>
           <PublicAdminEntryLink />
         </header>

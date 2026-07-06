@@ -65,7 +65,7 @@ const publications: Publication[] = [
 
 const activities: Activity[] = [
   {
-    title: '독립출판 서포터즈',
+    title: '인디펍 독립출판 서포터즈',
     description: '독립출판 플랫폼 인디펍의 도서들을 읽고 블로그에 서평을 작성했습니다.',
     label: 'Supporters',
     year: '2024',
