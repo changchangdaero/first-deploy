@@ -35,6 +35,7 @@
   --post-surface: #ffffff;
   --post-border: #eeeeee;
   --post-content-width: 980px;
+  --markdown-content-width: 740px;
   --portfolio-content-width: 880px;
   --header-content-width: 960px;
   --page-gutter: 40px;
@@ -856,8 +857,7 @@ select {
 }
 
 .post-body-inner .post-content {
-  font-size: clamp(1.02rem, 0.18vw + 0.98rem, 1.1rem);
-  line-height: 1.95;
+  max-width: var(--markdown-content-width);
 }
 
 .archive-shell > * + * {
@@ -1135,43 +1135,77 @@ select {
 }
 
 .markdown-content {
-  color: var(--text-body);
-  line-height: 1.85;
-  font-size: 1rem;
+  --markdown-body-color: rgba(0, 0, 0, 0.82);
+  --markdown-muted-color: rgba(0, 0, 0, 0.62);
+  --markdown-divider-color: rgba(0, 0, 0, 0.14);
+  width: 100%;
+  max-width: var(--markdown-content-width);
+  margin-inline: auto;
+  color: var(--markdown-body-color);
+  font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo",
+    "Malgun Gothic", var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.92;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
-.markdown-content > * + * {
-  margin-top: 1rem;
+:root[data-theme='dark'] .markdown-content {
+  --markdown-body-color: rgba(237, 237, 237, 0.86);
+  --markdown-muted-color: rgba(237, 237, 237, 0.66);
+  --markdown-divider-color: rgba(237, 237, 237, 0.18);
+}
+
+.markdown-content > :first-child {
+  margin-top: 0;
+}
+
+.markdown-content > :last-child {
+  margin-bottom: 0;
 }
 
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3,
 .markdown-content h4 {
+  margin: 3.1em 0 0.75em;
   color: var(--text-heading);
   font-weight: 720;
   letter-spacing: 0;
+  line-height: 1.38;
 }
 
 .markdown-content h1 {
-  font-size: 2rem;
+  font-size: 2.125rem;
 }
 
 .markdown-content h2 {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
 }
 
 .markdown-content h3 {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
+}
+
+.markdown-content h4 {
+  font-size: 1.12rem;
 }
 
 .markdown-content p {
+  margin: 22px 0;
   white-space: pre-line;
+}
+
+.markdown-content strong {
+  color: var(--text-heading);
+  font-weight: 720;
 }
 
 .markdown-content ul,
 .markdown-content ol {
-  padding-left: 1.5rem;
+  margin: 22px 0;
+  padding-left: 1.45em;
+  line-height: inherit;
 }
 
 .markdown-content ul {
@@ -1182,25 +1216,48 @@ select {
   list-style: decimal;
 }
 
+.markdown-content li + li {
+  margin-top: 0.42em;
+}
+
+.markdown-content li > p {
+  margin: 0.65em 0;
+}
+
 .markdown-content a {
   color: var(--primary-dark);
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
+}
+
+.markdown-content hr {
+  margin: 44px 0;
+  border: 0;
+  border-top: 1px solid var(--markdown-divider-color);
 }
 
 .markdown-content img {
   display: block;
   max-width: 100%;
-  border-radius: var(--radius-card);
+  height: auto;
+  margin: 32px auto;
   border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+}
+
+.markdown-content figure {
+  margin: 32px 0;
 }
 
 .markdown-content pre {
   overflow-x: auto;
-  border-radius: var(--radius-card);
+  margin: 32px 0;
   border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
   background: var(--code-bg);
   padding: 1rem 1.25rem;
+  line-height: 1.65;
 }
 
 .markdown-content pre code {
@@ -1209,6 +1266,7 @@ select {
   border-radius: 0;
   color: var(--code-text);
   font-size: 0.875rem;
+  white-space: pre;
 }
 
 .markdown-content code {
@@ -1217,18 +1275,28 @@ select {
   padding: 0.15rem 0.35rem;
   font-size: 0.875em;
   color: var(--code-text);
+  word-break: break-word;
 }
 
 .markdown-content blockquote {
-  border-left: 3px solid var(--primary);
-  background: var(--accent-muted);
-  padding: 0.8rem 1rem;
+  margin: 32px 0;
+  border-left: 3px solid color-mix(in srgb, var(--primary) 72%, transparent);
+  background: transparent;
+  color: var(--markdown-muted-color);
+  padding: 0.1rem 0 0.1rem 1.15rem;
+}
+
+.markdown-content blockquote p {
+  margin: 0.65em 0;
 }
 
 .markdown-content table {
+  display: block;
   width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   border: 1px solid var(--border-default);
+  margin: 32px 0;
 }
 
 .markdown-content th,
@@ -2047,6 +2115,50 @@ textarea::placeholder {
     gap: 0.24rem;
     letter-spacing: -0.01em;
   }
+
+  .markdown-content {
+    font-size: 1.0625rem;
+    line-height: 1.88;
+  }
+
+  .markdown-content h1 {
+    font-size: 1.9rem;
+  }
+
+  .markdown-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .markdown-content h3 {
+    font-size: 1.25rem;
+  }
+
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4 {
+    margin-top: 2.7em;
+  }
+
+  .markdown-content p,
+  .markdown-content ul,
+  .markdown-content ol {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .markdown-content hr {
+    margin: 36px 0;
+  }
+
+  .markdown-content img,
+  .markdown-content figure,
+  .markdown-content pre,
+  .markdown-content blockquote,
+  .markdown-content table {
+    margin-top: 28px;
+    margin-bottom: 28px;
+  }
 }
 
 @media (max-width: 479px) {
@@ -2109,6 +2221,30 @@ textarea::placeholder {
     gap: 0.18rem;
     font-size: clamp(0.48rem, 2.35vw, 0.56rem);
     letter-spacing: -0.03em;
+  }
+
+  .markdown-content {
+    font-size: 1rem;
+    line-height: 1.86;
+  }
+
+  .markdown-content h1 {
+    font-size: 1.75rem;
+  }
+
+  .markdown-content h2 {
+    font-size: 1.38rem;
+  }
+
+  .markdown-content h3 {
+    font-size: 1.18rem;
+  }
+
+  .markdown-content p,
+  .markdown-content ul,
+  .markdown-content ol {
+    margin-top: 18px;
+    margin-bottom: 18px;
   }
 }
 
