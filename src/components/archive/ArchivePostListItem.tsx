@@ -1,9 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-// 아카이브 글 목록 아이템: 하위 카테고리 안의 클릭 가능한 글 카드이며 썸네일과 요약 대체 로직을 포함합니다.
 import Link from 'next/link';
 import type { PostWithRelations } from '@/types/post';
 import { extractFirstImageFromMarkdown } from '@/lib/extract-first-image-from-markdown';
-import { splitContentWithHandwritingBlocks } from '@/lib/handwriting-blocks';
 
 type ArchivePostListItemProps = {
   href: string;
@@ -15,47 +13,31 @@ const PREVIEW_MAX_LENGTH = 220;
 function getPostThumbnailUrl(post: PostWithRelations) {
   const thumbnailUrl = post.thumbnail_url?.trim();
 
-  if (thumbnailUrl) {
-    return thumbnailUrl;
-  }
-
-  const firstMarkdownImage = extractFirstImageFromMarkdown(post.content);
-  const handwritingMap = new Map(
-    post.handwritingBlocks.map((block) => [block.id, block])
-  );
-  const segments = splitContentWithHandwritingBlocks(post.content);
-
-  for (const segment of segments) {
-    if (segment.type === 'markdown') {
-      const imageUrl = extractFirstImageFromMarkdown(segment.value);
-
-      if (imageUrl) {
-        return imageUrl;
-      }
-
-      continue;
-    }
-
-    const handwritingBlock = handwritingMap.get(segment.blockId);
-    const previewImageUrl = handwritingBlock?.preview_image_url?.trim();
-
-    if (previewImageUrl) {
-      return previewImageUrl;
-    }
-  }
-
-  return firstMarkdownImage;
+  return thumbnailUrl || extractFirstImageFromMarkdown(post.content);
 }
 
-function stripMarkdown(content: string) {
+function stripMarkdown(content: string | null | undefined) {
+  if (!content?.trim()) {
+    return '';
+  }
+
   return content
-    .replace(/!\[[^\]]*]\((.*?)\)/g, ' ')
-    .replace(/<img[^>]*>/gi, ' ')
+    .replace(/<img\b[^>]*>/gi, ' ')
+    .replace(
+      /!\[[^\]]*]\(\s*(?:<[^>\n]+>|[^)\s]+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)/g,
+      ' '
+    )
     .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/`[^`]*`/g, ' ')
-    .replace(/\[([^\]]+)\]\((.*?)\)/g, '$1')
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/\[([^\]]+)]\((?:[^()]|\([^)]*\))*\)/g, '$1')
     .replace(/<\/?[^>]+>/g, ' ')
-    .replace(/^\s{0,3}(#{1,6}|\*|-|\+|>)/gm, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/^\s{0,3}(#{1,6}|[-*+]|>)+\s*/gm, ' ')
     .replace(/\*\*|__|\*|_|~~/g, '')
     .replace(/\n+/g, ' ')
     .replace(/\s+/g, ' ')
@@ -63,23 +45,14 @@ function stripMarkdown(content: string) {
 }
 
 function getPreviewText(post: PostWithRelations) {
-  const excerpt = post.excerpt?.trim();
-
-  if (excerpt) {
-    return excerpt;
-  }
-
-  const plainText = stripMarkdown(post.content);
+  const source = post.excerpt?.trim() ? post.excerpt : post.content;
+  const plainText = stripMarkdown(source);
 
   if (plainText.length <= PREVIEW_MAX_LENGTH) {
     return plainText;
   }
 
   return `${plainText.slice(0, PREVIEW_MAX_LENGTH).trimEnd()}...`;
-}
-
-function ThumbnailPlaceholder() {
-  return <div className="archive-thumbnail-placeholder">Archive</div>;
 }
 
 export default function ArchivePostListItem({
@@ -96,24 +69,22 @@ export default function ArchivePostListItem({
 
   return (
     <Link href={href} className="archive-post-link">
-      <div className="archive-post-layout">
-        <div>
+      <div
+        className={`archive-post-layout ${
+          thumbnailUrl ? 'has-thumbnail' : 'no-thumbnail'
+        }`}
+      >
+        <div className="archive-post-content">
           <h2>{post.title}</h2>
-          {previewText && <p>{previewText}</p>}
+          {previewText && <p className="archive-post-excerpt">{previewText}</p>}
           <time className="archive-post-date">{formattedDate}</time>
         </div>
 
-        <div className="archive-thumbnail">
-          {thumbnailUrl ? (
-            <img
-              src={thumbnailUrl}
-              alt={`${post.title} 썸네일`}
-              loading="lazy"
-            />
-          ) : (
-            <ThumbnailPlaceholder />
-          )}
-        </div>
+        {thumbnailUrl && (
+          <div className="archive-post-thumbnail">
+            <img src={thumbnailUrl} alt={`${post.title} thumbnail`} loading="lazy" />
+          </div>
+        )}
       </div>
     </Link>
   );

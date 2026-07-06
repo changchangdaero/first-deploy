@@ -1081,18 +1081,41 @@ select {
 
 .archive-post-layout {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 0;
+  align-items: center;
+}
+
+.archive-post-layout.has-thumbnail {
+  grid-template-columns: minmax(0, 1fr) clamp(13.75rem, 28vw, 16.25rem);
+  gap: clamp(2rem, 4vw, 2.5rem);
+}
+
+.archive-post-layout.no-thumbnail {
+  grid-template-columns: 1fr;
+}
+
+.archive-post-content {
+  min-width: 0;
 }
 
 .archive-post-link h2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   color: var(--text-heading);
   font-size: 1.35rem;
   font-weight: 720;
   line-height: 1.45;
 }
 
-.archive-post-link p {
+.archive-post-excerpt {
+  display: -webkit-box;
   margin-top: 0.65rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
   color: var(--text-muted);
   font-size: 0.94rem;
   line-height: 1.8;
@@ -1105,33 +1128,20 @@ select {
   font-size: 0.78rem;
 }
 
-.archive-thumbnail {
+.archive-post-thumbnail {
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-card);
   background: var(--portfolio-surface-muted);
 }
 
-.archive-thumbnail img,
-.archive-thumbnail-placeholder {
-  aspect-ratio: 4 / 3;
+.archive-post-thumbnail img {
+  display: block;
   width: 100%;
+  height: 100%;
   object-fit: cover;
-}
-
-.archive-thumbnail-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-faint);
-  font-size: 0.72rem;
-}
-
-@media (min-width: 640px) {
-  .archive-post-layout {
-    grid-template-columns: minmax(0, 1fr) 9.5rem;
-    align-items: start;
-  }
 }
 
 .markdown-content {
@@ -2116,6 +2126,37 @@ textarea::placeholder {
     letter-spacing: -0.01em;
   }
 
+  .archive-post-link {
+    padding: 1.15rem 0;
+  }
+
+  .archive-post-layout.has-thumbnail {
+    grid-template-columns: minmax(0, 1fr) clamp(6rem, 26vw, 7.75rem);
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .archive-post-link h2 {
+    font-size: 1.08rem;
+    line-height: 1.42;
+  }
+
+  .archive-post-excerpt {
+    margin-top: 0.45rem;
+    -webkit-line-clamp: 3;
+    font-size: 0.86rem;
+    line-height: 1.65;
+  }
+
+  .archive-post-date {
+    margin-top: 0.65rem;
+  }
+
+  .archive-post-thumbnail {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-small);
+  }
+
   .markdown-content {
     font-size: 1.0625rem;
     line-height: 1.88;
@@ -2223,6 +2264,10 @@ textarea::placeholder {
     letter-spacing: -0.03em;
   }
 
+  .archive-post-excerpt {
+    -webkit-line-clamp: 4;
+  }
+
   .markdown-content {
     font-size: 1rem;
     line-height: 1.86;
@@ -2245,6 +2290,16 @@ textarea::placeholder {
   .markdown-content ol {
     margin-top: 18px;
     margin-bottom: 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .archive-post-layout.has-thumbnail {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-post-thumbnail {
+    display: none;
   }
 }
 
