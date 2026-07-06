@@ -64,14 +64,28 @@ export default async function SubcategoryPage({
             </div>
           )}
 
-          {result.pagination.hasMore && (
+          {(result.pagination.hasPrevious || result.pagination.hasMore) && (
             <div className="archive-load-more-wrap">
-              <Link
-                href={`${archivePath}?page=${result.pagination.page + 1}`}
-                className="archive-load-more"
-              >
-                더 보기
-              </Link>
+              {result.pagination.hasPrevious && (
+                <Link
+                  href={
+                    result.pagination.page <= 2
+                      ? archivePath
+                      : `${archivePath}?page=${result.pagination.page - 1}`
+                  }
+                  className="archive-load-more"
+                >
+                  이전
+                </Link>
+              )}
+              {result.pagination.hasMore && (
+                <Link
+                  href={`${archivePath}?page=${result.pagination.page + 1}`}
+                  className="archive-load-more"
+                >
+                  다음
+                </Link>
+              )}
             </div>
           )}
         </section>

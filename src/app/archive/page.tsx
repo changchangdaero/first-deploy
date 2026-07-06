@@ -28,10 +28,7 @@ export default async function ArchivePage() {
               className="archive-card"
             >
               <h2>{category.name}</h2>
-              <p>
-                {formatCountLabel(category.subcategoryCount, 'subcategory')} /{' '}
-                {formatCountLabel(category.postCount, 'post')}
-              </p>
+              <p>{formatCountLabel(category.subcategoryCount, 'subcategory')}</p>
             </Link>
           ))}
 

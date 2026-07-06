@@ -3,11 +3,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
   buildArchivePath,
-  getCategoryBySlug,
-  getPublishedSubcategorySummaries,
+  getPublishedCategoryWithSubcategories,
   normalizeRouteSlug,
 } from '@/lib/archive';
-import { formatCountLabel } from '@/lib/count-label';
 
 type PageProps = {
   params: Promise<{ category: string }>;
@@ -16,14 +14,13 @@ type PageProps = {
 export default async function CategoryPage({ params }: PageProps) {
   const { category } = await params;
   const categorySlug = normalizeRouteSlug(category);
-  const [categoryInfo, subcategories] = await Promise.all([
-    getCategoryBySlug(categorySlug),
-    getPublishedSubcategorySummaries(categorySlug),
-  ]);
+  const result = await getPublishedCategoryWithSubcategories(categorySlug);
 
-  if (!categoryInfo || !categoryInfo.published) {
+  if (!result) {
     notFound();
   }
+
+  const { category: categoryInfo, subcategories } = result;
 
   return (
     <main className="portfolio-page">
@@ -48,7 +45,6 @@ export default async function CategoryPage({ params }: PageProps) {
             >
               <h2>{subcategory.name}</h2>
               {subcategory.subtitle && <p>{subcategory.subtitle}</p>}
-              <p>{formatCountLabel(subcategory.postCount, 'post')}</p>
             </Link>
           ))}
 

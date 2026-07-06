@@ -87,6 +87,10 @@ export type CategorySummary = Category & {
   subcategoryCount: number;
 };
 
+export type PublicCategorySummary = Category & {
+  subcategoryCount: number;
+};
+
 export type SubcategoryWithCategory = Subcategory & {
   category: Category;
 };
@@ -94,6 +98,8 @@ export type SubcategoryWithCategory = Subcategory & {
 export type SubcategorySummary = SubcategoryWithCategory & {
   postCount: number;
 };
+
+export type PublicSubcategorySummary = SubcategoryWithCategory;
 
 export type PostWithRelations = PostRow & {
   tags: string[];

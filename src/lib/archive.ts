@@ -11,6 +11,8 @@ import type {
   PostListRow,
   PostRow,
   PostWithRelations,
+  PublicCategorySummary,
+  PublicSubcategorySummary,
   Subcategory,
   SubcategorySummary,
 } from '@/types/post';
@@ -148,6 +150,20 @@ export async function getAllCategories() {
   return (data ?? []) as Category[];
 }
 
+async function getPublishedCategories() {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('id, name, slug, published, created_at')
+    .eq('published', true)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as Category[];
+}
+
 export async function getCategorySummaries(): Promise<CategorySummary[]> {
   const [categories, subcategories, posts] = await Promise.all([
     getAllCategories(),
@@ -189,10 +205,28 @@ export async function getCategorySummaries(): Promise<CategorySummary[]> {
     .sort((a, b) => a.name.localeCompare(b.name, 'ko-KR'));
 }
 
-export async function getPublishedCategorySummaries() {
-  const categories = await getCategorySummaries();
+export async function getPublishedCategorySummaries(): Promise<
+  PublicCategorySummary[]
+> {
+  const [categories, subcategories] = await Promise.all([
+    getPublishedCategories(),
+    getPublishedSubcategories(),
+  ]);
+  const subcategoryCountByCategoryId = new Map<string, number>();
 
-  return categories.filter((category) => category.published);
+  subcategories.forEach((subcategory) => {
+    subcategoryCountByCategoryId.set(
+      subcategory.category_id,
+      (subcategoryCountByCategoryId.get(subcategory.category_id) ?? 0) + 1
+    );
+  });
+
+  return categories
+    .map((category) => ({
+      ...category,
+      subcategoryCount: subcategoryCountByCategoryId.get(category.id) ?? 0,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'ko-KR'));
 }
 
 export async function getSubcategoryById(id: string) {
@@ -222,11 +256,40 @@ export async function getAllSubcategories() {
   return (data ?? []) as Subcategory[];
 }
 
+async function getPublishedSubcategories() {
+  const { data, error } = await supabase
+    .from('subcategories')
+    .select('id, category_id, name, subtitle, slug, published, created_at')
+    .eq('published', true)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as Subcategory[];
+}
+
 export async function getSubcategoriesForCategory(categoryId: string) {
   const { data, error } = await supabase
     .from('subcategories')
     .select('id, category_id, name, subtitle, slug, published, created_at')
     .eq('category_id', categoryId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as Subcategory[];
+}
+
+async function getPublishedSubcategoriesForCategory(categoryId: string) {
+  const { data, error } = await supabase
+    .from('subcategories')
+    .select('id, category_id, name, subtitle, slug, published, created_at')
+    .eq('category_id', categoryId)
+    .eq('published', true)
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -310,26 +373,59 @@ export async function getSubcategorySummaries() {
 }
 
 export async function getPublishedSubcategorySummaries(categorySlug: string) {
-  const normalizedCategorySlug = normalizeRouteSlug(categorySlug);
-  const relation = await getSubcategorySummaries();
+  const result = await getPublishedCategoryWithSubcategories(categorySlug);
 
-  return relation.filter(
-    (subcategory) =>
-      subcategory.category.slug === normalizedCategorySlug &&
-      subcategory.category.published &&
-      subcategory.published
-  );
+  return result?.subcategories ?? [];
+}
+
+export async function getPublishedCategoryWithSubcategories(
+  categorySlug: string
+): Promise<{
+  category: Category;
+  subcategories: PublicSubcategorySummary[];
+} | null> {
+  const category = await getCategoryBySlug(categorySlug);
+
+  if (!category?.published) {
+    return null;
+  }
+
+  const subcategories = await getPublishedSubcategoriesForCategory(category.id);
+
+  return {
+    category,
+    subcategories: subcategories
+      .map((subcategory) => ({
+        ...subcategory,
+        category,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'ko-KR')),
+  };
 }
 
 export async function getSubcategoryOptions() {
-  const summaries = await getSubcategorySummaries();
+  const [categories, subcategories] = await Promise.all([
+    getAllCategories(),
+    getAllSubcategories(),
+  ]);
+  const categoryMap = new Map(categories.map((category) => [category.id, category]));
 
-  return summaries.map((subcategory) => ({
-    id: subcategory.id,
-    label: `${subcategory.category.name} / ${subcategory.name}`,
-    categorySlug: subcategory.category.slug,
-    subcategorySlug: subcategory.slug,
-  }));
+  return subcategories
+    .map((subcategory) => {
+      const category = categoryMap.get(subcategory.category_id);
+
+      if (!category) {
+        return null;
+      }
+
+      return {
+        id: subcategory.id,
+        label: `${category.name} / ${subcategory.name}`,
+        categorySlug: category.slug,
+        subcategorySlug: subcategory.slug,
+      };
+    })
+    .filter((value): value is NonNullable<typeof value> => value !== null);
 }
 
 export async function getCategoryTree(): Promise<CategoryWithSubcategories[]> {
@@ -443,10 +539,12 @@ export async function getAdminPosts() {
 async function getPostListRowsForSubcategory({
   subcategoryId,
   publishedOnly = false,
+  offset = 0,
   limit,
 }: {
   subcategoryId: string;
   publishedOnly?: boolean;
+  offset?: number;
   limit?: number;
 }) {
   let query = supabase
@@ -460,7 +558,8 @@ async function getPostListRowsForSubcategory({
   }
 
   if (limit && limit > 0) {
-    query = query.range(0, limit - 1);
+    const from = Math.max(0, offset);
+    query = query.range(from, from + limit - 1);
   }
 
   const { data, error } = await query;
@@ -492,13 +591,14 @@ export async function getPublishedPostsForSubcategory(
 
   const page = Math.max(1, Math.floor(options.page ?? 1));
   const pageSize = Math.max(1, options.pageSize ?? ARCHIVE_POST_LIST_PAGE_SIZE);
-  const visiblePostCount = page * pageSize;
+  const offset = (page - 1) * pageSize;
   const posts = await getPostListRowsForSubcategory({
     subcategoryId: relation.subcategory.id,
     publishedOnly: true,
-    limit: visiblePostCount + 1,
+    offset,
+    limit: pageSize + 1,
   });
-  const visiblePosts = posts.slice(0, visiblePostCount);
+  const visiblePosts = posts.slice(0, pageSize);
 
   return {
     ...relation,
@@ -508,7 +608,8 @@ export async function getPublishedPostsForSubcategory(
     pagination: {
       page,
       pageSize,
-      hasMore: posts.length > visiblePostCount,
+      hasPrevious: page > 1,
+      hasMore: posts.length > pageSize,
     },
   };
 }

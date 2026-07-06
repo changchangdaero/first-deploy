@@ -11,6 +11,15 @@ create index if not exists posts_subcategory_published_created_at_idx
 create index if not exists posts_published_created_at_idx
   on public.posts (published, created_at desc);
 
+create index if not exists categories_published_created_at_idx
+  on public.categories (published, created_at);
+
+create index if not exists subcategories_published_created_at_idx
+  on public.subcategories (published, created_at);
+
+create index if not exists subcategories_category_published_created_at_idx
+  on public.subcategories (category_id, published, created_at);
+
 create or replace function public.archive_extract_first_image(markdown text)
 returns text
 language plpgsql

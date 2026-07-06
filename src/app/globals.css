@@ -1147,6 +1147,7 @@ select {
 
 .archive-load-more-wrap {
   display: flex;
+  gap: 0.75rem;
   justify-content: center;
   padding-top: 1.5rem;
 }
