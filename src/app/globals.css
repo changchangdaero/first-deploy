@@ -1145,6 +1145,34 @@ select {
   object-fit: cover;
 }
 
+.archive-load-more-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 1.5rem;
+}
+
+.archive-load-more {
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--portfolio-surface);
+  color: var(--primary-dark);
+  padding: 0.55rem 1rem;
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.archive-load-more:hover,
+.archive-load-more:focus-visible {
+  border-color: var(--primary);
+  background: var(--accent-muted);
+}
+
 .markdown-content {
   --markdown-body-color: rgba(0, 0, 0, 0.82);
   --markdown-muted-color: rgba(0, 0, 0, 0.62);

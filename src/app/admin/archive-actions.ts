@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { buildArchivePath, getPostWithRelationsById } from '@/lib/archive';
 import { requireAdminAuthenticated } from '@/lib/admin-server-auth';
 import { parseHandwritingBlocksInput } from '@/lib/handwriting-blocks';
+import { buildPostExcerpt, buildPostThumbnailUrl } from '@/lib/post-preview';
 import { createSlugCandidate } from '@/lib/slug';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { supabase } from '@/lib/supabase/server';
@@ -397,7 +398,8 @@ export async function createPostAction(
   let title: string;
   let slug: string;
   let content: string;
-  let excerpt: string;
+  let excerpt: string | null;
+  let thumbnailUrl: string | null;
   let tags: string[];
   let handwritingBlocks: HandwritingBlockInput[];
   let published: boolean;
@@ -410,7 +412,12 @@ export async function createPostAction(
     subcategoryId = getRequiredText(formData, 'subcategory_id', '?쒕툕移댄뀒怨좊━');
     title = getRequiredText(formData, 'title', '?쒕ぉ');
     content = getRequiredText(formData, 'content', '蹂몃Ц');
-    excerpt = getOptionalText(formData, 'excerpt');
+    excerpt = buildPostExcerpt({
+      excerpt: getOptionalText(formData, 'excerpt'),
+      content,
+      title,
+    });
+    thumbnailUrl = buildPostThumbnailUrl(content);
     tags = parseTags(formData);
     handwritingBlocks = parseHandwritingBlocksInput(
       formData.get('handwriting_blocks')
@@ -443,7 +450,8 @@ export async function createPostAction(
         subcategory_id: subcategoryId,
         title,
         slug,
-        excerpt: excerpt || null,
+        excerpt,
+        thumbnail_url: thumbnailUrl,
         content,
         tags,
         published,
@@ -512,7 +520,8 @@ export async function updatePostAction(
   let title: string;
   let slug: string;
   let content: string;
-  let excerpt: string;
+  let excerpt: string | null;
+  let thumbnailUrl: string | null;
   let tags: string[];
   let handwritingBlocks: HandwritingBlockInput[];
   let published: boolean;
@@ -527,7 +536,12 @@ export async function updatePostAction(
     subcategoryId = getRequiredText(formData, 'subcategory_id', '?쒕툕移댄뀒怨좊━');
     title = getRequiredText(formData, 'title', '?쒕ぉ');
     content = getRequiredText(formData, 'content', '蹂몃Ц');
-    excerpt = getOptionalText(formData, 'excerpt');
+    excerpt = buildPostExcerpt({
+      excerpt: getOptionalText(formData, 'excerpt'),
+      content,
+      title,
+    });
+    thumbnailUrl = buildPostThumbnailUrl(content);
     tags = parseTags(formData);
     handwritingBlocks = parseHandwritingBlocksInput(
       formData.get('handwriting_blocks')
@@ -569,7 +583,8 @@ export async function updatePostAction(
         subcategory_id: subcategoryId,
         title,
         slug,
-        excerpt: excerpt || null,
+        excerpt,
+        thumbnail_url: thumbnailUrl,
         content,
         tags,
         published,

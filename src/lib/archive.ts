@@ -6,11 +6,24 @@ import type {
   Category,
   CategorySummary,
   HandwritingBlockRow,
+  PostCountRow,
+  PostListItemWithRelations,
+  PostListRow,
   PostRow,
   PostWithRelations,
   Subcategory,
   SubcategorySummary,
 } from '@/types/post';
+
+export const ARCHIVE_POST_LIST_PAGE_SIZE = 12;
+
+const POST_LIST_SELECT =
+  'id, subcategory_id, title, slug, excerpt, thumbnail_url, tags, published, created_at';
+
+const POST_DETAIL_SELECT =
+  'id, subcategory_id, title, slug, excerpt, content, thumbnail_url, tags, published, created_at';
+
+const POST_COUNT_SELECT = 'id, subcategory_id, published';
 
 function toPostWithRelations(
   post: PostRow,
@@ -24,6 +37,19 @@ function toPostWithRelations(
     subcategory,
     category,
     handwritingBlocks,
+  };
+}
+
+function toPostListItemWithRelations(
+  post: PostListRow,
+  subcategory: Subcategory,
+  category: Category
+): PostListItemWithRelations {
+  return {
+    ...post,
+    tags: post.tags ?? [],
+    subcategory,
+    category,
   };
 }
 
@@ -42,35 +68,6 @@ async function getHandwritingBlocksForPostWithClient(
   }
 
   return (data ?? []) as HandwritingBlockRow[];
-}
-
-async function getHandwritingBlocksForPostsWithClient(
-  postIds: string[],
-  client: typeof supabase
-) {
-  if (postIds.length === 0) {
-    return new Map<string, HandwritingBlockRow[]>();
-  }
-
-  const { data, error } = await client
-    .from('handwriting_blocks')
-    .select('*')
-    .in('post_id', postIds)
-    .order('created_at', { ascending: true });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  const blocksByPostId = new Map<string, HandwritingBlockRow[]>();
-
-  for (const block of (data ?? []) as HandwritingBlockRow[]) {
-    const current = blocksByPostId.get(block.post_id) ?? [];
-    current.push(block);
-    blocksByPostId.set(block.post_id, current);
-  }
-
-  return blocksByPostId;
 }
 
 export async function getHandwritingBlocksForPost(postId: string) {
@@ -155,7 +152,7 @@ export async function getCategorySummaries(): Promise<CategorySummary[]> {
   const [categories, subcategories, posts] = await Promise.all([
     getAllCategories(),
     getAllSubcategories(),
-    getAllPosts(),
+    getPostCountRows(),
   ]);
 
   const publishedPosts = posts.filter((post) => post.published);
@@ -272,7 +269,7 @@ export async function getSubcategorySummaries() {
   const [categories, subcategories, posts] = await Promise.all([
     getAllCategories(),
     getAllSubcategories(),
-    getAllPosts(),
+    getPostCountRows(),
   ]);
 
   const categoryMap = new Map(categories.map((category) => [category.id, category]));
@@ -351,23 +348,35 @@ export async function getCategoryTree(): Promise<CategoryWithSubcategories[]> {
     .sort((a, b) => a.name.localeCompare(b.name, 'ko-KR'));
 }
 
-export async function getAllPosts() {
+async function getPostCountRows() {
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select(POST_COUNT_SELECT);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []) as PostCountRow[];
+}
+
+async function getAllPostListRows() {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(POST_LIST_SELECT)
     .order('created_at', { ascending: false });
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return (data ?? []) as PostRow[];
+  return (data ?? []) as PostListRow[];
 }
 
 export async function getPostById(id: string) {
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select(POST_DETAIL_SELECT)
     .eq('id', id)
     .single();
 
@@ -404,7 +413,7 @@ export async function getPostWithRelationsById(id: string) {
 
 export async function getAdminPosts() {
   const [posts, subcategories, categories] = await Promise.all([
-    getAllPosts(),
+    getAllPostListRows(),
     getAllSubcategories(),
     getAllCategories(),
   ]);
@@ -426,20 +435,32 @@ export async function getAdminPosts() {
         return null;
       }
 
-      return toPostWithRelations(post, subcategory, category);
+      return toPostListItemWithRelations(post, subcategory, category);
     })
-    .filter((value): value is PostWithRelations => value !== null);
+    .filter((value): value is PostListItemWithRelations => value !== null);
 }
 
-export async function getPostsForSubcategory(subcategoryId: string, publishedOnly = false) {
+async function getPostListRowsForSubcategory({
+  subcategoryId,
+  publishedOnly = false,
+  limit,
+}: {
+  subcategoryId: string;
+  publishedOnly?: boolean;
+  limit?: number;
+}) {
   let query = supabase
     .from('posts')
-    .select('*')
+    .select(POST_LIST_SELECT)
     .eq('subcategory_id', subcategoryId)
     .order('created_at', { ascending: false });
 
   if (publishedOnly) {
     query = query.eq('published', true);
+  }
+
+  if (limit && limit > 0) {
+    query = query.range(0, limit - 1);
   }
 
   const { data, error } = await query;
@@ -448,12 +469,16 @@ export async function getPostsForSubcategory(subcategoryId: string, publishedOnl
     throw new Error(error.message);
   }
 
-  return (data ?? []) as PostRow[];
+  return (data ?? []) as PostListRow[];
 }
 
 export async function getPublishedPostsForSubcategory(
   categorySlug: string,
-  subcategorySlug: string
+  subcategorySlug: string,
+  options: {
+    page?: number;
+    pageSize?: number;
+  } = {}
 ) {
   const relation = await getSubcategoryBySlugs(categorySlug, subcategorySlug);
 
@@ -465,22 +490,26 @@ export async function getPublishedPostsForSubcategory(
     return null;
   }
 
-  const posts = await getPostsForSubcategory(relation.subcategory.id, true);
-  const handwritingBlocksByPostId = await getHandwritingBlocksForPostsWithClient(
-    posts.map((post) => post.id),
-    supabase
-  );
+  const page = Math.max(1, Math.floor(options.page ?? 1));
+  const pageSize = Math.max(1, options.pageSize ?? ARCHIVE_POST_LIST_PAGE_SIZE);
+  const visiblePostCount = page * pageSize;
+  const posts = await getPostListRowsForSubcategory({
+    subcategoryId: relation.subcategory.id,
+    publishedOnly: true,
+    limit: visiblePostCount + 1,
+  });
+  const visiblePosts = posts.slice(0, visiblePostCount);
 
   return {
     ...relation,
-    posts: posts.map((post) =>
-      toPostWithRelations(
-        post,
-        relation.subcategory,
-        relation.category,
-        handwritingBlocksByPostId.get(post.id) ?? []
-      )
+    posts: visiblePosts.map((post) =>
+      toPostListItemWithRelations(post, relation.subcategory, relation.category)
     ),
+    pagination: {
+      page,
+      pageSize,
+      hasMore: posts.length > visiblePostCount,
+    },
   };
 }
 
@@ -502,7 +531,7 @@ export async function getPublishedPostBySlugs(
 
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select(POST_DETAIL_SELECT)
     .eq('subcategory_id', relation.subcategory.id)
     .eq('slug', normalizedPostSlug)
     .eq('published', true)
@@ -537,7 +566,7 @@ export async function getAdminPostBySlugs(
 
   const { data, error } = await createAdminSupabase()
     .from('posts')
-    .select('*')
+    .select(POST_DETAIL_SELECT)
     .eq('subcategory_id', relation.subcategory.id)
     .eq('slug', normalizedPostSlug)
     .single();

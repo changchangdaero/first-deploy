@@ -30,6 +30,10 @@ export type PostRow = {
   created_at: string;
 };
 
+export type PostListRow = Omit<PostRow, 'content'>;
+
+export type PostCountRow = Pick<PostRow, 'id' | 'subcategory_id' | 'published'>;
+
 export type HandwritingPoint = {
   x: number;
   y: number;
@@ -96,6 +100,12 @@ export type PostWithRelations = PostRow & {
   category: Category;
   subcategory: Subcategory;
   handwritingBlocks: HandwritingBlockRow[];
+};
+
+export type PostListItemWithRelations = PostListRow & {
+  tags: string[];
+  category: Category;
+  subcategory: Subcategory;
 };
 
 export type CategoryWithSubcategories = Category & {
