@@ -1,4 +1,4 @@
-// 방문자 통계 데이터 계층: 일별 고유 방문을 기록하고 공개 카운터의 오늘/전체 수치를 읽습니다.
+// 방문자 통계 데이터 계층: 일별 방문을 기록하고 공개 카운터의 오늘/누적 방문 수치를 읽습니다.
 import 'server-only';
 
 import { createAdminSupabase } from '@/lib/supabase/admin';
@@ -25,13 +25,15 @@ export async function getVisitorStats(): Promise<VisitorStats> {
   const supabase = createAdminSupabase();
   const today = getTodayInSeoulDate();
 
-  const [{ count: todayCount, error: todayError }, { data, error: totalError }] =
+  const [{ count: todayCount, error: todayError }, { count: totalCount, error: totalError }] =
     await Promise.all([
       supabase
         .from('visitor_daily_visits')
         .select('visitor_id', { count: 'exact', head: true })
         .eq('visit_date', today),
-      supabase.from('visitor_daily_visits').select('visitor_id'),
+      supabase
+        .from('visitor_daily_visits')
+        .select('visitor_id', { count: 'exact', head: true }),
     ]);
 
   if (todayError) {
@@ -42,11 +44,9 @@ export async function getVisitorStats(): Promise<VisitorStats> {
     throw new Error(totalError.message);
   }
 
-  const uniqueVisitors = new Set((data ?? []).map((row) => row.visitor_id));
-
   return {
     today: todayCount ?? 0,
-    total: uniqueVisitors.size,
+    total: totalCount ?? 0,
   };
 }
 
