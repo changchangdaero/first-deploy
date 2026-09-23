@@ -1,11 +1,13 @@
 // 기술 스택 섹션: 홈페이지에 기술 아이콘과 출간/활동 기록을 보여줍니다.
 import Image from 'next/image';
+import type { IconType } from 'react-icons';
+import { SiGit, SiGrafana, SiJenkins, SiPrometheus, SiTerraform } from 'react-icons/si';
 
 import SectionHeader from '@/components/SectionHeader';
 
 type Skill = {
   name: string;
-  icon: string;
+  icon: string | IconType;
 };
 
 type Publication = {
@@ -25,18 +27,20 @@ type Activity = {
 };
 
 const languageFrameworks: Skill[] = [
-  { name: 'Java', icon: '/tech-icons/java.svg' },
-  { name: 'Spring', icon: '/tech-icons/spring.svg' },
-  { name: 'SQL', icon: '/tech-icons/sql.svg' },
-  { name: 'React', icon: '/tech-icons/react.svg' },
-  { name: 'JavaScript', icon: '/tech-icons/javascript.svg' },
   { name: 'Python', icon: '/tech-icons/python.svg' },
+  { name: 'SQL', icon: '/tech-icons/sql.svg' },
+  { name: 'JavaScript', icon: '/tech-icons/javascript.svg' },
 ];
 
 const toolsInfra: Skill[] = [
   { name: 'Linux', icon: '/tech-icons/linux.svg' },
-  { name: 'Docker', icon: '/tech-icons/docker.svg' },
   { name: 'AWS', icon: '/tech-icons/aws.svg' },
+  { name: 'Docker', icon: '/tech-icons/docker.svg' },
+  { name: 'Terraform', icon: SiTerraform },
+  { name: 'Git', icon: SiGit },
+  { name: 'Jenkins', icon: SiJenkins },
+  { name: 'Prometheus', icon: SiPrometheus },
+  { name: 'Grafana', icon: SiGrafana },
 ];
 
 const publications: Publication[] = [
@@ -88,16 +92,22 @@ const activities: Activity[] = [
 ];
 
 function SkillCard({ skill }: { skill: Skill }) {
+  const SkillIcon = skill.icon;
+
   return (
     <span className="tech-skill-card">
-      <Image
-        src={skill.icon}
-        alt=""
-        width={28}
-        height={28}
-        className="tech-skill-card__icon"
-        aria-hidden="true"
-      />
+      {typeof SkillIcon === 'string' ? (
+        <Image
+          src={SkillIcon}
+          alt=""
+          width={28}
+          height={28}
+          className="tech-skill-card__icon"
+          aria-hidden="true"
+        />
+      ) : (
+        <SkillIcon className="tech-skill-card__icon" aria-hidden="true" focusable="false" />
+      )}
       <span>{skill.name}</span>
     </span>
   );
@@ -176,12 +186,12 @@ export default function TechStack() {
     <section id="tech-stack" className="content-section tech-stack-section" aria-labelledby="tech-stack-title">
       <SectionHeader eyebrow="SKILLS" title="Tech Stack" titleId="tech-stack-title" />
       <div className="tech-stack-group">
-        <h3>Languages / Frameworks</h3>
+        <h3>Languages</h3>
         <SkillGrid skills={languageFrameworks} />
       </div>
 
       <div className="tech-stack-group">
-        <h3>Tools / Infra</h3>
+        <h3>Infra / DevOps</h3>
         <SkillGrid skills={toolsInfra} />
       </div>
 
