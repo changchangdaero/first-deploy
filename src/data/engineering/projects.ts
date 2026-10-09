@@ -203,10 +203,10 @@ export const projects: Project[] = [
         symptom: '빌드 직전 Jenkins 연결이 다시 끊김',
         cause:
           '멘토와 함께 docker logs를 확인한 결과, 마운트한 디렉토리의 권한이 Jenkins 실행 사용자와 맞지 않아 read/write 불가 로그가 발생',
-        solution: '마운트할 디렉토리를 미리 만들고 Jenkins 실행 사용자 권한을 부여한 뒤 재실행 → 정상 가동',
+        solution:
+          '마운트할 디렉토리를 미리 만들고, Jenkins 실행 사용자(uid 1000)에게 소유권을 부여한 뒤 재실행 → 정상 가동',
         lesson:
           '2번에서 세운 가설 중 "권한 꼬임"이 실제 원인이었고, 플러그인 설치 실패와 접속 끊김도 같은 원인에서 비롯됐을 가능성이 높았습니다. 이후 장애가 나면 docker logs부터 확인하는 습관이 생겼습니다.',
-        notes: ['[확인 필요] 실제 사용한 명령어 (예: `chown -R 1000:1000 <디렉토리>`)'],
       },
     ],
     decisions: [
