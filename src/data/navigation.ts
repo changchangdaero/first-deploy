@@ -1,4 +1,4 @@
-// 섹션별 헤더 메뉴: Engineering, Literature 각 페이지의 네비게이션과 반대편 링크를 정의합니다.
+// 헤더 메뉴: 모든 페이지 상단 바에 Engineering 그룹과 Literature 그룹 메뉴를 나란히 정의합니다.
 import { links } from '@/data/links';
 
 export type NavItem = {
@@ -7,33 +7,38 @@ export type NavItem = {
   external?: boolean;
 };
 
-export type HeaderConfig = {
-  brandHref: string;
-  navItems: NavItem[];
-  crossLink?: NavItem;
+export type NavGroup = {
+  key: 'engineering' | 'literature';
+  label: string;
+  basePath: string;
+  items: NavItem[];
 };
 
-export const engineeringHeader: HeaderConfig = {
-  brandHref: '/',
-  navItems: [
-    { label: 'About', href: '/engineering#about' },
-    { label: 'Projects', href: '/engineering#projects' },
-    ...(links.velog ? [{ label: 'velog', href: links.velog, external: true }] : []),
-  ],
-  crossLink: { label: 'Literature', href: '/literature' },
-};
+// 주소가 빈 링크(예: 아직 없는 velog)는 메뉴에서 뺍니다.
+function visible(items: NavItem[]) {
+  return items.filter((item) => item.href);
+}
 
-export const literatureHeader: HeaderConfig = {
-  brandHref: '/',
-  navItems: [
-    { label: 'About', href: '/literature#about' },
-    { label: 'Works', href: '/literature#works' },
-    { label: 'Activities', href: '/literature#activities' },
-  ],
-  crossLink: { label: 'Engineering', href: '/engineering' },
-};
-
-export const landingHeader: HeaderConfig = {
-  brandHref: '/',
-  navItems: [],
-};
+export const navGroups: NavGroup[] = [
+  {
+    key: 'engineering',
+    label: 'Engineering',
+    basePath: '/engineering',
+    items: visible([
+      { label: 'About', href: '/engineering#about' },
+      { label: 'Projects', href: '/engineering#projects' },
+      { label: 'velog', href: links.velog, external: true },
+    ]),
+  },
+  {
+    key: 'literature',
+    label: 'Literature',
+    basePath: '/literature',
+    items: visible([
+      { label: 'About', href: '/literature#about' },
+      { label: 'Works', href: '/literature#works' },
+      { label: 'Activities', href: '/literature#activities' },
+      { label: 'Brunch', href: links.brunch, external: true },
+    ]),
+  },
+];

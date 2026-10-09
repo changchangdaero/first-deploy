@@ -1,8 +1,9 @@
-// 전체 사이트 껍데기: 모든 페이지에 폰트, 전역 CSS, 테마 초기화, 푸터를 감쌉니다. 헤더는 섹션별 레이아웃이 담당합니다.
+// 전체 사이트 껍데기: 모든 페이지에 폰트, 전역 CSS, 테마 초기화, 공통 헤더, 푸터를 감쌉니다.
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
 import SiteFooter from '@/components/SiteFooter';
+import SiteHeader from '@/components/SiteHeader';
 import { getInitialTheme } from '@/lib/theme';
 import './globals.css';
 
@@ -53,6 +54,7 @@ export default async function RootLayout({
   return (
     <html lang="ko" data-theme={initialTheme} style={{ colorScheme: initialTheme }}>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+        <SiteHeader initialTheme={initialTheme} />
         {children}
         <SiteFooter />
       </body>
