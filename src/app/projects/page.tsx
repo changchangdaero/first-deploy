@@ -1,84 +1,68 @@
-// 프로젝트 페이지: "/projects" 화면에 프로젝트 상세 카드와 기술 스택 링크를 보여줍니다.
-import Link from 'next/link';
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import { FiArrowUpRight, FiGithub, FiImage } from 'react-icons/fi';
 
-import SectionHeading from '@/components/home/SectionHeading';
-import TagList from '@/components/home/TagList';
-import { futureProjects, projects } from '@/data/portfolio';
+import { PROJECTS, type ProjectStatus } from '@/data/projects';
+
+export const metadata: Metadata = {
+  title: 'Projects | Changmin.dev',
+  description: '인프라, 웹, AI를 연결해 만든 유창민의 프로젝트 모음입니다.',
+};
+
+const STATUS_LABELS: Record<ProjectStatus, string> = {
+  done: '완료',
+  wip: '진행 중',
+  planned: '예정',
+};
 
 export default function ProjectsPage() {
   return (
     <main className="portfolio-page">
-      <div className="portfolio-main">
-        <header className="page-intro">
-          <p className="section-eyebrow">Projects</p>
-          <h1>Project</h1>
-          <p>{'<프로젝트별 문제, 역할, 기술, 결과, 회고를 정리하는 페이지 설명>'}</p>
-        </header>
+      <div className="portfolio-main projects-page">
+        <section id="projects" className="projects-showcase" aria-labelledby="projects-title">
+          <header className="page-intro projects-showcase__header">
+            <p className="section-eyebrow">PROJECTS</p>
+            <h1 id="projects-title">What I&apos;ve Built</h1>
+            <p>시스템을 직접 세우고, 데이터를 관찰하고, 다시 더 단단하게 만드는 과정을 기록합니다.</p>
+          </header>
 
-        <section className="content-section">
-          <SectionHeading
-            eyebrow="Selected"
-            title="<프로젝트 상세 섹션 제목>"
-            description="<대표 프로젝트를 상세히 읽을 수 있다는 설명>"
-          />
-          <div className="project-list">
-            {projects.map((project) => (
-              <article id={project.slug} key={project.slug} className="project-card project-card--detail">
-                <div className="project-card__header">
-                  <div>
-                    <p>{project.period}</p>
-                    <h3>{project.title}</h3>
-                  </div>
+          <div className="projects-grid">
+            {PROJECTS.map((project, index) => (
+              <article className="showcase-project-card" key={project.id}>
+                <div className="showcase-project-card__media">
+                  {project.thumbnail ? (
+                    <Image src={project.thumbnail} alt={`${project.title} 프로젝트 화면`} fill sizes="(max-width: 767px) 100vw, 50vw" className="showcase-project-card__image" />
+                  ) : (
+                    <div className="showcase-project-card__placeholder">
+                      <FiImage aria-hidden="true" />
+                      <span>Coming soon</span>
+                    </div>
+                  )}
                 </div>
-                <p className="project-card__summary">{project.oneLine}</p>
-                <dl className="project-card__meta">
-                  <div>
-                    <dt>문제</dt>
-                    <dd>{project.problem}</dd>
+
+                <div className="showcase-project-card__body">
+                  <div className="showcase-project-card__meta">
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <span className={`project-status project-status--${project.status}`}>{STATUS_LABELS[project.status]}</span>
                   </div>
-                  <div>
-                    <dt>내 역할</dt>
-                    <dd>{project.role}</dd>
-                  </div>
-                  <div>
-                    <dt>기술</dt>
-                    <dd>
-                      <TagList tags={project.stack} />
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>결과</dt>
-                    <dd>{project.result}</dd>
-                  </div>
-                  <div>
-                    <dt>회고</dt>
-                    <dd>{project.learned}</dd>
-                  </div>
-                </dl>
+                  <h2>{project.title}</h2>
+                  <p className="showcase-project-card__subtitle">{project.subtitle}</p>
+                  <p className="showcase-project-card__description">{project.description}</p>
+                  {project.highlight ? <p className="showcase-project-card__highlight">{'// '}{project.highlight}</p> : null}
+                  <ul className="showcase-project-card__stack" aria-label="기술 스택">
+                    {project.stack.map((technology) => <li key={technology}>{technology}</li>)}
+                  </ul>
+                  {project.links?.github || project.links?.demo ? (
+                    <div className="showcase-project-card__links">
+                      {project.links.github ? <a href={project.links.github} target="_blank" rel="noreferrer"><FiGithub aria-hidden="true" /> GitHub</a> : null}
+                      {project.links.demo ? <a href={project.links.demo} target="_blank" rel="noreferrer"><FiArrowUpRight aria-hidden="true" /> Demo</a> : null}
+                    </div>
+                  ) : null}
+                </div>
               </article>
             ))}
           </div>
         </section>
-
-        <section className="content-section">
-          <SectionHeading
-            eyebrow="Next"
-            title="<추가 예정 프로젝트 섹션 제목>"
-            description="<이후 추가 가능한 프로젝트를 정리하는 설명>"
-          />
-          <div className="note-list">
-            {futureProjects.map((project) => (
-              <article key={project} className="note-card">
-                <h3>{project}</h3>
-                <p>{'<추가 예정 프로젝트 설명>'}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <Link href="/contact" className="text-link">
-          Contact
-        </Link>
       </div>
     </main>
   );

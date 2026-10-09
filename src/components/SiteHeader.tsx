@@ -13,6 +13,7 @@ const sectionNavItems = [
   { label: 'Contact', href: '/#contact' },
 ];
 
+const projectsNavItem = { label: 'Projects', href: '/projects#projects' };
 const archiveNavItem = { label: 'Archive', href: '/archive' };
 
 type SiteHeaderProps = {
@@ -53,7 +54,10 @@ export default function SiteHeader({ initialTheme = 'light' }: SiteHeaderProps) 
               {item.label}
             </Link>
           ))}
-          <Link className="site-nav__archive" href={archiveNavItem.href}>
+          <Link className="site-nav__projects" href={projectsNavItem.href}>
+            {projectsNavItem.label}
+          </Link>
+          <Link href={archiveNavItem.href}>
             {archiveNavItem.label}
           </Link>
         </nav>
@@ -84,6 +88,10 @@ export default function SiteHeader({ initialTheme = 'light' }: SiteHeaderProps) 
               </Link>
             ))}
             <span className="site-mobile-menu__divider" aria-hidden="true" />
+            <Link href={projectsNavItem.href} onClick={() => setIsMenuOpen(false)}>
+              <span>{projectsNavItem.label}</span>
+              <span aria-hidden="true">→</span>
+            </Link>
             <Link
               className="site-mobile-menu__archive"
               href={archiveNavItem.href}
