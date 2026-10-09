@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" font-family="Pretendard, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3f5f4a"/>
+    </marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7a8178"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="600" fill="#ffffff"/>
+
+  <!-- GitHub -->
+  <rect x="40" y="70" width="230" height="130" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="64" y="106" font-size="20" font-weight="800" fill="#1f2a24">GitHub</text>
+  <text x="64" y="132" font-size="14" fill="#7a8178">inspire3_fortune</text>
+  <text x="64" y="156" font-size="14" fill="#2d352f">main 브랜치</text>
+  <text x="64" y="180" font-size="13" fill="#7a8178">Dockerfile (멀티스테이지)</text>
+
+  <!-- Docker Hub -->
+  <rect x="930" y="70" width="230" height="130" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="954" y="106" font-size="20" font-weight="800" fill="#1f2a24">Docker Hub</text>
+  <text x="954" y="132" font-size="14" fill="#7a8178">changchangdaero/ai-fortune</text>
+  <rect x="954" y="148" width="62" height="26" rx="13" fill="#eef3ec" stroke="#a8b89a"/>
+  <text x="985" y="166" font-size="13" fill="#2f4638" text-anchor="middle">:7</text>
+  <rect x="1024" y="148" width="86" height="26" rx="13" fill="#eef3ec" stroke="#a8b89a"/>
+  <text x="1067" y="166" font-size="13" fill="#2f4638" text-anchor="middle">:latest</text>
+
+  <!-- AWS EC2 경계 -->
+  <rect x="300" y="250" width="860" height="310" rx="18" fill="#f7f9f6" stroke="#d4d4d4" stroke-dasharray="6 6"/>
+  <text x="324" y="284" font-size="17" font-weight="700" fill="#3f5f4a">AWS EC2 (단일 인스턴스)</text>
+
+  <!-- Jenkins -->
+  <rect x="330" y="310" width="380" height="220" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="354" y="346" font-size="20" font-weight="800" fill="#1f2a24">Jenkins 컨테이너</text>
+  <text x="354" y="370" font-size="14" fill="#7a8178">jenkins/jenkins:lts-jdk17 · :8085</text>
+  <text x="354" y="404" font-size="15" fill="#2d352f">① 필수 환경변수 검증 · Docker Hub 로그인</text>
+  <text x="354" y="430" font-size="15" fill="#2d352f">② 클린 clone (--depth 1)</text>
+  <text x="354" y="456" font-size="15" fill="#2d352f">③ docker build</text>
+  <text x="354" y="482" font-size="15" fill="#2d352f">④ push :빌드번호 + :latest</text>
+  <text x="354" y="508" font-size="15" fill="#2d352f">⑤ compose pull &amp; up -d (옵션)</text>
+
+  <!-- 호스트 Docker -->
+  <rect x="760" y="310" width="370" height="96" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="784" y="346" font-size="18" font-weight="800" fill="#1f2a24">호스트 Docker 엔진</text>
+  <text x="784" y="372" font-size="14" fill="#7a8178">docker.sock 마운트로 Jenkins가 사용</text>
+  <text x="784" y="394" font-size="14" fill="#7a8178">이미지 빌드 · 컨테이너 실행</text>
+
+  <!-- 서비스 -->
+  <rect x="760" y="434" width="370" height="96" rx="14" fill="#ffffff" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="784" y="470" font-size="18" font-weight="800" fill="#1f2a24">ai-fortune 서비스</text>
+  <text x="784" y="496" font-size="14" fill="#7a8178">docker compose (/opt/compose/fortune.yml)</text>
+  <text x="784" y="518" font-size="14" fill="#7a8178">compose 파일이 있을 때만 배포</text>
+
+  <!-- 흐름 -->
+  <path d="M155 200 L 155 300 Q 155 330 185 330 L 324 330" fill="none" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="168" y="262" font-size="13" fill="#3f5f4a">git clone</text>
+  <text x="168" y="282" font-size="13" fill="#7a8178">(수동 빌드 실행)</text>
+
+  <line x1="710" y1="358" x2="754" y2="358" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <path d="M945 310 L 1045 206" fill="none" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="975" y="266" font-size="13" fill="#3f5f4a" text-anchor="end">docker push</text>
+
+  <path d="M1100 206 Q 1185 320 1134 470" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+  <text x="1124" y="232" font-size="13" fill="#7a8178" text-anchor="end">compose pull</text>
+
+  <!-- 범례 -->
+  <line x1="40" y1="530" x2="80" y2="530" stroke="#3f5f4a" stroke-width="3"/>
+  <text x="90" y="535" font-size="14" fill="#2d352f">빌드 · 푸시</text>
+  <line x1="40" y1="556" x2="80" y2="556" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="90" y="561" font-size="14" fill="#2d352f">배포 (옵션)</text>
+</svg>

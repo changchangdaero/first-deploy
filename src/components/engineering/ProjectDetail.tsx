@@ -1,16 +1,20 @@
-// 프로젝트 상세: 요약 → 기본 정보 → 스택 → 아키텍처 → 내가 한 일 → 트러블슈팅 → 결과 → 배운 점/한계 → 링크 순서로 보여줍니다.
+// 프로젝트 상세: 요약 → 대표 사진 → 기본 정보 → 스택 → 아키텍처 → 내가 한 일 → 트러블슈팅 → 설계 결정
+// → 표 → 코드 → 결과 → 배운 점/한계/다음 과제 → 링크 순서로 보여줍니다.
 // 데이터가 비어 있거나 이미지 파일이 없는 섹션은 통째로 숨깁니다.
 import Image from 'next/image';
 import Link from 'next/link';
 import type { IconType } from 'react-icons';
-import { FiArrowUpRight, FiFileText, FiGithub, FiPlayCircle } from 'react-icons/fi';
+import { FiAlertCircle, FiArrowUpRight, FiBox, FiFileText, FiGithub, FiPlayCircle } from 'react-icons/fi';
 
+import CodeBlock from '@/components/engineering/CodeBlock';
+import RichText from '@/components/engineering/RichText';
 import {
   PROJECT_STATUS_LABELS,
   getAdjacentProjects,
   projectImagePath,
   type Project,
   type ProjectImage,
+  type ProjectTroubleshooting,
 } from '@/data/engineering/projects';
 import { engineeringSections } from '@/data/engineering/sections';
 import { publicFileExists } from '@/lib/public-file';
@@ -19,10 +23,12 @@ const labels = engineeringSections.projectDetail;
 
 type LinkKey = keyof NonNullable<Project['links']>;
 
-const LINK_ORDER: LinkKey[] = ['github', 'video', 'slides', 'demo'];
+const LINK_ORDER: LinkKey[] = ['github', 'issue', 'dockerhub', 'video', 'slides', 'demo'];
 
 const LINK_ICONS: Record<LinkKey, IconType> = {
   github: FiGithub,
+  issue: FiAlertCircle,
+  dockerhub: FiBox,
   video: FiPlayCircle,
   slides: FiFileText,
   demo: FiArrowUpRight,
@@ -34,6 +40,18 @@ function DetailSection({ title, children }: { title: string; children: React.Rea
       <h2 className="project-detail__heading">{title}</h2>
       {children}
     </section>
+  );
+}
+
+function TextList({ items }: { items: string[] }) {
+  return (
+    <ul className="profile-list project-detail__list">
+      {items.map((item) => (
+        <li key={item}>
+          <RichText text={item} />
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -54,7 +72,13 @@ function Figure({
 
   return (
     <figure className="project-detail__figure">
-      <a href={src} target="_blank" rel="noopener noreferrer" className="project-detail__image-link" aria-label={`${alt} 원본 보기`}>
+      <a
+        href={src}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="project-detail__image-link"
+        aria-label={`${alt} 원본 보기`}
+      >
         <Image
           src={src}
           alt={alt}
@@ -89,6 +113,67 @@ function hasImage(slug: string, image?: ProjectImage) {
   return Boolean(image) && publicFileExists(projectImagePath(slug, image!.file));
 }
 
+// 트러블슈팅 한 항목: 증상 / 원인 / 대응 / 원인 가설 / 해결 / 배운 점 중 채워진 칸만 보여줍니다.
+function TroubleItem({ slug, item, index }: { slug: string; item: ProjectTroubleshooting; index: number }) {
+  const steps = labels.troubleshootingSteps;
+  const textRows = (['symptom', 'cause', 'response'] as const).filter((key) => item[key]);
+  const afterRows = (['solution', 'lesson'] as const).filter((key) => item[key]);
+
+  return (
+    <div className="project-detail__trouble-item">
+      {item.title ? (
+        <h3 className="project-detail__trouble-title">
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          {item.title}
+        </h3>
+      ) : null}
+      <dl className="project-detail__trouble">
+        {textRows.map((key) => (
+          <div key={key} className={`project-detail__trouble-row project-detail__trouble-row--${key}`}>
+            <dt>{steps[key]}</dt>
+            <dd>
+              <RichText text={item[key]!} />
+            </dd>
+          </div>
+        ))}
+        {item.hypotheses && item.hypotheses.length > 0 ? (
+          <div className="project-detail__trouble-row">
+            <dt>{steps.hypotheses}</dt>
+            <dd>
+              <ol className="project-detail__hypotheses">
+                {item.hypotheses.map((hypothesis) => (
+                  <li key={hypothesis}>
+                    <RichText text={hypothesis} />
+                  </li>
+                ))}
+              </ol>
+            </dd>
+          </div>
+        ) : null}
+        {afterRows.map((key) => (
+          <div key={key} className={`project-detail__trouble-row project-detail__trouble-row--${key}`}>
+            <dt>{steps[key]}</dt>
+            <dd>
+              <RichText text={item[key]!} />
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {item.notes && item.notes.length > 0 ? (
+        <ul className="project-detail__notes">
+          {item.notes.map((note) => (
+            <li key={note}>
+              <RichText text={note} />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {/* 항목별 증거 사진 (예: 에러 화면, 해결 후 정상 화면). 파일이 없으면 숨깁니다. */}
+      {item.image && hasImage(slug, item.image) ? <Figure slug={slug} image={item.image} /> : null}
+    </div>
+  );
+}
+
 export default function ProjectDetail({ project }: { project: Project }) {
   const { slug } = project;
   const heroImage = project.thumbnail ? { file: project.thumbnail, caption: '' } : undefined;
@@ -98,8 +183,10 @@ export default function ProjectDetail({ project }: { project: Project }) {
   const screenshots = (project.screenshots ?? []).filter((image) => hasImage(slug, image));
   const metrics = project.metrics ?? [];
   const troubleshooting = project.troubleshooting ?? [];
+  const decisions = project.decisions ?? [];
   const learnings = project.learnings ?? [];
   const limitations = project.limitations ?? [];
+  const nextSteps = project.nextSteps ?? [];
   const links = LINK_ORDER.filter((key) => project.links?.[key]);
   const { previous, next } = getAdjacentProjects(slug);
 
@@ -120,7 +207,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
         <h1 className="project-detail__title">{project.title}</h1>
         <p className="project-detail__summary">{project.summary}</p>
         {project.award ? <p className="showcase-project-card__highlight">{'// '}{project.award}</p> : null}
-        {project.background ? <p className="project-detail__background">{project.background}</p> : null}
+        {project.background ? (
+          <p className="project-detail__background">
+            <RichText text={project.background} />
+          </p>
+        ) : null}
         {links.length > 0 ? <ProjectLinks project={project} keys={links} /> : null}
       </header>
 
@@ -175,17 +266,13 @@ export default function ProjectDetail({ project }: { project: Project }) {
       {/* ⑤ 내가 한 일 */}
       {project.contributions.length > 0 || project.teamContext ? (
         <DetailSection title={labels.contributions}>
-          {project.contributions.length > 0 ? (
-            <ul className="profile-list project-detail__list">
-              {project.contributions.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          ) : null}
+          {project.contributions.length > 0 ? <TextList items={project.contributions} /> : null}
           {project.teamContext ? (
             <div className="project-detail__note">
               <strong>{labels.teamContext}</strong>
-              <p>{project.teamContext}</p>
+              <p>
+                <RichText text={project.teamContext} />
+              </p>
             </div>
           ) : null}
         </DetailSection>
@@ -196,20 +283,67 @@ export default function ProjectDetail({ project }: { project: Project }) {
         <DetailSection title={labels.troubleshooting}>
           <div className="project-detail__troubles">
             {troubleshooting.map((item, index) => (
-              <div key={`${item.problem}-${index}`} className="project-detail__trouble-item">
+              <TroubleItem key={`${item.symptom}-${index}`} slug={slug} item={item} index={index} />
+            ))}
+          </div>
+        </DetailSection>
+      ) : null}
+
+      {/* 설계 결정 */}
+      {decisions.length > 0 ? (
+        <DetailSection title={labels.decisions}>
+          <div className="project-detail__troubles">
+            {decisions.map((decision) => (
+              <div key={decision.title} className="project-detail__trouble-item">
+                <h3 className="project-detail__trouble-title">{decision.title}</h3>
                 <dl className="project-detail__trouble">
-                  {(['problem', 'cause', 'solution', 'result'] as const).map((step) => (
-                    <div key={step} className={`project-detail__trouble-row project-detail__trouble-row--${step}`}>
-                      <dt>{labels.troubleshootingSteps[step]}</dt>
-                      <dd>{item[step]}</dd>
-                    </div>
-                  ))}
+                  {(['options', 'decision', 'tradeoff'] as const)
+                    .filter((key) => decision[key])
+                    .map((key) => (
+                      <div key={key} className={`project-detail__trouble-row project-detail__trouble-row--${key}`}>
+                        <dt>{labels.decisionSteps[key]}</dt>
+                        <dd>
+                          <RichText text={decision[key]!} />
+                        </dd>
+                      </div>
+                    ))}
                 </dl>
-                {/* 항목별 증거 사진 (예: 에러 화면, 해결 후 정상 화면). 파일이 없으면 숨깁니다. */}
-                {item.image && hasImage(slug, item.image) ? <Figure slug={slug} image={item.image} /> : null}
               </div>
             ))}
           </div>
+        </DetailSection>
+      ) : null}
+
+      {/* 표: 모바일에서는 행마다 카드처럼 쌓여 가로 스크롤이 생기지 않습니다. */}
+      {project.table && project.table.rows.length > 0 ? (
+        <DetailSection title={project.table.title}>
+          <table className="project-detail__table">
+            <thead>
+              <tr>
+                <th scope="col">{project.table.columns[0]}</th>
+                <th scope="col">{project.table.columns[1]}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {project.table.rows.map(([left, right]) => (
+                <tr key={left}>
+                  <th scope="row" data-label={project.table!.columns[0]}>
+                    <RichText text={left} />
+                  </th>
+                  <td data-label={project.table!.columns[1]}>
+                    <RichText text={right} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </DetailSection>
+      ) : null}
+
+      {/* 코드 */}
+      {project.code ? (
+        <DetailSection title={project.code.title}>
+          <CodeBlock code={project.code} />
         </DetailSection>
       ) : null}
 
@@ -240,25 +374,22 @@ export default function ProjectDetail({ project }: { project: Project }) {
         </DetailSection>
       ) : null}
 
-      {/* ⑦ 배운 점 / 한계 */}
-      {learnings.length > 0 || limitations.length > 0 ? (
+      {/* ⑦ 배운 점 / 한계 / 다음 개선 과제 */}
+      {learnings.length > 0 || limitations.length > 0 || nextSteps.length > 0 ? (
         <div className="project-detail__reflection">
           {learnings.length > 0 ? (
             <DetailSection title={labels.learnings}>
-              <ul className="profile-list project-detail__list">
-                {learnings.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+              <TextList items={learnings} />
             </DetailSection>
           ) : null}
           {limitations.length > 0 ? (
             <DetailSection title={labels.limitations}>
-              <ul className="profile-list project-detail__list">
-                {limitations.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+              <TextList items={limitations} />
+            </DetailSection>
+          ) : null}
+          {nextSteps.length > 0 ? (
+            <DetailSection title={labels.nextSteps}>
+              <TextList items={nextSteps} />
             </DetailSection>
           ) : null}
         </div>

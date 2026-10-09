@@ -15,13 +15,44 @@ export type ProjectMetric = {
   value: string;
 };
 
-// 트러블슈팅: 문제 → 원인 → 해결 → 결과 순서로 적습니다. image는 이 항목의 증거 사진(선택)입니다.
+// 트러블슈팅: 증상 / 원인 / 해결 구조로 적습니다. 비어 있는 칸은 화면에서 숨겨집니다.
+// - response: 근본 해결 전에 취한 대응 (해결 대신 쓸 때)
+// - hypotheses: 정리한 원인 가설 목록
+// - notes: '[확인 필요] …'처럼 직접 채울 메모 (노란색으로 강조됩니다)
+// - image: 이 항목의 증거 사진
 export type ProjectTroubleshooting = {
-  problem: string;
-  cause: string;
-  solution: string;
-  result: string;
+  title?: string;
+  symptom: string;
+  cause?: string;
+  response?: string;
+  hypotheses?: string[];
+  solution?: string;
+  lesson?: string;
+  notes?: string[];
   image?: ProjectImage;
+};
+
+// 설계 결정: 어떤 선택지 중에서 무엇을 왜 골랐고, 어떤 한계를 인식했는지 적습니다.
+export type ProjectDecision = {
+  title: string;
+  options: string;
+  decision: string;
+  tradeoff?: string;
+};
+
+// 2열 표 (예: 겪은 문제 → 반영한 장치). 셀 안의 `코드`는 코드 글꼴로 보입니다.
+export type ProjectTable = {
+  title: string;
+  columns: [string, string];
+  rows: [string, string][];
+};
+
+// 코드 블록: language에 맞춰 문법 강조가 적용됩니다.
+export type ProjectCode = {
+  title: string;
+  language: 'bash' | 'yaml' | 'dockerfile';
+  source: string;
+  caption?: string;
 };
 
 // 기술 선택 이유: 왜 이 기술을 골랐는지 1~2줄로 적습니다.
@@ -50,12 +81,18 @@ export type Project = {
   contributions: string[];
   teamContext?: string;
   troubleshooting?: ProjectTroubleshooting[];
+  decisions?: ProjectDecision[];
+  table?: ProjectTable;
+  code?: ProjectCode;
   metrics?: ProjectMetric[];
   screenshots?: ProjectImage[];
   learnings?: string[];
   limitations?: string[];
+  nextSteps?: string[];
   links?: {
     github?: string;
+    issue?: string;
+    dockerhub?: string;
     video?: string;
     slides?: string;
     demo?: string;
@@ -106,20 +143,167 @@ export const projects: Project[] = [
     slug: 'jenkins-ci',
     tier: 'main',
     status: 'done',
-    title: 'Jenkins 기반 CI 파이프라인',
-    summary: todo('Jenkins CI 프로젝트 한 줄 요약'),
+    title: 'Jenkins 기반 CI/CD 파이프라인 구축',
+    summary: 'Jenkins와 Docker로 빌드 · Docker Hub push를 자동화하고, compose 배포 단계까지 스크립트로 구현',
+    background:
+      'LG CNS 블로그 서비스를 MSA로 전환하는 팀 프로젝트에서 ai-fortune-service의 Jenkins 파이프라인을 맡았습니다. 구축 중 Jenkins가 반복해서 끊기는 장애를 겪었고, 멘토와 함께 docker logs를 확인해 볼륨 마운트 권한 불일치가 원인임을 찾아 해결했습니다.',
     context: 'LG CNS AM INSPIRE CAMP 3기 · 미니 프로젝트 2차',
-    period: todo('기간'),
+    period: '2025.10.23 ~ 10.29 (1주)',
     team: '7명',
-    role: 'Jenkins CI 담당',
-    stack: ['Jenkins', 'Docker', 'Docker Hub', 'GitHub'],
+    role: 'CI/CD 파이프라인 구축 담당',
+    stack: ['AWS EC2', 'Jenkins (lts-jdk17)', 'Docker', 'Docker Hub', 'Docker Compose', 'Bash', 'GitHub'],
+    thumbnail: 'dockerhub-tags.png',
+    architecture: {
+      file: 'architecture.svg',
+      caption:
+        'GitHub → EC2 위 Jenkins 컨테이너에서 docker build → Docker Hub push(:빌드번호, :latest) → 같은 EC2에서 docker compose 배포(옵션)',
+    },
     contributions: [
-      'Jenkins 빌드 → Docker 이미지 패키징 → Docker Hub push로 이어지는 CI 파이프라인 구축',
-      '세 세부팀 결과를 통합한 발표 자료 제작 및 발표',
+      'EC2에 Jenkins 컨테이너를 구성하고 docker.sock을 마운트해 호스트 Docker로 이미지를 빌드하도록 설정',
+      'Docker Hub Access Token을 Jenkins Credentials에 등록하고 빌드 환경변수로 주입',
+      '빌드 → Docker Hub push(:빌드번호, :latest) → compose 배포로 이어지는 최종 파이프라인 스크립트 작성',
+      '필수값 검증 · 클린 clone · 단계별 로그 등 실패 원인을 빠르게 찾기 위한 방어 장치 반영',
+      '배포 구조를 SSH 원격 배포에서 단일 EC2 로컬 compose 배포로 재설계',
     ],
     teamContext:
-      '웹사이트 MVP를 만든 뒤 3개 세부팀(nGrinder 부하 테스트 / Jenkins CI / GitHub Actions CI)으로 나누어 진행했습니다. nGrinder 부하 테스트와 GitHub Actions CI는 다른 팀원이 담당했습니다.',
-    limitations: ['CI까지 완료했고, CD는 다음 단계로 계획했습니다.'],
+      '7명 팀이 3개 세부팀(nGrinder 부하 테스트 / Jenkins CI·CD / GitHub Actions CI)으로 나눠 진행했고, nGrinder와 GitHub Actions는 다른 팀원이 담당했습니다. Jenkins 초기 셋업과 docker.sock 권한 해결, SSH 원격 배포 스크립트 초안은 팀원이 작성했고, 저는 이를 참고해 단일 EC2 로컬 배포 방식의 최종 파이프라인 스크립트를 직접 작성했습니다.',
+    troubleshooting: [
+      {
+        title: '첫 배포 실패: 인증 환경변수 미주입',
+        symptom:
+          'Docker Hub 계정 환경변수(`DOCKERHUB_USR`, `DOCKERHUB_PSW`)가 비어 `unbound variable` 오류로 스크립트가 중단됨',
+        cause:
+          'Jenkins Credentials가 빌드 환경변수로 바인딩되지 않았음. Docker Hub를 구글 계정으로 가입해 비밀번호가 없는 상태였음',
+        solution:
+          'Docker Hub Access Token을 발급해 Jenkins Credentials에 등록하고, Credentials Binding 플러그인으로 환경변수에 주입. 스크립트에 필수 변수 검증 가드(`${VAR:?}`)를 추가',
+        notes: [
+          '[확인 필요] 이슈 기록에는 `DOCKERHUB_USR`, 최종 스크립트에는 `DOCKERHUB_USER` — 변수명 불일치도 원인이었는지',
+        ],
+        image: {
+          file: 'build1-console-unbound.png',
+          caption: '빌드 #1 콘솔: DOCKERHUB_PSW · DOCKERHUB_USR unbound variable로 실패',
+        },
+      },
+      {
+        title: 'Jenkins 접속 불가와 플러그인 설치 실패',
+        symptom: '8080 포트 접속 시 무한 로딩. 재구축 후에는 플러그인 설치가 극도로 느리고 대부분 실패',
+        response: '환경을 처음부터 재구축(포트 8085로 변경, 보안그룹 재설정)하고 원인 가설을 정리',
+        hypotheses: [
+          '업데이트 서버 타임아웃',
+          '컨테이너 DNS 불안정',
+          '설치 lock 파일 잔존',
+          '디스크 부족',
+          '`jenkins_home` 권한 꼬임',
+          '플러그인 의존성 충돌',
+        ],
+        image: {
+          file: 'plugin-install-failed.png',
+          caption: '재구축 후 초기 플러그인 설치에서 대부분의 플러그인이 실패',
+        },
+      },
+      {
+        title: '핵심 원인: 볼륨 마운트 권한 불일치',
+        symptom: '빌드 직전 Jenkins 연결이 다시 끊김',
+        cause:
+          '멘토와 함께 docker logs를 확인한 결과, 마운트한 디렉토리의 권한이 Jenkins 실행 사용자와 맞지 않아 read/write 불가 로그가 발생',
+        solution: '마운트할 디렉토리를 미리 만들고 Jenkins 실행 사용자 권한을 부여한 뒤 재실행 → 정상 가동',
+        lesson:
+          '2번에서 세운 가설 중 "권한 꼬임"이 실제 원인이었고, 플러그인 설치 실패와 접속 끊김도 같은 원인에서 비롯됐을 가능성이 높았습니다. 이후 장애가 나면 docker logs부터 확인하는 습관이 생겼습니다.',
+        notes: ['[확인 필요] 실제 사용한 명령어 (예: `chown -R 1000:1000 <디렉토리>`)'],
+      },
+    ],
+    decisions: [
+      {
+        title: '배포 구조 결정',
+        options: 'CI 서버와 서비스 서버를 분리해 SSH로 원격 배포 vs Jenkins가 있는 단일 EC2에 로컬 배포',
+        decision:
+          '일정상 "배포 성공"을 최우선으로 두고 단일 EC2 로컬 배포를 선택. 배포 단계를 SSH 방식에서 로컬 compose 방식으로 다시 작성',
+        tradeoff:
+          '단일 EC2는 Jenkins와 서비스가 리소스를 나눠 써서 운영 환경에는 맞지 않음. 실제로 메모리 문제도 의심됐기 때문에, 운영이라면 서버를 분리하는 것이 맞다고 판단',
+      },
+    ],
+    table: {
+      title: '최종 스크립트의 방어 장치',
+      columns: ['겪은 문제', '반영한 장치'],
+      rows: [
+        ['환경변수 미주입', '`${VAR:?}` 필수값 검증'],
+        ['로그인 캐시 꼬임', '`docker logout` 후 `--password-stdin`으로 재로그인'],
+        ['이전 작업물 잔존', '`rm -rf` 후 `--depth 1` 클린 clone'],
+        ['원인 파악이 어려운 실패', '버전 출력, Dockerfile 존재 체크, 단계별 로그'],
+        ['롤백 불가', '`:BUILD_NUMBER` + `:latest` 이중 태깅'],
+        ['배포 환경 차이', 'compose 파일이 있을 때만 배포하도록 옵션화'],
+      ],
+    },
+    code: {
+      title: '최종 파이프라인 스크립트',
+      language: 'bash',
+      caption: 'Jenkins Execute shell에 작성한 최종 스크립트 (원문 그대로)',
+      source: `APP="ai-fortune"
+REPO_URL="https://github.com/lgcns2-mini/inspire3_fortune.git"
+BRANCH="main"
+: "\${DOCKERHUB_USER:?DOCKERHUB_USER is empty}"   # Jenkins가 주입
+: "\${DOCKERHUB_PSW:?DOCKERHUB_PSW is empty}"     # Jenkins가 주입
+IMAGE="\${DOCKERHUB_USER}/\${APP}"
+TAG="\${BUILD_NUMBER:-latest}"
+# (배포 옵션) EC2 로컬에 준비해 둔 compose 파일 경로
+COMPOSE_FILE="/opt/compose/fortune.yml"
+echo "==> APP=\${APP}"
+echo "==> REPO=\${REPO_URL} (\${BRANCH})"
+echo "==> IMAGE=\${IMAGE}:\${TAG}"
+### ── 1) 디버그용 버전 확인 ─────────────────────────────────────────────────
+docker version || true
+docker compose version || true
+# ⭐(추가) 캐시 로그인 비우고 새 토큰으로 로그인, 베이스 이미지 미리 당김
+docker logout || true
+echo "\${DOCKERHUB_PSW}" | docker login -u "\${DOCKERHUB_USER}" --password-stdin
+docker pull openjdk:17-jdk-slim
+### ── 2) 소스 체크아웃(깨끗하게) ───────────────────────────────────────────
+rm -rf repo
+git clone -b "\${BRANCH}" --depth 1 "\${REPO_URL}" repo
+cd repo
+# 필요 시 Gradle 빌드가 선행되어야 하는 프로젝트면 주석 해제
+# ./gradlew -x test build
+# Dockerfile 존재 확인(있으면 진행, 없으면 실패)
+test -f Dockerfile || { echo "❌ Dockerfile not found in $(pwd)"; exit 1; }
+### ── 3) 이미지 빌드 ────────────────────────────────────────────────────────
+echo "==> docker build \${IMAGE}:\${TAG}"
+docker build --pull -t "\${IMAGE}:\${TAG}" .
+### ── 4) DockerHub 푸시 ─────────────────────────────────────────────────────
+echo "==> docker push \${IMAGE}:\${TAG}"
+docker push "\${IMAGE}:\${TAG}"
+echo "==> tag & push :latest"
+docker tag "\${IMAGE}:\${TAG}" "\${IMAGE}:latest"
+docker push "\${IMAGE}:latest"
+docker logout || true
+### ── 5) (옵션) 배포: compose pull/up ──────────────────────────────────────
+if [ -f "\${COMPOSE_FILE}" ]; then
+  echo "==> Deploy with compose: \${COMPOSE_FILE}"
+  docker compose -f "\${COMPOSE_FILE}" pull
+  docker compose -f "\${COMPOSE_FILE}" up -d
+else
+  echo "==> Skip deploy (compose file not found: \${COMPOSE_FILE})"
+fi
+### ── 6) 완료 ───────────────────────────────────────────────────────────────
+echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
+    },
+    metrics: [
+      { label: 'Docker Hub 이미지 태그', value: '7 · latest' },
+      { label: '두 태그의 digest', value: '0d69a56e1d90 (동일)' },
+      { label: 'push 일자', value: '2025-10-28' },
+    ],
+    limitations: [
+      'compose 배포 단계는 스크립트로 구현했지만, 실제 실행 결과 기록은 남아 있지 않습니다.',
+      '단일 EC2 구성이라 Jenkins와 서비스가 리소스를 나눠 씁니다.',
+    ],
+    nextSteps: [
+      'CI 서버와 서비스 서버 분리',
+      'docker.sock 마운트 대신 권한을 최소화한 빌드 방식 검토',
+      'deprecated 상태인 openjdk 베이스 이미지를 eclipse-temurin으로 교체',
+    ],
+    links: {
+      issue: 'https://github.com/lgcns2-mini/dcompose/issues/4',
+      dockerhub: 'https://hub.docker.com/r/changchangdaero/ai-fortune/tags',
+    },
   },
   {
     slug: 'alertlens',
