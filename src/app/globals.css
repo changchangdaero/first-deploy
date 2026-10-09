@@ -2535,11 +2535,10 @@ html:not([data-theme='dark']) .site-header {
   --landing-word-center: calc(var(--landing-word-top) + var(--landing-word-size) * 0.58);
   --landing-axis-gap: clamp(2.25rem, 4vw, 3.5rem);
   --landing-outer-gap: clamp(1.25rem, 4vw, 3rem);
-  --landing-footer-height: 2.9rem;
 
   display: flex;
-  /* 첫 화면은 상단 헤더와 하단 바 사이를 정확히 채우고 스크롤이 생기지 않게 합니다. */
-  height: calc(100svh - var(--site-header-height) - var(--landing-footer-height));
+  /* 첫 화면은 헤더 아래를 정확히 채우고 스크롤이 생기지 않게 합니다. */
+  height: calc(100svh - var(--site-header-height));
   flex-direction: column;
   overflow: hidden;
 }
@@ -2549,28 +2548,9 @@ body:has(.landing) {
   overflow: hidden;
 }
 
-/* 랜딩에서는 방문자 수 푸터를 헤더와 같은 모양의 하단 고정 바로 보여줍니다. */
+/* 랜딩에서는 방문자 수 푸터를 숨깁니다. */
 body:has(.landing) .portfolio-footer {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 100;
-  width: auto;
-  min-height: 2.9rem;
-  margin: 0;
-  padding: 0 1rem;
-  background: color-mix(in srgb, var(--portfolio-bg) 90%, transparent);
-  border-top: 1px solid color-mix(in srgb, var(--border-default) 72%, transparent);
-  box-shadow: 0 -10px 30px rgba(47, 70, 56, 0.05);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-}
-
-:root[data-theme='dark'] body:has(.landing) .portfolio-footer {
-  background: rgba(10, 10, 10, 0.9);
-  border-top-color: rgba(42, 42, 42, 0.86);
-  box-shadow: 0 -12px 34px rgba(0, 0, 0, 0.34);
+  display: none;
 }
 
 .landing__name {
