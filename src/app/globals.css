@@ -2604,3 +2604,95 @@ html:not([data-theme='dark']) .site-header {
     transition: none;
   }
 }
+
+/* Engineering: About 보조 요소 */
+.about-summary--no-image {
+  grid-template-columns: 1fr;
+}
+
+.about-summary__stack {
+  margin-top: 1.25rem;
+}
+
+.about-summary .hero-social-links {
+  margin-top: 1.5rem;
+}
+
+/* Engineering: 프로젝트 목록 (메인 크게 / 서브 짧게) */
+.projects-group-label {
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.projects-grid + .projects-group-label {
+  margin-top: clamp(2.25rem, 5vw, 3rem);
+}
+
+.showcase-project-card--link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.showcase-project-card--link:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 3px;
+}
+
+.showcase-project-card__title {
+  color: var(--text-heading);
+  font-size: 1.08rem;
+  font-weight: 720;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+.projects-grid--main {
+  grid-template-columns: 1fr;
+}
+
+.showcase-project-card--main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+
+.showcase-project-card--main .showcase-project-card__media {
+  aspect-ratio: auto;
+  min-height: 16rem;
+  border-bottom: 0;
+  border-right: 1px solid var(--border-default);
+}
+
+.showcase-project-card--main .showcase-project-card__title {
+  font-size: 1.25rem;
+}
+
+.projects-grid--sub {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1023px) {
+  .projects-grid--sub {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .showcase-project-card--main {
+    display: block;
+  }
+
+  .showcase-project-card--main .showcase-project-card__media {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .projects-grid--sub {
+    grid-template-columns: 1fr;
+  }
+}

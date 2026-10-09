@@ -6,3 +6,11 @@ export const links = {
   brunch: 'https://brunch.co.kr/@changchangdaero',
   instagram: 'https://www.instagram.com/chang_y.u/',
 };
+
+export type LinkIcon = 'github' | 'mail' | 'velog' | 'brunch' | 'instagram';
+
+export type ProfileLink = {
+  label: string;
+  href: string;
+  icon?: LinkIcon;
+};

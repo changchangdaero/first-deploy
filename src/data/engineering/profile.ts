@@ -1,5 +1,5 @@
 // Engineering 프로필: "/engineering" About 섹션의 사진, 소개, 이력, 기술 스택, 링크를 관리합니다.
-import { links } from '@/data/links';
+import { links, type ProfileLink } from '@/data/links';
 import { todo } from '@/lib/todo';
 
 export const engineeringProfile = {
@@ -17,8 +17,8 @@ export const engineeringProfile = {
   ],
   stack: ['Linux', 'Docker', 'Jenkins', 'Prometheus', 'Grafana', 'Nginx', 'PostgreSQL', 'AWS'],
   links: [
-    { label: 'GitHub', href: links.github },
-    { label: 'Email', href: links.email ? `mailto:${links.email}` : '' },
-    { label: 'velog', href: links.velog },
-  ],
+    { label: 'GitHub', icon: 'github', href: links.github },
+    { label: 'Email', icon: 'mail', href: links.email ? `mailto:${links.email}` : '' },
+    { label: 'velog', icon: 'velog', href: links.velog },
+  ] satisfies ProfileLink[],
 };

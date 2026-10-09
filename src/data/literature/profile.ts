@@ -1,5 +1,5 @@
 // Literature 프로필: "/literature" About 섹션의 사진, 소개, 이력, 링크를 관리합니다.
-import { links } from '@/data/links';
+import { links, type ProfileLink } from '@/data/links';
 import { todo } from '@/lib/todo';
 
 export const literatureProfile = {
@@ -17,7 +17,7 @@ export const literatureProfile = {
     '트라아트(빈칸) 글 전시회 <낮과밤> 참여',
   ],
   links: [
-    { label: 'Brunch', href: links.brunch },
-    { label: 'Instagram', href: links.instagram },
-  ],
+    { label: 'Brunch', icon: 'brunch', href: links.brunch },
+    { label: 'Instagram', icon: 'instagram', href: links.instagram },
+  ] satisfies ProfileLink[],
 };
