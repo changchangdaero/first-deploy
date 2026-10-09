@@ -66,13 +66,11 @@ export const projects: Project[] = [
     team: todo('인원'),
     role: todo('역할'),
     stack: ['Linux', 'Nginx', 'Node.js', 'PostgreSQL', 'Prometheus', 'Grafana', 'stress'],
-    thumbnail: 'monitoring.png',
     contributions: [
       'VM 4대(mgt/web/was/db)에 nginx · Node.js · PostgreSQL 3-tier 구성 및 연동',
       'Prometheus · Grafana 모니터링 대시보드 구축',
       'stress 부하 테스트',
     ],
-    screenshots: [{ file: 'monitoring.png', caption: todo('스크린샷 설명') }],
   },
   {
     slug: 'jenkins-ci',
