@@ -7,6 +7,12 @@ const nextConfig = {
   images: {
     unoptimized: true, // 깃허브 페이지 이미지 최적화 비활성화
   },
+  // 이미지 존재 확인(lib/public-file.ts)이 서버에서 public 폴더를 읽을 수 있도록 배포 번들에 포함합니다.
+  outputFileTracingIncludes: {
+    '/engineering': ['./public/**/*'],
+    '/engineering/**': ['./public/**/*'],
+    '/literature': ['./public/**/*'],
+  },
   async redirects() {
     return [
       { source: '/projects', destination: '/engineering#projects', permanent: true },
