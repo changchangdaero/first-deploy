@@ -5,7 +5,7 @@ export const engineeringProfile = {
   name: '유창민',
   // 사진 경로. 지금은 Literature와 같은 사진이며, 교체하려면 경로만 바꾸면 됩니다. 비워두면 사진 영역이 숨겨집니다.
   image: '/me.jpg',
-  headline: 'DevOps를 공부하고 있습니다',
+  headline: 'DEVOPS 엔지니어를 희망하고 있습니다!',
   summary: '',
   highlights: [
     '명지대학교 정보통신공학 & 인공지능·ICT융합전공',
@@ -14,7 +14,7 @@ export const engineeringProfile = {
   ],
   links: [
     { label: 'GitHub', icon: 'github', href: links.github },
-    { label: 'Email', icon: 'mail', href: links.email ? `mailto:${links.email}` : '' },
     { label: 'Blog', icon: 'velog', href: links.velog, keepWhenEmpty: true },
+    { label: 'Email', icon: 'mail', href: links.email ? `mailto:${links.email}` : '' },
   ] satisfies ProfileLink[],
 };
