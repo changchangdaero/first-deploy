@@ -2527,3 +2527,80 @@ html:not([data-theme='dark']) .site-header {
   background: rgba(255, 255, 255, 0.9) !important;
   background-image: none !important;
 }
+
+/* Landing: "/" 이름과 두 갈래 문 */
+.landing-hero__name {
+  color: var(--primary);
+  font-size: clamp(1.05rem, 3vw, 1.25rem);
+  font-weight: 740;
+  letter-spacing: 0.04em;
+}
+
+.landing-doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.landing-door {
+  display: flex;
+  min-height: clamp(12rem, 32vw, 18rem);
+  flex-direction: column;
+  gap: 0.9rem;
+  border: 1px solid var(--border-default);
+  border-radius: calc(var(--radius-card) + 4px);
+  background: var(--portfolio-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--text-heading);
+  padding: clamp(1.4rem, 4vw, 2.2rem);
+  text-decoration: none;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.landing-door:hover,
+.landing-door:focus-visible {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border-default));
+  box-shadow: 0 18px 42px rgba(47, 70, 56, 0.12);
+}
+
+.landing-door:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 3px;
+}
+
+.landing-door__tagline {
+  color: var(--text-heading);
+  font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+  font-weight: 720;
+  line-height: 1.4;
+}
+
+.landing-door__arrow {
+  margin-top: auto;
+  color: var(--primary-dark);
+  font-size: 1.4rem;
+  transition: transform 180ms ease;
+}
+
+.landing-door:hover .landing-door__arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 767px) {
+  .landing-doors {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-door:hover,
+  .landing-door:focus-visible {
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-door,
+  .landing-door__arrow {
+    transition: none;
+  }
+}
