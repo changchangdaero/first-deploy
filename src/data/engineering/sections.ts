@@ -25,6 +25,7 @@ export const engineeringSections = {
     back: 'Projects',
     facts: { period: '기간', team: '인원', role: '내 역할' },
     stack: '기술 스택',
+    techChoices: '기술 선택 이유',
     architecture: '아키텍처',
     contributions: '내가 한 일',
     teamContext: '팀 맥락',

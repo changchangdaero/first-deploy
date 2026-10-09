@@ -38,15 +38,26 @@ function DetailSection({ title, children }: { title: string; children: React.Rea
 }
 
 // 이미지는 최대 높이 안에서 비율을 유지해 보여주고, 누르면 원본을 새 탭에서 엽니다.
-function Figure({ slug, image, priority }: { slug: string; image: ProjectImage; priority?: boolean }) {
+function Figure({
+  slug,
+  image,
+  priority,
+  fallbackAlt,
+}: {
+  slug: string;
+  image: ProjectImage;
+  priority?: boolean;
+  fallbackAlt?: string;
+}) {
   const src = projectImagePath(slug, image.file);
+  const alt = image.caption || fallbackAlt || '';
 
   return (
     <figure className="project-detail__figure">
-      <a href={src} target="_blank" rel="noopener noreferrer" className="project-detail__image-link" aria-label={`${image.caption} 원본 보기`}>
+      <a href={src} target="_blank" rel="noopener noreferrer" className="project-detail__image-link" aria-label={`${alt} 원본 보기`}>
         <Image
           src={src}
-          alt={image.caption}
+          alt={alt}
           width={1600}
           height={900}
           sizes="(max-width: 880px) 100vw, 880px"
@@ -80,7 +91,10 @@ function hasImage(slug: string, image?: ProjectImage) {
 
 export default function ProjectDetail({ project }: { project: Project }) {
   const { slug } = project;
+  const heroImage = project.thumbnail ? { file: project.thumbnail, caption: '' } : undefined;
+  const showHero = hasImage(slug, heroImage);
   const showArchitecture = hasImage(slug, project.architecture);
+  const techChoices = project.techChoices ?? [];
   const screenshots = (project.screenshots ?? []).filter((image) => hasImage(slug, image));
   const metrics = project.metrics ?? [];
   const troubleshooting = project.troubleshooting ?? [];
@@ -110,6 +124,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
         {links.length > 0 ? <ProjectLinks project={project} keys={links} /> : null}
       </header>
 
+      {/* 대표 사진: 목록 카드의 썸네일을 상세 페이지 맨 위에도 크게 보여줍니다. */}
+      {showHero && heroImage ? (
+        <Figure slug={slug} image={heroImage} fallbackAlt={`${project.title} 대표 화면`} priority />
+      ) : null}
+
       {/* ② 기본 정보 */}
       <dl className="project-detail__facts">
         {(['period', 'team', 'role'] as const).map((key) => (
@@ -120,21 +139,36 @@ export default function ProjectDetail({ project }: { project: Project }) {
         ))}
       </dl>
 
-      {/* ③ 기술 스택 */}
-      {project.stack.length > 0 ? (
+      {/* ③ 기술 스택 + 기술 선택 이유 */}
+      {project.stack.length > 0 || techChoices.length > 0 ? (
         <DetailSection title={labels.stack}>
-          <ul className="showcase-project-card__stack project-detail__stack">
-            {project.stack.map((technology) => (
-              <li key={technology}>{technology}</li>
-            ))}
-          </ul>
+          {project.stack.length > 0 ? (
+            <ul className="showcase-project-card__stack project-detail__stack">
+              {project.stack.map((technology) => (
+                <li key={technology}>{technology}</li>
+              ))}
+            </ul>
+          ) : null}
+          {techChoices.length > 0 ? (
+            <div className="project-detail__choices">
+              <h3 className="project-detail__subheading">{labels.techChoices}</h3>
+              <dl>
+                {techChoices.map((choice) => (
+                  <div key={choice.tech} className="project-detail__choice">
+                    <dt>{choice.tech}</dt>
+                    <dd>{choice.reason}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ) : null}
         </DetailSection>
       ) : null}
 
       {/* ④ 아키텍처 */}
       {showArchitecture && project.architecture ? (
         <DetailSection title={labels.architecture}>
-          <Figure slug={slug} image={project.architecture} priority />
+          <Figure slug={slug} image={project.architecture} priority={!showHero} />
         </DetailSection>
       ) : null}
 
@@ -162,14 +196,18 @@ export default function ProjectDetail({ project }: { project: Project }) {
         <DetailSection title={labels.troubleshooting}>
           <div className="project-detail__troubles">
             {troubleshooting.map((item, index) => (
-              <dl key={`${item.problem}-${index}`} className="project-detail__trouble">
-                {(['problem', 'cause', 'solution', 'result'] as const).map((step) => (
-                  <div key={step} className={`project-detail__trouble-row project-detail__trouble-row--${step}`}>
-                    <dt>{labels.troubleshootingSteps[step]}</dt>
-                    <dd>{item[step]}</dd>
-                  </div>
-                ))}
-              </dl>
+              <div key={`${item.problem}-${index}`} className="project-detail__trouble-item">
+                <dl className="project-detail__trouble">
+                  {(['problem', 'cause', 'solution', 'result'] as const).map((step) => (
+                    <div key={step} className={`project-detail__trouble-row project-detail__trouble-row--${step}`}>
+                      <dt>{labels.troubleshootingSteps[step]}</dt>
+                      <dd>{item[step]}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {/* 항목별 증거 사진 (예: 에러 화면, 해결 후 정상 화면). 파일이 없으면 숨깁니다. */}
+                {item.image && hasImage(slug, item.image) ? <Figure slug={slug} image={item.image} /> : null}
+              </div>
             ))}
           </div>
         </DetailSection>

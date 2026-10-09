@@ -15,12 +15,19 @@ export type ProjectMetric = {
   value: string;
 };
 
-// 트러블슈팅: 문제 → 원인 → 해결 → 결과 순서로 적습니다.
+// 트러블슈팅: 문제 → 원인 → 해결 → 결과 순서로 적습니다. image는 이 항목의 증거 사진(선택)입니다.
 export type ProjectTroubleshooting = {
   problem: string;
   cause: string;
   solution: string;
   result: string;
+  image?: ProjectImage;
+};
+
+// 기술 선택 이유: 왜 이 기술을 골랐는지 1~2줄로 적습니다.
+export type ProjectTechChoice = {
+  tech: string;
+  reason: string;
 };
 
 export type Project = {
@@ -36,6 +43,8 @@ export type Project = {
   team: string;
   role: string;
   stack: string[];
+  techChoices?: ProjectTechChoice[];
+  // 목록 메인 카드 이미지이자 상세 페이지 맨 위 대표 사진입니다.
   thumbnail?: string;
   architecture?: ProjectImage;
   contributions: string[];

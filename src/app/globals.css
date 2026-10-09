@@ -3107,6 +3107,41 @@ body:has(.landing) .portfolio-footer {
   margin-top: 0;
 }
 
+.project-detail__choices {
+  margin-top: 1.25rem;
+}
+
+.project-detail__subheading {
+  margin-bottom: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.project-detail__choices dl {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.project-detail__choice {
+  display: grid;
+  grid-template-columns: minmax(6rem, max-content) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: baseline;
+}
+
+.project-detail__choice dt {
+  color: var(--primary-dark);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.project-detail__choice dd {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
 .project-detail__list {
   margin-top: 0;
   border-top: 0;
@@ -3174,7 +3209,12 @@ body:has(.landing) .portfolio-footer {
 
 .project-detail__troubles {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
+}
+
+.project-detail__trouble-item {
+  display: grid;
+  gap: 0.75rem;
 }
 
 .project-detail__trouble {
@@ -3307,6 +3347,11 @@ body:has(.landing) .portfolio-footer {
 
   .project-detail__gallery--multi {
     grid-template-columns: 1fr;
+  }
+
+  .project-detail__choice {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
   }
 
   .project-detail__pager-link--next {
