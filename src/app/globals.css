@@ -3195,8 +3195,28 @@ body:has(.landing) .portfolio-footer {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.project-detail__gallery--multi .project-detail__image {
-  max-height: 24rem;
+/* 결과 갤러리 카드: 원본 크기와 상관없이 이미지 영역을 16:10으로 통일하고 왼쪽 위 기준으로 꽉 채웁니다. */
+.project-detail__gallery .project-detail__figure {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-detail__gallery .project-detail__image-link {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.project-detail__gallery .project-detail__image {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.project-detail__gallery figcaption {
+  flex: 1;
 }
 
 .project-detail__figure figcaption {
