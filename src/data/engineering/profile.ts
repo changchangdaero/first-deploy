@@ -5,12 +5,13 @@ export const engineeringProfile = {
   name: '유창민',
   // 사진 경로. 지금은 Literature와 같은 사진이며, 교체하려면 경로만 바꾸면 됩니다. 비워두면 사진 영역이 숨겨집니다.
   image: '/me.jpg',
-  headline: 'DEVOPS 엔지니어를 희망하고 있습니다!',
+  headline: 'AI를 이해하는 DEVOPS 엔지니어가 되고 싶습니다!',
   summary: '',
   highlights: [
     '명지대학교 정보통신공학 & 인공지능·ICT융합전공',
     'LG CNS AM INSPIRE CAMP 3기 DevOps 과정 수료',
     'Comento Linux 운영 직무 부트캠프 수료',
+    '교내 AI 학술동아리 ORCA 부원',
   ],
   links: [
     { label: 'GitHub', icon: 'github', href: links.github },
