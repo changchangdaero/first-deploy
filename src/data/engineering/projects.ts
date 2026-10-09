@@ -64,6 +64,8 @@ export type Project = {
   slug: string;
   // 카드 번호 옆에 표시하는 분류 라벨 (예: Infra, CI/CD, AI)
   category: string;
+  // true면 사이트 목록과 상세 페이지에서 숨깁니다. (작성은 해 두고 나중에 공개할 때)
+  hidden?: boolean;
   status: ProjectStatus;
   title: string;
   summary: string;
@@ -102,7 +104,7 @@ export type Project = {
   award?: string;
 };
 
-export const projects: Project[] = [
+const allProjects: Project[] = [
   {
     slug: '3tier-monitoring',
     category: 'Infra',
@@ -307,6 +309,8 @@ echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
   {
     // 요약 · 배경 · 내가 한 일 문구는 제안서와 검토의견서를 바탕으로 쓴 초안입니다.
     slug: 'alertlens',
+    // 프로젝트 완성 후 공개 예정
+    hidden: true,
     category: 'Observability',
     status: 'wip',
     title: 'AlertLens',
@@ -414,6 +418,9 @@ echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
     contributions: [todo('내가 한 일')],
   },
 ];
+
+// 사이트에 보여줄 프로젝트 (hidden 제외). 목록 · 상세 페이지 · 이전/다음 이동 모두 이 배열을 사용합니다.
+export const projects = allProjects.filter((project) => !project.hidden);
 
 export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
   done: '완료',
