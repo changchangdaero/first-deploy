@@ -3139,10 +3139,29 @@ body:has(.landing) .portfolio-footer {
   box-shadow: var(--shadow-sm);
 }
 
+.project-detail__image-link {
+  display: flex;
+  justify-content: center;
+  background: var(--portfolio-surface-muted);
+  cursor: zoom-in;
+}
+
+/* 세로로 긴 이미지가 페이지를 덮지 않도록 최대 높이 안에서 비율을 유지합니다. */
 .project-detail__image {
   display: block;
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   height: auto;
+  max-height: 32rem;
+  object-fit: contain;
+}
+
+.project-detail__gallery--multi {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.project-detail__gallery--multi .project-detail__image {
+  max-height: 24rem;
 }
 
 .project-detail__figure figcaption {
@@ -3227,6 +3246,10 @@ body:has(.landing) .portfolio-footer {
   padding-top: 0;
 }
 
+.project-detail__header .project-detail__links {
+  margin-top: 1.25rem;
+}
+
 .project-detail__pager {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3279,6 +3302,10 @@ body:has(.landing) .portfolio-footer {
   }
 
   .project-detail__pager {
+    grid-template-columns: 1fr;
+  }
+
+  .project-detail__gallery--multi {
     grid-template-columns: 1fr;
   }
 

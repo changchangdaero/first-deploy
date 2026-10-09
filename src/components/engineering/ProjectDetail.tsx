@@ -37,20 +37,40 @@ function DetailSection({ title, children }: { title: string; children: React.Rea
   );
 }
 
+// 이미지는 최대 높이 안에서 비율을 유지해 보여주고, 누르면 원본을 새 탭에서 엽니다.
 function Figure({ slug, image, priority }: { slug: string; image: ProjectImage; priority?: boolean }) {
+  const src = projectImagePath(slug, image.file);
+
   return (
     <figure className="project-detail__figure">
-      <Image
-        src={projectImagePath(slug, image.file)}
-        alt={image.caption}
-        width={1600}
-        height={900}
-        sizes="(max-width: 880px) 100vw, 880px"
-        className="project-detail__image"
-        priority={priority}
-      />
+      <a href={src} target="_blank" rel="noopener noreferrer" className="project-detail__image-link" aria-label={`${image.caption} 원본 보기`}>
+        <Image
+          src={src}
+          alt={image.caption}
+          width={1600}
+          height={900}
+          sizes="(max-width: 880px) 100vw, 880px"
+          className="project-detail__image"
+          priority={priority}
+        />
+      </a>
       {image.caption ? <figcaption>{image.caption}</figcaption> : null}
     </figure>
+  );
+}
+
+function ProjectLinks({ project, keys }: { project: Project; keys: LinkKey[] }) {
+  return (
+    <div className="showcase-project-card__links project-detail__links">
+      {keys.map((key) => {
+        const Icon = LINK_ICONS[key];
+        return (
+          <a key={key} href={project.links?.[key]} target="_blank" rel="noopener noreferrer">
+            <Icon aria-hidden="true" /> {labels.linkLabels[key]}
+          </a>
+        );
+      })}
+    </div>
   );
 }
 
@@ -87,6 +107,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
         <p className="project-detail__summary">{project.summary}</p>
         {project.award ? <p className="showcase-project-card__highlight">{'// '}{project.award}</p> : null}
         {project.background ? <p className="project-detail__background">{project.background}</p> : null}
+        {links.length > 0 ? <ProjectLinks project={project} keys={links} /> : null}
       </header>
 
       {/* ② 기본 정보 */}
@@ -118,13 +139,15 @@ export default function ProjectDetail({ project }: { project: Project }) {
       ) : null}
 
       {/* ⑤ 내가 한 일 */}
-      {project.contributions.length > 0 ? (
+      {project.contributions.length > 0 || project.teamContext ? (
         <DetailSection title={labels.contributions}>
-          <ul className="profile-list project-detail__list">
-            {project.contributions.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
+          {project.contributions.length > 0 ? (
+            <ul className="profile-list project-detail__list">
+              {project.contributions.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
           {project.teamContext ? (
             <div className="project-detail__note">
               <strong>{labels.teamContext}</strong>
@@ -166,7 +189,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
             </dl>
           ) : null}
           {screenshots.length > 0 ? (
-            <div className="project-detail__gallery">
+            <div
+              className={
+                screenshots.length > 1 ? 'project-detail__gallery project-detail__gallery--multi' : 'project-detail__gallery'
+              }
+            >
               {screenshots.map((image) => (
                 <Figure key={image.file} slug={slug} image={image} />
               ))}
@@ -202,16 +229,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
       {/* ⑧ 링크 */}
       {links.length > 0 ? (
         <DetailSection title={labels.links}>
-          <div className="showcase-project-card__links project-detail__links">
-            {links.map((key) => {
-              const Icon = LINK_ICONS[key];
-              return (
-                <a key={key} href={project.links?.[key]} target="_blank" rel="noopener noreferrer">
-                  <Icon aria-hidden="true" /> {labels.linkLabels[key]}
-                </a>
-              );
-            })}
-          </div>
+          <ProjectLinks project={project} keys={links} />
         </DetailSection>
       ) : null}
 
