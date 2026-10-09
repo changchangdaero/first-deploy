@@ -2931,7 +2931,13 @@ body:has(.landing) .portfolio-footer {
 }
 
 .projects-grid--sub {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1023px) {
+  .projects-grid--sub {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 767px) {
