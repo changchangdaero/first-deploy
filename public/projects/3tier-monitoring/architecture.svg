@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" font-family="Pretendard, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3f5f4a"/>
+    </marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7a8178"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="640" fill="#ffffff"/>
+
+  <!-- VMware 경계 -->
+  <rect x="250" y="40" width="920" height="560" rx="18" fill="#f7f9f6" stroke="#d4d4d4" stroke-dasharray="6 6"/>
+  <text x="274" y="74" font-size="17" font-weight="700" fill="#3f5f4a">VMware Workstation · NAT 192.168.199.0/24</text>
+
+  <!-- 사용자 -->
+  <rect x="40" y="160" width="170" height="96" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="125" y="200" font-size="19" font-weight="700" fill="#1f2a24" text-anchor="middle">사용자</text>
+  <text x="125" y="228" font-size="15" fill="#7a8178" text-anchor="middle">브라우저</text>
+
+  <!-- web01 -->
+  <rect x="290" y="120" width="250" height="176" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="314" y="156" font-size="21" font-weight="800" fill="#1f2a24">web01</text>
+  <text x="314" y="180" font-size="14" fill="#7a8178">192.168.199.128</text>
+  <text x="314" y="216" font-size="17" font-weight="700" fill="#3f5f4a">Nginx :80</text>
+  <text x="314" y="238" font-size="14" fill="#2d352f">리버스 프록시</text>
+  <rect x="314" y="254" width="168" height="26" rx="13" fill="#eef3ec" stroke="#a8b89a"/>
+  <text x="398" y="272" font-size="13" fill="#2f4638" text-anchor="middle">node_exporter :9100</text>
+
+  <!-- was01 -->
+  <rect x="600" y="120" width="250" height="176" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="624" y="156" font-size="21" font-weight="800" fill="#1f2a24">was01</text>
+  <text x="624" y="180" font-size="14" fill="#7a8178">192.168.199.129</text>
+  <text x="624" y="216" font-size="17" font-weight="700" fill="#3f5f4a">Node.js :8000</text>
+  <text x="624" y="238" font-size="14" fill="#2d352f">애플리케이션 서버</text>
+  <rect x="624" y="254" width="168" height="26" rx="13" fill="#eef3ec" stroke="#a8b89a"/>
+  <text x="708" y="272" font-size="13" fill="#2f4638" text-anchor="middle">node_exporter :9100</text>
+
+  <!-- dbm01 -->
+  <rect x="910" y="120" width="236" height="176" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="934" y="156" font-size="21" font-weight="800" fill="#1f2a24">dbm01</text>
+  <text x="934" y="180" font-size="14" fill="#7a8178">192.168.199.130</text>
+  <text x="934" y="216" font-size="17" font-weight="700" fill="#3f5f4a">PostgreSQL :5432</text>
+  <text x="934" y="238" font-size="14" fill="#2d352f">데이터베이스</text>
+  <rect x="934" y="254" width="168" height="26" rx="13" fill="#eef3ec" stroke="#a8b89a"/>
+  <text x="1018" y="272" font-size="13" fill="#2f4638" text-anchor="middle">node_exporter :9100</text>
+
+  <!-- 서비스 요청 흐름 -->
+  <line x1="210" y1="208" x2="284" y2="208" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="247" y="196" font-size="13" fill="#3f5f4a" text-anchor="middle">HTTP</text>
+  <line x1="540" y1="208" x2="594" y2="208" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="567" y="196" font-size="13" fill="#3f5f4a" text-anchor="middle">proxy</text>
+  <line x1="850" y1="208" x2="904" y2="208" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="877" y="196" font-size="13" fill="#3f5f4a" text-anchor="middle">SQL</text>
+
+  <!-- mgt01 -->
+  <rect x="560" y="430" width="330" height="140" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="584" y="466" font-size="21" font-weight="800" fill="#1f2a24">mgt01</text>
+  <text x="584" y="490" font-size="14" fill="#7a8178">192.168.199.131</text>
+  <text x="584" y="524" font-size="17" font-weight="700" fill="#3f5f4a">Prometheus · Grafana</text>
+  <rect x="584" y="536" width="168" height="26" rx="13" fill="#eef3ec" stroke="#a8b89a"/>
+  <text x="668" y="554" font-size="13" fill="#2f4638" text-anchor="middle">node_exporter :9100</text>
+
+  <!-- 모니터링 흐름 (Prometheus가 각 서버 지표 수집) -->
+  <path d="M640 424 C 600 360, 430 360, 398 300" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+  <path d="M708 424 L 708 302" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+  <path d="M800 424 C 850 360, 1000 360, 1018 300" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+  <text x="900" y="404" font-size="14" fill="#7a8178">지표 수집 (scrape)</text>
+
+  <!-- 범례 -->
+  <line x1="290" y1="548" x2="330" y2="548" stroke="#3f5f4a" stroke-width="3"/>
+  <text x="340" y="553" font-size="14" fill="#2d352f">서비스 요청</text>
+  <line x1="290" y1="576" x2="330" y2="576" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="340" y="581" font-size="14" fill="#2d352f">모니터링</text>
+</svg>
