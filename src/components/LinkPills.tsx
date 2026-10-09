@@ -40,7 +40,8 @@ function PillIcon({ icon }: { icon?: LinkIcon }) {
 }
 
 export default function LinkPills({ items, label }: { items: ProfileLink[]; label: string }) {
-  const visibleItems = items.filter((item) => item.href);
+  // 주소가 빈 링크는 숨기되, keepWhenEmpty인 링크는 "준비 중" 버튼으로 자리만 보여줍니다.
+  const visibleItems = items.filter((item) => item.href || item.keepWhenEmpty);
 
   if (visibleItems.length === 0) {
     return null;
@@ -49,6 +50,20 @@ export default function LinkPills({ items, label }: { items: ProfileLink[]; labe
   return (
     <nav className="hero-social-links" aria-label={label}>
       {visibleItems.map((item) => {
+        if (!item.href) {
+          return (
+            <span
+              key={item.label}
+              className="social-link-pill social-link-pill--pending"
+              aria-disabled="true"
+              title={`${item.label} 링크 준비 중`}
+            >
+              <PillIcon icon={item.icon} />
+              <span>{item.label}</span>
+            </span>
+          );
+        }
+
         const isExternal = item.href.startsWith('http');
 
         return (

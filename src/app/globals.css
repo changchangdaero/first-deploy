@@ -3007,3 +3007,15 @@ body:has(.landing) .portfolio-footer {
     display: grid;
   }
 }
+
+/* 링크 연결 전 임시 버튼: 모양은 같고 클릭·호버 반응만 없습니다. */
+.social-link-pill--pending {
+  cursor: default;
+}
+
+.social-link-pill--pending:hover {
+  transform: none;
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+  color: var(--primary-dark);
+}

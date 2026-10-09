@@ -15,6 +15,6 @@ export const engineeringProfile = {
   links: [
     { label: 'GitHub', icon: 'github', href: links.github },
     { label: 'Email', icon: 'mail', href: links.email ? `mailto:${links.email}` : '' },
-    { label: 'Blog', icon: 'velog', href: links.velog },
+    { label: 'Blog', icon: 'velog', href: links.velog, keepWhenEmpty: true },
   ] satisfies ProfileLink[],
 };

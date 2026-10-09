@@ -21,8 +21,8 @@ export const navGroups: NavGroup[] = [
     paths: ['/engineering', '/archive'],
     items: [
       { label: 'Engineering', href: '/engineering#about' },
-      { label: 'Projects', href: '/engineering#projects' },
       { label: 'Tech Stack', href: '/engineering#tech-stack' },
+      { label: 'Projects', href: '/engineering#projects' },
       { label: 'Archive', href: '/archive' },
     ],
   },

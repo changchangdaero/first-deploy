@@ -16,4 +16,6 @@ export type ProfileLink = {
   label: string;
   href: string;
   icon?: LinkIcon;
+  // true면 주소가 비어 있어도 버튼 자리를 보여줍니다. (링크 연결 전 임시)
+  keepWhenEmpty?: boolean;
 };
