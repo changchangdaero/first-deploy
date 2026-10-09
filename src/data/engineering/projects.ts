@@ -444,7 +444,7 @@ echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
           ['Near-full', '0.9425', '0.0575', '1.0000', '0.0747', '175'],
           ['Edge-Ring', '0.9672', '0.0328', '0.0000', '0.0328', '77'],
         ],
-        caption: '분류가 어려운 Scratch · Loc에 증강량이 집중되고, 이미 잘 분류되는 Edge-Ring에는 적게 배정됩니다. (발표 자료 기준)',
+        caption: '분류가 어려운 Scratch · Loc에 증강량이 집중되고, 이미 잘 분류되는 Edge-Ring에는 적게 배정됩니다.',
       },
       {
         title: '최종 성능 비교 (fold 0 고정 테스트셋)',
@@ -460,7 +460,7 @@ echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
     code: {
       title: '증강량 배분 수식',
       language: 'python',
-      caption: '발표 자료의 배분 수식을 코드로 옮긴 것입니다. 0.3은 휴리스틱 계수입니다.',
+      caption: '배분 수식을 코드로 옮긴 것입니다. 0.3은 휴리스틱 계수입니다.',
       source: `difficulty = 1 - f2_score                    # 분류 난이도 (검증셋 F2 기준)
 scarcity = math.log(n_max / n_class)         # 희소성 보너스 (데이터가 적을수록 큼)
 weight = difficulty * (1 + 0.3 * scarcity)   # 최종 가중치
@@ -504,18 +504,42 @@ aug_count = budget * weight / total_weight   # 증강 예산 4,024장을 가중�
     status: 'done',
     title: 'SentiStock',
     summary: '뉴스 감성 분석 기반 주식 투자 판단 보조 플랫폼',
+    background:
+      '투자자는 재무 지표뿐 아니라 뉴스가 만든 기대 · 불안 같은 감정에도 반응합니다. SentiStock은 종목별 뉴스를 감정 점수(0~100)로 수치화하고, 투자 성향에 따라 매수 · 매도 알림을 보내 감정적 매매를 줄이도록 돕는 서비스입니다.',
     context: 'LG CNS AM INSPIRE CAMP 3기 · 최종 팀 프로젝트',
-    period: todo('기간'),
+    period: '2025.11 ~ 2026.01 (10주)',
     team: '7명',
-    role: todo('역할'),
-    stack: ['Python', 'React', 'Next.js', 'Spring Boot', 'MariaDB', 'Docker', 'Jenkins', 'AWS'],
+    role: 'Frontend · 마이페이지 개발과 API 연동',
+    stack: ['TypeScript', 'Next.js'],
+    thumbnail: 'app-mockup.jpg',
+    architecture: {
+      file: 'service-architecture.png',
+      caption:
+        '팀 서비스 아키텍처 — 백엔드 API, 감정 분석 파이프라인(GPT-4o-mini · KR-FinBERT), 클라우드 인프라(EKS · GitHub Actions · Kafka)는 다른 팀원이 담당',
+    },
     contributions: [
-      '네이버 뉴스 크롤링 파이프라인 구축 (Python)',
-      '마이페이지 UI 개발 및 API 연동',
+      'Next.js · TypeScript로 마이페이지 화면 개발 (회원정보 조회 · 수정, 알림 설정, 계정 보안, 구독 관리, 즐겨찾기, 매수 종목 리스트)',
+      '투자 성향 · 구독 · 즐겨찾기 · 매수 종목 · 계정 보안 · 회원 탈퇴 API 연동, API 요청 헬퍼와 구독 관련 훅 정리',
+      '회원정보 수정 · 매수 종목 리스트 등 연동 오류 수정',
       'WBS · 요구사항 정의서 작성',
       '최종 시연 영상 제작',
     ],
-    award: '우수상 (5팀 중 3등)',
+    teamContext:
+      '프론트엔드 4명 · 백엔드/클라우드 3명과 멘토 1명으로 진행했습니다. 뉴스 수집과 감정 분석 파이프라인, 백엔드 API, 클라우드 인프라는 다른 팀원이 담당했고, 저는 프론트엔드에서 마이페이지와 사용자 관련 API 연동을 맡았습니다.',
+    screenshots: [
+      { file: 'mypage-profile.png', caption: '회원정보 조회 · 투자 성향 결과' },
+      { file: 'mypage-subscription.png', caption: '구독 관리 (구독 상태 · 결제 정보)' },
+      { file: 'mypage-favorites.png', caption: '즐겨찾기 종목 목록' },
+      { file: 'mypage-stock-list.png', caption: '매수 종목 리스트 (평단가 · 수익률)' },
+    ],
+    learnings: [
+      '아이디어가 기획 · 개발 · 배포를 거쳐 실제 서비스로 사용자에게 전달되기까지, 단계마다 필요한 의사결정과 기술적 고려사항을 통합적인 관점에서 이해했습니다.',
+    ],
+    limitations: [
+      '데이터 수집 확장(커뮤니티 · SNS)과 기능 고도화(모의투자 등)는 일정과 데이터 제약으로 충분히 진행하지 못했습니다.',
+    ],
+    links: { github: 'https://github.com/changchangdaero/sentistock-FE' },
+    award: '우수상',
   },
   {
     slug: 'hami',
