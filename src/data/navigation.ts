@@ -1,4 +1,5 @@
 // 헤더 메뉴: 모든 페이지 상단 바에 Engineering 그룹과 Literature 그룹 메뉴를 나란히 정의합니다.
+// 각 그룹의 첫 메뉴는 그룹 이름이며, 해당 페이지 맨 위(About)로 이동합니다.
 export type NavItem = {
   label: string;
   href: string;
@@ -19,7 +20,7 @@ export const navGroups: NavGroup[] = [
     label: 'Engineering',
     paths: ['/engineering', '/archive'],
     items: [
-      { label: 'About', href: '/engineering#about' },
+      { label: 'Engineering', href: '/engineering#about' },
       { label: 'Projects', href: '/engineering#projects' },
       { label: 'Tech Stack', href: '/engineering#tech-stack' },
       { label: 'Archive', href: '/archive' },
@@ -30,7 +31,7 @@ export const navGroups: NavGroup[] = [
     label: 'Literature',
     paths: ['/literature'],
     items: [
-      { label: 'About', href: '/literature#about' },
+      { label: 'Literature', href: '/literature#about' },
       { label: 'Works', href: '/literature#works' },
       { label: 'Activities', href: '/literature#activities' },
     ],

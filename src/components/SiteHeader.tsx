@@ -195,7 +195,6 @@ export default function SiteHeader({ initialTheme = 'light' }: SiteHeaderProps) 
             {navGroups.map((group, index) => (
               <div key={group.key} className={groupClassName('site-mobile-menu__group', group)}>
                 {index > 0 ? <span className="site-mobile-menu__divider" aria-hidden="true" /> : null}
-                <span className="site-mobile-menu__heading">{group.label}</span>
                 {group.items.map((item) => (
                   <NavLink
                     key={item.label}

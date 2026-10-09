@@ -3008,16 +3008,6 @@ body:has(.landing) .portfolio-footer {
   gap: 0.12rem;
 }
 
-.site-mobile-menu__heading {
-  display: block;
-  color: var(--primary);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  padding: 0.55rem 1rem 0.2rem;
-  text-transform: uppercase;
-}
-
 .site-mobile-menu__group--muted a {
   color: var(--text-muted);
 }
