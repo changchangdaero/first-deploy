@@ -2874,10 +2874,6 @@ body:has(.landing) .portfolio-footer {
   grid-template-columns: 1fr;
 }
 
-.about-summary__stack {
-  margin-top: 1.25rem;
-}
-
 .about-summary .hero-social-links {
   margin-top: 1.5rem;
 }

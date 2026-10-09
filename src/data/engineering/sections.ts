@@ -10,6 +10,10 @@ export const engineeringSections = {
     eyebrow: 'ENGINEERING',
     title: 'About Me',
   },
+  techStack: {
+    eyebrow: 'SKILLS',
+    title: 'Tech Stack',
+  },
   projects: {
     eyebrow: 'PROJECTS',
     title: "What I've Built",

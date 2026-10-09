@@ -1,4 +1,4 @@
-// Engineering About: 사진(없으면 숨김), 한 줄 소개, 이력, 기술 스택 칩, 링크 버튼을 보여줍니다.
+// Engineering About: 사진(없으면 숨김), 한 줄 소개, 이력, 링크 버튼을 보여줍니다.
 import Image from 'next/image';
 
 import LinkPills from '@/components/LinkPills';
@@ -26,12 +26,6 @@ export default function EngAbout() {
           <ul className="profile-list">
             {profile.highlights.map((item) => (
               <li key={item}>{item}</li>
-            ))}
-          </ul>
-          {/* 헤더 Tech Stack 메뉴의 임시 이동 위치. 엔지니어링 개편 때 별도 섹션으로 옮깁니다. */}
-          <ul id="tech-stack" className="showcase-project-card__stack about-summary__stack" aria-label="기술 스택">
-            {profile.stack.map((technology) => (
-              <li key={technology}>{technology}</li>
             ))}
           </ul>
           <LinkPills items={profile.links} label="Engineering 링크" />
