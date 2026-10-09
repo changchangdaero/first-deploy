@@ -5,7 +5,7 @@ export const literatureProfile = {
   name: '유창민',
   // 사진 경로. 비워두면 사진 영역이 숨겨집니다.
   image: '/me.jpg',
-  headline: '글을 쓰고 있습니다.',
+  headline: '글을 쓰고 있습니다. 시와 에세이를 좋아해요!',
   summary: '',
   highlights: [
     '교보문고 시·에세이 분야 주간베스트 도서 [사랑과 타박상] 저자',
