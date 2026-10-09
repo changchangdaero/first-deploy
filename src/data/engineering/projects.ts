@@ -173,12 +173,9 @@ export const projects: Project[] = [
         symptom:
           'Docker Hub 계정 환경변수(`DOCKERHUB_USR`, `DOCKERHUB_PSW`)가 비어 `unbound variable` 오류로 스크립트가 중단됨',
         cause:
-          'Jenkins Credentials가 빌드 환경변수로 바인딩되지 않았음. Docker Hub를 구글 계정으로 가입해 비밀번호가 없는 상태였음',
+          'Jenkins Credentials가 빌드 환경변수로 바인딩되지 않았고, 스크립트가 참조한 변수명(`DOCKERHUB_USR`)과 바인딩한 변수명도 일치하지 않았음. 또 Docker Hub를 구글 계정으로 가입해 비밀번호가 없는 상태였음',
         solution:
-          'Docker Hub Access Token을 발급해 Jenkins Credentials에 등록하고, Credentials Binding 플러그인으로 환경변수에 주입. 스크립트에 필수 변수 검증 가드(`${VAR:?}`)를 추가',
-        notes: [
-          '[확인 필요] 이슈 기록에는 `DOCKERHUB_USR`, 최종 스크립트에는 `DOCKERHUB_USER` — 변수명 불일치도 원인이었는지',
-        ],
+          'Docker Hub Access Token을 발급해 Jenkins Credentials에 등록하고, Credentials Binding 플러그인으로 환경변수에 주입. 변수명을 `DOCKERHUB_USER` / `DOCKERHUB_PSW`로 맞추고, 스크립트에 필수 변수 검증 가드(`${VAR:?}`)를 추가',
         image: {
           file: 'build1-console-unbound.png',
           caption: '빌드 #1 콘솔: DOCKERHUB_PSW · DOCKERHUB_USR unbound variable로 실패',

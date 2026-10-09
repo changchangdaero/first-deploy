@@ -44,7 +44,6 @@ export const engineeringSections = {
     learnings: '배운 점',
     limitations: '한계',
     nextSteps: '다음 개선 과제',
-    links: '링크',
     linkLabels: {
       github: 'GitHub',
       issue: '트러블슈팅 기록',

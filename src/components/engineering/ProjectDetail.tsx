@@ -1,5 +1,5 @@
 // 프로젝트 상세: 요약 → 대표 사진 → 기본 정보 → 스택 → 아키텍처 → 내가 한 일 → 트러블슈팅 → 설계 결정
-// → 표 → 코드 → 결과 → 배운 점/한계/다음 과제 → 링크 순서로 보여줍니다.
+// → 표 → 코드 → 결과 → 배운 점/한계/다음 과제 순서로 보여줍니다. 링크 버튼은 맨 위 요약 아래에만 둡니다.
 // 데이터가 비어 있거나 이미지 파일이 없는 섹션은 통째로 숨깁니다.
 import Image from 'next/image';
 import Link from 'next/link';
@@ -393,13 +393,6 @@ export default function ProjectDetail({ project }: { project: Project }) {
             </DetailSection>
           ) : null}
         </div>
-      ) : null}
-
-      {/* ⑧ 링크 */}
-      {links.length > 0 ? (
-        <DetailSection title={labels.links}>
-          <ProjectLinks project={project} keys={links} />
-        </DetailSection>
       ) : null}
 
       {/* 이전 / 다음 프로젝트 */}
