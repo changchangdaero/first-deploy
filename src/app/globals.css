@@ -3252,6 +3252,54 @@ body:has(.landing) .portfolio-footer {
   flex: 1;
 }
 
+/* 차트처럼 잘리면 안 되는 이미지: 같은 16:10 칸 안에 전체가 보이도록 맞춥니다. */
+.project-detail__gallery .project-detail__image--contain {
+  background: #ffffff;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* 3열 이상 표: 숫자 열은 가운데 정렬, 첫 열 폭은 내용에 맞춤 */
+.project-detail__table--wide tbody th {
+  width: auto;
+  white-space: nowrap;
+}
+
+.project-detail__table--wide thead th:not(:first-child),
+.project-detail__table--wide tbody td {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.86rem;
+  text-align: right;
+}
+
+.project-detail__table-caption {
+  margin-top: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 767px) {
+  /* 여러 열 표는 모바일에서 행마다 카드 안에 2열 그리드로 값을 배치해 세로 길이를 줄입니다. */
+  .project-detail__table--wide tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0.55rem 0;
+  }
+
+  .project-detail__table--wide tbody th {
+    grid-column: 1 / -1;
+    white-space: normal;
+  }
+
+  .project-detail__table--wide tbody th,
+  .project-detail__table--wide tbody td {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    text-align: left;
+  }
+}
+
 .project-detail__figure figcaption {
   border-top: 1px solid var(--border-default);
   color: var(--text-muted);

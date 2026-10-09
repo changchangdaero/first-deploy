@@ -2,12 +2,14 @@
 import hljs from 'highlight.js/lib/core';
 import bash from 'highlight.js/lib/languages/bash';
 import dockerfile from 'highlight.js/lib/languages/dockerfile';
+import python from 'highlight.js/lib/languages/python';
 import yaml from 'highlight.js/lib/languages/yaml';
 
 import type { ProjectCode } from '@/data/engineering/projects';
 
 hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('dockerfile', dockerfile);
+hljs.registerLanguage('python', python);
 hljs.registerLanguage('yaml', yaml);
 
 export default function CodeBlock({ code }: { code: ProjectCode }) {

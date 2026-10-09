@@ -85,7 +85,7 @@ function Figure({
           width={1600}
           height={900}
           sizes="(max-width: 880px) 100vw, 880px"
-          className="project-detail__image"
+          className={image.fit === 'contain' ? 'project-detail__image project-detail__image--contain' : 'project-detail__image'}
           priority={priority}
         />
       </a>
@@ -184,6 +184,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
   const metrics = project.metrics ?? [];
   const troubleshooting = project.troubleshooting ?? [];
   const decisions = project.decisions ?? [];
+  const tables = (project.tables ?? []).filter((table) => table.rows.length > 0);
   const learnings = project.learnings ?? [];
   const limitations = project.limitations ?? [];
   const nextSteps = project.nextSteps ?? [];
@@ -314,31 +315,41 @@ export default function ProjectDetail({ project }: { project: Project }) {
         </DetailSection>
       ) : null}
 
-      {/* 표: 모바일에서는 행마다 카드처럼 쌓여 가로 스크롤이 생기지 않습니다. */}
-      {project.table && project.table.rows.length > 0 ? (
-        <DetailSection title={project.table.title}>
-          <table className="project-detail__table">
+      {/* 표: 첫 열은 행 제목. 모바일에서는 행마다 카드처럼 쌓여 가로 스크롤이 생기지 않습니다. */}
+      {tables.map((table) => (
+        <DetailSection key={table.title} title={table.title}>
+          <table
+            className={
+              table.columns.length > 2 ? 'project-detail__table project-detail__table--wide' : 'project-detail__table'
+            }
+          >
             <thead>
               <tr>
-                <th scope="col">{project.table.columns[0]}</th>
-                <th scope="col">{project.table.columns[1]}</th>
+                {table.columns.map((column) => (
+                  <th key={column} scope="col">
+                    {column}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {project.table.rows.map(([left, right]) => (
-                <tr key={left}>
-                  <th scope="row" data-label={project.table!.columns[0]}>
-                    <RichText text={left} />
+              {table.rows.map(([head, ...cells]) => (
+                <tr key={head}>
+                  <th scope="row" data-label={table.columns[0]}>
+                    <RichText text={head} />
                   </th>
-                  <td data-label={project.table!.columns[1]}>
-                    <RichText text={right} />
-                  </td>
+                  {cells.map((cell, index) => (
+                    <td key={`${head}-${index}`} data-label={table.columns[index + 1]}>
+                      <RichText text={cell} />
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
           </table>
+          {table.caption ? <p className="project-detail__table-caption">{table.caption}</p> : null}
         </DetailSection>
-      ) : null}
+      ))}
 
       {/* 코드 */}
       {project.code ? (

@@ -7,6 +7,8 @@ export type ProjectStatus = 'done' | 'wip';
 export type ProjectImage = {
   file: string;
   caption: string;
+  // 결과 갤러리에서 기본은 16:10 칸을 꽉 채움(cover). 차트처럼 잘리면 안 되는 이미지는 'contain'
+  fit?: 'cover' | 'contain';
 };
 
 export type ProjectMetric = {
@@ -39,17 +41,18 @@ export type ProjectDecision = {
   tradeoff?: string;
 };
 
-// 2열 표 (예: 겪은 문제 → 반영한 장치). 셀 안의 `코드`는 코드 글꼴로 보입니다.
+// 표: 첫 열은 행 제목입니다. 셀 안의 `코드`는 코드 글꼴로 보입니다.
 export type ProjectTable = {
   title: string;
-  columns: [string, string];
-  rows: [string, string][];
+  columns: string[];
+  rows: string[][];
+  caption?: string;
 };
 
 // 코드 블록: language에 맞춰 문법 강조가 적용됩니다.
 export type ProjectCode = {
   title: string;
-  language: 'bash' | 'yaml' | 'dockerfile';
+  language: 'bash' | 'yaml' | 'dockerfile' | 'python';
   source: string;
   caption?: string;
 };
@@ -84,7 +87,7 @@ export type Project = {
   teamContext?: string;
   troubleshooting?: ProjectTroubleshooting[];
   decisions?: ProjectDecision[];
-  table?: ProjectTable;
+  tables?: ProjectTable[];
   code?: ProjectCode;
   metrics?: ProjectMetric[];
   screenshots?: ProjectImage[];
@@ -223,18 +226,20 @@ const allProjects: Project[] = [
           '단일 EC2는 Jenkins와 서비스가 리소스를 나눠 써서 운영 환경에는 맞지 않음. 실제로 메모리 문제도 의심됐기 때문에, 운영이라면 서버를 분리하는 것이 맞다고 판단',
       },
     ],
-    table: {
-      title: '최종 스크립트의 방어 장치',
-      columns: ['겪은 문제', '반영한 장치'],
-      rows: [
-        ['환경변수 미주입', '`${VAR:?}` 필수값 검증'],
-        ['로그인 캐시 꼬임', '`docker logout` 후 `--password-stdin`으로 재로그인'],
-        ['이전 작업물 잔존', '`rm -rf` 후 `--depth 1` 클린 clone'],
-        ['원인 파악이 어려운 실패', '버전 출력, Dockerfile 존재 체크, 단계별 로그'],
-        ['롤백 불가', '`:BUILD_NUMBER` + `:latest` 이중 태깅'],
-        ['배포 환경 차이', 'compose 파일이 있을 때만 배포하도록 옵션화'],
-      ],
-    },
+    tables: [
+      {
+        title: '최종 스크립트의 방어 장치',
+        columns: ['겪은 문제', '반영한 장치'],
+        rows: [
+          ['환경변수 미주입', '`${VAR:?}` 필수값 검증'],
+          ['로그인 캐시 꼬임', '`docker logout` 후 `--password-stdin`으로 재로그인'],
+          ['이전 작업물 잔존', '`rm -rf` 후 `--depth 1` 클린 clone'],
+          ['원인 파악이 어려운 실패', '버전 출력, Dockerfile 존재 체크, 단계별 로그'],
+          ['롤백 불가', '`:BUILD_NUMBER` + `:latest` 이중 태깅'],
+          ['배포 환경 차이', 'compose 파일이 있을 때만 배포하도록 옵션화'],
+        ],
+      },
+    ],
     code: {
       title: '최종 파이프라인 스크립트',
       language: 'bash',
@@ -375,15 +380,123 @@ echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
     category: 'AI',
     status: 'done',
     title: 'WM-811K 웨이퍼 결함 분류',
-    summary: '결함 클래스 난이도 기반 증강으로 클래스 불균형 해소',
-    context: '캡스톤디자인 · IC-PBL 기업연계',
-    period: todo('기간'),
+    summary:
+      '정상 · 결함 비율로 증강 예산을 정하고, 클래스별 분류 난이도와 희소성에 따라 증강량을 차등 배분해 결함 클래스의 Recall 중심 성능을 개선',
+    background:
+      'WM-811K 웨이퍼 맵은 정상(None)이 약 85.2%를 차지하고, 결함 클래스끼리도 Edge-Ring 9,680장과 Near-full 149장처럼 편차가 큽니다. 모든 결함 클래스에 같은 양을 증강하면 클래스마다 다른 부족 정도와 분류 난이도를 반영하지 못하기 때문에, 제한된 증강 예산을 어떻게 나눌지에 집중했습니다.',
+    context: 'IC-PBL 캡스톤디자인 2 · 팀 도체부도체',
+    period: '2026년 1학기',
     team: '2명',
-    role: todo('역할'),
-    stack: ['Python', 'PyTorch', 'CFG-DDPM', 'MobileNet'],
-    contributions: [todo('내가 한 일')],
-    metrics: [{ label: 'F2-score', value: '0.8647 → 0.8947' }],
-    limitations: ['난이도 계산 수식이 휴리스틱이라 신뢰성이 부족합니다.'],
+    role: '데이터 전처리 · 증강 · 모델 학습 · 튜닝 (공동 수행)',
+    stack: ['Python', 'PyTorch', 'MobileNetV2'],
+    thumbnail: 'class-distribution.png',
+    architecture: {
+      file: 'architecture.svg',
+      caption: '데이터 준비 → 정상 · 결함 비율 탐색 → 증강 예산 산출 → 클래스별 배분 → 3개 데이터셋을 동일 조건으로 학습 · 비교',
+    },
+    contributions: [
+      'WM-811K 라벨 데이터 추출, 64×64 · 3채널 전처리, 5개 fold 분할(fold 0 고정 테스트셋) 구성',
+      '회전 · 반전 기반 전통적 증강으로 균등 · 차등 증강 데이터셋 생성',
+      'ImageNet 사전학습 MobileNetV2 전이학습, 검증 Macro-F2 기준 모델 선정',
+      '하이퍼파라미터 튜닝(AdamW, lr · weight decay 1e-4)과 클래스별 증강 가중치 조정 실험',
+      '최종 보고서 작성',
+    ],
+    teamContext:
+      '2인 팀으로 대부분의 실험을 함께 진행했습니다. 정상 · 결함 기준 비율 탐색과 증강 가중치 수식은 팀원이 주도했고, 전처리 · 증강 · 학습 · 튜닝 · 가중치 조정은 함께 수행했습니다.',
+    decisions: [
+      {
+        title: '연구 질문 전환',
+        options: '어떤 증강 기법(전통적 · 생성형 · 결함 합성)이 가장 좋은가 vs 같은 예산을 클래스별로 어떻게 나눌 것인가',
+        decision: '증강량 배분 전략 비교로 전환',
+        tradeoff:
+          '기법 간 성능 차이가 크지 않아, 단순 비교로는 불균형 문제를 어떤 기준으로 해결했는지 제시하기 어렵다는 지도교수 피드백을 반영',
+      },
+      {
+        title: '증강 데이터 선별 방식',
+        options: '생성 데이터 중 품질 좋은 샘플만 사람이 골라 사용 vs 사전에 정한 기준대로 전부 사용',
+        decision: '사람의 임의 선별을 제외',
+        tradeoff: '주관적 판단이 개입되면 실험의 객관성과 재현성이 떨어지고 기법 간 공정한 비교가 어려움',
+      },
+      {
+        title: 'CFG-DDPM 생성형 증강',
+        options: '클래스 조건 확산 모델(CFG-DDPM)로 결함 데이터 생성 vs 전통적 증강(회전 · 반전)으로 통일',
+        decision: '초기 탐색에만 활용하고 최종 실험에서는 제외',
+        tradeoff: '생성 샘플마다 품질 편차가 있어, 배분 전략의 효과만 비교하려면 증강 기법을 하나로 통제하는 편이 타당하다고 판단',
+      },
+      {
+        title: '모델 선정 기준',
+        options: '검증 F1-score vs 검증 Macro-F2',
+        decision: 'Macro-F2로 변경하고 Defect Macro-F2를 핵심 지표로 설정',
+        tradeoff: '결함을 놓치지 않는 것(Recall)이 중요한 문제라 Recall에 더 큰 비중을 두는 F2가 목적에 맞음',
+      },
+    ],
+    tables: [
+      {
+        title: '클래스별 증강량 배분',
+        columns: ['클래스', '검증 F2', '난이도 D', '희소성', '최종 가중치', '증강량'],
+        rows: [
+          ['Scratch', '0.5802', '0.4198', '0.5022', '0.4830', '1,130'],
+          ['Loc', '0.6351', '0.3649', '0.2378', '0.3910', '915'],
+          ['Edge-Loc', '0.7450', '0.2550', '0.1496', '0.2665', '624'],
+          ['Donut', '0.8175', '0.1825', '0.6860', '0.2201', '515'],
+          ['Random', '0.8790', '0.1210', '0.5795', '0.1421', '333'],
+          ['Center', '0.8950', '0.1050', '0.1951', '0.1111', '260'],
+          ['Near-full', '0.9425', '0.0575', '1.0000', '0.0747', '175'],
+          ['Edge-Ring', '0.9672', '0.0328', '0.0000', '0.0328', '77'],
+        ],
+        caption: '분류가 어려운 Scratch · Loc에 증강량이 집중되고, 이미 잘 분류되는 Edge-Ring에는 적게 배정됩니다. (발표 자료 기준)',
+      },
+      {
+        title: '최종 성능 비교 (fold 0 고정 테스트셋)',
+        columns: ['조건', 'Macro-F1', 'Macro-F2', 'Defect Macro-F1', 'Defect Macro-F2'],
+        rows: [
+          ['원본', '0.8782', '0.8647', '0.8644', '0.8488'],
+          ['균등 증강', '0.8947', '0.8864', '0.8829', '0.8732'],
+          ['차등 증강 (제안)', '0.8917', '0.8907', '0.8795', '0.8783'],
+        ],
+        caption: '차등 증강은 F2 계열 지표에서 가장 높았고, F1 계열은 균등 증강이 더 높았습니다.',
+      },
+    ],
+    code: {
+      title: '증강량 배분 수식',
+      language: 'python',
+      caption: '발표 자료의 배분 수식을 코드로 옮긴 것입니다. 0.3은 휴리스틱 계수입니다.',
+      source: `difficulty = 1 - f2_score                    # 분류 난이도 (검증셋 F2 기준)
+scarcity = math.log(n_max / n_class)         # 희소성 보너스 (데이터가 적을수록 큼)
+weight = difficulty * (1 + 0.3 * scarcity)   # 최종 가중치
+aug_count = budget * weight / total_weight   # 증강 예산 4,024장을 가중치 비율로 배분`,
+    },
+    metrics: [
+      { label: 'Macro-F2', value: '0.8647 → 0.8907' },
+      { label: 'Defect Macro-F2', value: '0.8488 → 0.8783' },
+      { label: 'Scratch F2', value: '0.6356 → 0.7553' },
+      { label: '증강 예산', value: '4,024장' },
+    ],
+    screenshots: [
+      {
+        file: 'none-ratio-curve.png',
+        caption: '정상(None) 데이터 수에 따른 Macro-F2 — 약 3.23:1부터 향상 폭이 완만해져 기준 비율로 설정',
+        fit: 'contain',
+      },
+      {
+        file: 'performance-comparison.png',
+        caption: '원본 · 균등 증강 · 차등 증강의 테스트셋 성능 비교',
+        fit: 'contain',
+      },
+    ],
+    learnings: [
+      '불균형 데이터에서는 Accuracy 하나로 판단할 수 없어, 문제 목적에 맞는 평가 지표(Macro-F2, Defect Macro-F2)를 먼저 정해야 한다는 점을 배웠습니다.',
+      '모델 구조만큼이나 학습 데이터의 구성과 배분이 성능에 큰 영향을 준다는 것을 실험으로 확인했습니다.',
+    ],
+    limitations: [
+      '희소성 계수 0.3 등 난이도 계산 수식이 휴리스틱이라 통계적 근거가 부족합니다.',
+      'Macro-F1은 균등 증강이 더 높았고, Donut · Random(균등 증강)과 Near-full(원본)은 차등 증강에서 오히려 낮아 모든 클래스에서 일관된 개선은 아니었습니다.',
+      '공개 데이터셋(WM-811K)만 사용해 실제 생산라인 데이터로는 검증하지 않았습니다.',
+    ],
+    nextSteps: [
+      '결함 패턴의 형태적 특성에 맞춰 클래스별 증강 기법과 수량을 개별 설정',
+      '난이도 산정 기준의 객관성과 다른 도메인으로의 일반화 가능성 검증',
+    ],
   },
   {
     slug: 'sentistock',
