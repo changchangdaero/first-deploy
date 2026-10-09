@@ -1,8 +1,9 @@
 // 링크 버튼 묶음: 프로필 링크를 기존 social-link-pill 디자인으로 그리고, 주소가 빈 링크는 숨깁니다.
 import Image from 'next/image';
 import type { IconType } from 'react-icons';
-import { FaGithub, FaInstagram } from 'react-icons/fa';
+import { FaGithub, FaInstagram, FaUser } from 'react-icons/fa';
 import { FiMail } from 'react-icons/fi';
+import { MdArticle } from 'react-icons/md';
 import { SiVelog } from 'react-icons/si';
 
 import type { LinkIcon, ProfileLink } from '@/data/links';
@@ -12,6 +13,8 @@ const ICONS: Record<Exclude<LinkIcon, 'brunch'>, IconType> = {
   mail: FiMail,
   velog: SiVelog,
   instagram: FaInstagram,
+  profile: FaUser,
+  blog: MdArticle,
 };
 
 function PillIcon({ icon }: { icon?: LinkIcon }) {

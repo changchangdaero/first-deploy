@@ -4,10 +4,13 @@ export const links = {
   email: 'changchangdaero@naver.com',
   velog: '',
   brunch: 'https://brunch.co.kr/@changchangdaero',
+  blog: 'https://blog.naver.com/changchangdaero',
+  profile:
+    'https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&mra=bjky&pkid=1&os=35402807&qvt=0&query=%EC%9C%A0%EC%B0%BD%EB%AF%BC',
   instagram: 'https://www.instagram.com/chang_y.u/',
 };
 
-export type LinkIcon = 'github' | 'mail' | 'velog' | 'brunch' | 'instagram';
+export type LinkIcon = 'github' | 'mail' | 'velog' | 'brunch' | 'instagram' | 'profile' | 'blog';
 
 export type ProfileLink = {
   label: string;
