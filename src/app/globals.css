@@ -2535,10 +2535,11 @@ html:not([data-theme='dark']) .site-header {
   --landing-word-center: calc(var(--landing-word-top) + var(--landing-word-size) * 0.58);
   --landing-axis-gap: clamp(2.25rem, 4vw, 3.5rem);
   --landing-outer-gap: clamp(1.25rem, 4vw, 3rem);
+  --landing-footer-height: 2.9rem;
 
   display: flex;
-  /* 첫 화면은 헤더 아래를 정확히 채우고 스크롤이 생기지 않게 합니다. */
-  height: calc(100svh - var(--site-header-height));
+  /* 첫 화면은 상단 헤더와 하단 바 사이를 정확히 채우고 스크롤이 생기지 않게 합니다. */
+  height: calc(100svh - var(--site-header-height) - var(--landing-footer-height));
   flex-direction: column;
   overflow: hidden;
 }
@@ -2548,15 +2549,28 @@ body:has(.landing) {
   overflow: hidden;
 }
 
-/* 랜딩에서는 방문자 수 푸터를 화면 하단에 겹쳐 둡니다. */
+/* 랜딩에서는 방문자 수 푸터를 헤더와 같은 모양의 하단 고정 바로 보여줍니다. */
 body:has(.landing) .portfolio-footer {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 5;
-  margin: 0 auto;
-  padding: 0 0 1rem;
+  z-index: 100;
+  width: auto;
+  min-height: 2.9rem;
+  margin: 0;
+  padding: 0 1rem;
+  background: color-mix(in srgb, var(--portfolio-bg) 90%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--border-default) 72%, transparent);
+  box-shadow: 0 -10px 30px rgba(47, 70, 56, 0.05);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+:root[data-theme='dark'] body:has(.landing) .portfolio-footer {
+  background: rgba(10, 10, 10, 0.9);
+  border-top-color: rgba(42, 42, 42, 0.86);
+  box-shadow: 0 -12px 34px rgba(0, 0, 0, 0.34);
 }
 
 .landing__name {
@@ -2590,7 +2604,7 @@ body:has(.landing) .portfolio-footer {
   padding-top: var(--landing-word-top);
   padding-bottom: clamp(2.5rem, 8vh, 4.5rem);
   text-decoration: none;
-  transition: flex-grow 360ms ease, background-color 240ms ease;
+  transition: background-color 240ms ease;
 }
 
 /* 축 쪽으로 붙는 거울 배치: 왼쪽 문은 오른쪽 정렬, 오른쪽 문은 왼쪽 정렬 */
@@ -2687,6 +2701,7 @@ body:has(.landing) .portfolio-footer {
   background: var(--portfolio-surface);
   box-shadow: var(--shadow-sm);
   color: var(--primary-dark);
+  transition: border-color 200ms ease, background-color 200ms ease;
 }
 
 .landing-door__icon svg {
@@ -2697,7 +2712,7 @@ body:has(.landing) .portfolio-footer {
 .landing-door__arrow {
   color: var(--primary-dark);
   font-size: 1.3rem;
-  transition: transform 200ms ease;
+  transition: color 200ms ease;
 }
 
 /* 가운데 축: 이름, ×, 세로선이 함께 움직입니다. */
@@ -2753,7 +2768,6 @@ body:has(.landing) .portfolio-footer {
 
 @media (hover: hover) and (min-width: 768px) {
   .landing-door:hover {
-    flex-grow: 1.22;
     background: color-mix(in srgb, var(--primary) 4%, transparent);
   }
 
@@ -2762,11 +2776,12 @@ body:has(.landing) .portfolio-footer {
   }
 
   .landing-door:hover .landing-door__arrow {
-    transform: translateX(5px);
+    color: var(--primary);
   }
 
-  .landing-door--engineering:hover .landing-door__arrow {
-    transform: translateX(-5px);
+  .landing-door:hover .landing-door__icon {
+    border-color: var(--primary);
+    background: var(--accent-muted);
   }
 
   .landing-split:hover .landing-door:not(:hover) .landing-door__content {
@@ -2806,8 +2821,7 @@ body:has(.landing) .portfolio-footer {
 
   .landing-door--literature {
     justify-content: flex-start;
-    /* 아래쪽은 겹쳐 둔 푸터 자리만큼 비웁니다. */
-    padding: 2.75rem 1.25rem 3rem;
+    padding: 2.75rem 1.25rem 2rem;
   }
 
   .landing-door--engineering::before {
@@ -2853,7 +2867,7 @@ body:has(.landing) .portfolio-footer {
   }
 
   .landing-door--literature {
-    padding: 1.9rem 1.25rem 2.6rem;
+    padding: 1.9rem 1.25rem 1.5rem;
   }
 }
 
