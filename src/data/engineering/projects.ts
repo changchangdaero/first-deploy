@@ -15,12 +15,22 @@ export type ProjectMetric = {
   value: string;
 };
 
+// 트러블슈팅: 문제 → 원인 → 해결 → 결과 순서로 적습니다.
+export type ProjectTroubleshooting = {
+  problem: string;
+  cause: string;
+  solution: string;
+  result: string;
+};
+
 export type Project = {
   slug: string;
   tier: ProjectTier;
   status: ProjectStatus;
   title: string;
   summary: string;
+  // 왜 만들었나 / 어떤 문제를 풀려고 했나 (선택)
+  background?: string;
   context: string;
   period: string;
   team: string;
@@ -30,6 +40,7 @@ export type Project = {
   architecture?: ProjectImage;
   contributions: string[];
   teamContext?: string;
+  troubleshooting?: ProjectTroubleshooting[];
   metrics?: ProjectMetric[];
   screenshots?: ProjectImage[];
   learnings?: string[];
@@ -151,6 +162,15 @@ export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
 
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);
+}
+
+// 목록 순서 기준으로 이전/다음 프로젝트를 찾습니다. (상세 페이지 하단 이동용)
+export function getAdjacentProjects(slug: string) {
+  const index = projects.findIndex((project) => project.slug === slug);
+  return {
+    previous: index > 0 ? projects[index - 1] : undefined,
+    next: index >= 0 && index < projects.length - 1 ? projects[index + 1] : undefined,
+  };
 }
 
 export function projectImagePath(slug: string, file: string) {
