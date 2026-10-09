@@ -12,7 +12,7 @@
 
   <!-- VMware 경계 -->
   <rect x="250" y="40" width="920" height="560" rx="18" fill="#f7f9f6" stroke="#d4d4d4" stroke-dasharray="6 6"/>
-  <text x="274" y="74" font-size="17" font-weight="700" fill="#3f5f4a">VMware Workstation · NAT 192.168.199.0/24</text>
+  <text x="274" y="74" font-size="17" font-weight="700" fill="#3f5f4a">VMware Workstation · RHEL9 · NAT 192.168.199.0/24</text>
 
   <!-- 사용자 -->
   <rect x="40" y="160" width="170" height="96" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>

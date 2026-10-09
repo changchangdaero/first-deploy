@@ -75,14 +75,14 @@ export const projects: Project[] = [
     period: '5주',
     team: '개인',
     role: '설계 · 구축 · 모니터링 전체',
-    stack: ['VMware', 'Linux', 'Nginx', 'Node.js', 'PostgreSQL', 'Prometheus', 'node_exporter', 'Grafana', 'stress'],
+    stack: ['VMware', 'RHEL9', 'Nginx', 'Node.js', 'PostgreSQL', 'Prometheus', 'node_exporter', 'Grafana', 'stress'],
     thumbnail: 'grafana-dashboard.png',
     architecture: {
       file: 'architecture.svg',
       caption: '사용자 → Nginx(web01) → Node.js(was01) → PostgreSQL(dbm01), mgt01의 Prometheus가 4대의 node_exporter 지표를 수집',
     },
     contributions: [
-      '1주차 · VMware로 리눅스 VM 4대(web01 / was01 / dbm01 / mgt01) 생성, 저장소 · 호스트명 · 보안 설정',
+      '1주차 · VMware로 RHEL9 VM 4대(web01 / was01 / dbm01 / mgt01) 생성, 저장소 · 호스트명 · 보안 설정',
       '2주차 · Nginx · Node.js · PostgreSQL 설치',
       '3주차 · 웹 → WAS → DB 3-tier 구조 구성 및 연동 (Nginx 리버스 프록시 경유)',
       '4주차 · Prometheus · Grafana로 4대 서버의 자원 지표 수집 및 시각화',
