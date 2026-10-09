@@ -68,6 +68,14 @@ function Door({ doorKey, typedLength, segmentIndex }: { doorKey: DoorKey; typedL
   const door = landing.doors[doorKey];
   const Icon = DOOR_ICONS[doorKey];
   const { visible, isTyping } = segmentProgress(typedLength, segmentIndex);
+  // 거울 배치: 왼쪽 문은 "← 아이콘", 오른쪽 문은 "아이콘 →"로 화살표가 각자 바깥을 향합니다.
+  const isLeftDoor = doorKey === 'engineering';
+  const icon = (
+    <span className="landing-door__icon">
+      <Icon focusable="false" />
+    </span>
+  );
+  const arrow = <span className="landing-door__arrow">{isLeftDoor ? '←' : '→'}</span>;
 
   return (
     <Link
@@ -79,10 +87,17 @@ function Door({ doorKey, typedLength, segmentIndex }: { doorKey: DoorKey; typedL
         <TypedWord text={door.label} visible={visible} showCursor={isTyping} />
         <span className="landing-door__tagline">{door.tagline}</span>
         <span className="landing-door__meta" aria-hidden="true">
-          <span className="landing-door__icon">
-            <Icon focusable="false" />
-          </span>
-          <span className="landing-door__arrow">→</span>
+          {isLeftDoor ? (
+            <>
+              {arrow}
+              {icon}
+            </>
+          ) : (
+            <>
+              {icon}
+              {arrow}
+            </>
+          )}
         </span>
       </span>
     </Link>

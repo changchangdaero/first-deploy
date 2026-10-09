@@ -13,10 +13,17 @@ type SiteHeaderProps = {
   initialTheme?: 'light' | 'dark';
 };
 
+function isUnderPath(pathname: string, path: string) {
+  return pathname === path || pathname.startsWith(`${path}/`);
+}
+
 function getActiveGroup(pathname: string) {
-  return navGroups.find(
-    (group) => pathname === group.basePath || pathname.startsWith(`${group.basePath}/`),
-  );
+  return navGroups.find((group) => group.paths.some((path) => isUnderPath(pathname, path)));
+}
+
+function getPath(href: string) {
+  const index = href.indexOf('#');
+  return index >= 0 ? href.slice(0, index) : href;
 }
 
 function getHash(href: string) {
@@ -31,11 +38,12 @@ function useActiveSection(group: NavGroup | undefined, pathname: string) {
   useEffect(() => {
     setActiveId('');
 
-    if (!group || pathname !== group.basePath) {
+    if (!group) {
       return;
     }
 
     const sections = group.items
+      .filter((item) => getPath(item.href) === pathname)
       .map((item) => getHash(item.href))
       .filter(Boolean)
       .map((id) => document.getElementById(id))
@@ -124,12 +132,19 @@ export default function SiteHeader({ initialTheme = 'light' }: SiteHeaderProps) 
     return isMuted ? `${base} ${base}--muted` : base;
   }
 
+  // 섹션 링크(#)는 화면에 보이는 섹션과, 페이지 링크(예: /archive)는 현재 경로와 비교합니다.
   function isCurrentItem(group: NavGroup, item: NavItem) {
-    return (
-      activeGroup?.key === group.key &&
-      activeSectionId !== '' &&
-      getHash(item.href) === activeSectionId
-    );
+    if (activeGroup?.key !== group.key || item.external) {
+      return false;
+    }
+
+    const hash = getHash(item.href);
+
+    if (!hash) {
+      return isUnderPath(pathname, item.href);
+    }
+
+    return activeSectionId !== '' && hash === activeSectionId;
   }
 
   return (

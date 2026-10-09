@@ -28,7 +28,8 @@ export default function EngAbout() {
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <ul className="showcase-project-card__stack about-summary__stack" aria-label="기술 스택">
+          {/* 헤더 Tech Stack 메뉴의 임시 이동 위치. 엔지니어링 개편 때 별도 섹션으로 옮깁니다. */}
+          <ul id="tech-stack" className="showcase-project-card__stack about-summary__stack" aria-label="기술 스택">
             {profile.stack.map((technology) => (
               <li key={technology}>{technology}</li>
             ))}
