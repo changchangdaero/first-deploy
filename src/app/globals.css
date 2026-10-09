@@ -2528,78 +2528,218 @@ html:not([data-theme='dark']) .site-header {
   background-image: none !important;
 }
 
-/* Landing: "/" 이름과 두 갈래 문 */
-.landing-hero__name {
-  color: var(--primary);
-  font-size: clamp(1.05rem, 3vw, 1.25rem);
-  font-weight: 740;
-  letter-spacing: 0.04em;
+/* Landing: "/" 풀스크린 스플릿 (Engineering / Literature 두 문) */
+.landing {
+  position: relative;
+  display: flex;
+  min-height: calc(100svh - var(--site-header-height));
+  flex-direction: column;
+  /* 푸터의 음수 margin이 첫 화면에 걸쳐 보이지 않도록 여유를 둡니다. */
+  margin-bottom: 1rem;
 }
 
-.landing-doors {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 2.5vw, 1.75rem);
+.landing__intro {
+  position: absolute;
+  top: clamp(2.5rem, 9vh, 5.5rem);
+  left: 50%;
+  z-index: 2;
+  width: min(calc(100% - var(--page-gutter)), 1100px);
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.landing__name {
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.landing__intro .hero-title {
+  margin-top: 0.9rem;
+  color: var(--text-heading);
+  font-size: clamp(2rem, 5.2vw, 3.6rem);
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.16;
+}
+
+.landing-split {
+  display: flex;
+  flex: 1;
 }
 
 .landing-door {
+  position: relative;
+  isolation: isolate;
   display: flex;
-  min-height: clamp(12rem, 32vw, 18rem);
-  flex-direction: column;
-  gap: 0.9rem;
-  border: 1px solid var(--border-default);
-  border-radius: calc(var(--radius-card) + 4px);
-  background: var(--portfolio-surface);
-  box-shadow: var(--shadow-card);
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   color: var(--text-heading);
-  padding: clamp(1.4rem, 4vw, 2.2rem);
+  padding: clamp(11rem, 30vh, 15rem) clamp(1.25rem, 4vw, 3rem) clamp(2.5rem, 8vh, 4.5rem);
   text-decoration: none;
-  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  transition: flex-grow 360ms ease, background-color 240ms ease;
 }
 
-.landing-door:hover,
-.landing-door:focus-visible {
-  transform: translateY(-5px);
-  border-color: color-mix(in srgb, var(--primary) 55%, var(--border-default));
-  box-shadow: 0 18px 42px rgba(47, 70, 56, 0.12);
+.landing-door::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  opacity: 0.9;
+  transition: opacity 240ms ease;
+}
+
+.landing-door--engineering::before {
+  background-image: radial-gradient(circle, var(--border-strong) 1.1px, transparent 1.4px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse at 0% 100%, #000 15%, transparent 72%);
+  mask-image: radial-gradient(ellipse at 0% 100%, #000 15%, transparent 72%);
+}
+
+.landing-door--literature::before {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 27px,
+    var(--border-strong) 27px 28px
+  );
+  -webkit-mask-image: radial-gradient(ellipse at 100% 100%, #000 15%, transparent 72%);
+  mask-image: radial-gradient(ellipse at 100% 100%, #000 15%, transparent 72%);
 }
 
 .landing-door:focus-visible {
   outline: 2px solid var(--accent-ring);
-  outline-offset: 3px;
+  outline-offset: -8px;
+}
+
+.landing-door__content {
+  display: flex;
+  max-width: 22rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  text-align: center;
+  transition: opacity 240ms ease;
+}
+
+.landing-door__icon {
+  display: inline-flex;
+  width: 3.1rem;
+  height: 3.1rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--border-default) 82%, var(--primary));
+  border-radius: var(--radius-pill);
+  background: var(--portfolio-surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--primary-dark);
+}
+
+.landing-door__icon svg {
+  width: 1.3rem;
+  height: 1.3rem;
 }
 
 .landing-door__tagline {
   color: var(--text-heading);
-  font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+  font-size: clamp(1.15rem, 2.4vw, 1.45rem);
   font-weight: 720;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .landing-door__arrow {
-  margin-top: auto;
   color: var(--primary-dark);
-  font-size: 1.4rem;
-  transition: transform 180ms ease;
+  font-size: 1.35rem;
+  transition: transform 200ms ease;
 }
 
-.landing-door:hover .landing-door__arrow {
-  transform: translateX(4px);
+.landing-split__divider {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 1px;
+  /* 위쪽 이름·제목 영역에서는 선을 숨기고 아래로 갈수록 드러나게 합니다. */
+  background: linear-gradient(to bottom, transparent 0 36%, var(--border-default) 46% 100%);
+}
+
+.landing-split__cross {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  display: inline-flex;
+  width: 2.6rem;
+  height: 2.6rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--border-default) 82%, var(--primary));
+  border-radius: var(--radius-pill);
+  background: var(--portfolio-bg);
+  box-shadow: var(--shadow-sm);
+  color: var(--primary);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+
+@media (hover: hover) and (min-width: 768px) {
+  .landing-door:hover {
+    flex-grow: 1.22;
+    background: color-mix(in srgb, var(--primary) 4%, transparent);
+  }
+
+  .landing-door:hover::before {
+    opacity: 1;
+  }
+
+  .landing-door:hover .landing-door__arrow {
+    transform: translateX(5px);
+  }
+
+  .landing-split:hover .landing-door:not(:hover) .landing-door__content {
+    opacity: 0.55;
+  }
 }
 
 @media (max-width: 767px) {
-  .landing-doors {
-    grid-template-columns: 1fr;
+  .landing__intro {
+    position: static;
+    width: auto;
+    transform: none;
+    padding: 2.5rem calc(var(--page-gutter) / 2) 1.5rem;
   }
 
-  .landing-door:hover,
-  .landing-door:focus-visible {
-    transform: translateY(-3px);
+  .landing-split {
+    flex-direction: column;
+  }
+
+  .landing-door {
+    min-height: 15rem;
+    padding: 2.25rem 1.25rem;
+  }
+
+  .landing-door--engineering::before {
+    -webkit-mask-image: radial-gradient(ellipse at 0% 0%, #000 15%, transparent 75%);
+    mask-image: radial-gradient(ellipse at 0% 0%, #000 15%, transparent 75%);
+  }
+
+  .landing-split__divider {
+    background: var(--border-default);
+  }
+
+  .landing-split__cross {
+    top: 50%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .landing-door,
+  .landing-door::before,
+  .landing-door__content,
   .landing-door__arrow {
     transition: none;
   }

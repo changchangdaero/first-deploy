@@ -2,8 +2,8 @@
 import { todo } from '@/lib/todo';
 
 export const landing = {
-  name: '유창민',
-  title: 'Engineering × Literature',
+  name: 'Yoo Chang Min',
+  title: 'Engineering × Literature Hybrid',
   doors: {
     engineering: {
       label: 'Engineering',
