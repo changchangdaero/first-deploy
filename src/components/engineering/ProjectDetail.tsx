@@ -388,7 +388,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             </DetailSection>
           ) : null}
           {nextSteps.length > 0 ? (
-            <DetailSection title={labels.nextSteps}>
+            <DetailSection title={project.nextStepsLabel ?? labels.nextSteps}>
               <TextList items={nextSteps} />
             </DetailSection>
           ) : null}

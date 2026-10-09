@@ -3,7 +3,6 @@
 import { todo } from '@/lib/todo';
 
 export type ProjectStatus = 'done' | 'wip';
-export type ProjectTier = 'main' | 'sub';
 
 export type ProjectImage = {
   file: string;
@@ -63,7 +62,8 @@ export type ProjectTechChoice = {
 
 export type Project = {
   slug: string;
-  tier: ProjectTier;
+  // 카드 번호 옆에 표시하는 분류 라벨 (예: Infra, CI/CD, AI)
+  category: string;
   status: ProjectStatus;
   title: string;
   summary: string;
@@ -89,6 +89,8 @@ export type Project = {
   learnings?: string[];
   limitations?: string[];
   nextSteps?: string[];
+  // nextSteps 섹션 제목을 바꿀 때 사용 (기본: 다음 개선 과제)
+  nextStepsLabel?: string;
   links?: {
     github?: string;
     issue?: string;
@@ -103,7 +105,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: '3tier-monitoring',
-    tier: 'main',
+    category: 'Infra',
     status: 'done',
     title: '3-tier 인프라 구축 및 모니터링',
     summary: 'VM 4대로 구성한 3-tier 웹 서비스와 모니터링 환경 구성',
@@ -141,7 +143,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'jenkins-ci',
-    tier: 'main',
+    category: 'CI/CD',
     status: 'done',
     title: 'Jenkins 기반 CI/CD 파이프라인 구축',
     summary: 'Jenkins와 Docker로 빌드 · Docker Hub push를 자동화하고, compose 배포 단계까지 스크립트로 구현',
@@ -303,21 +305,85 @@ echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
     },
   },
   {
+    // 요약 · 배경 · 내가 한 일 문구는 제안서와 검토의견서를 바탕으로 쓴 초안입니다.
     slug: 'alertlens',
-    tier: 'main',
+    category: 'Observability',
     status: 'wip',
     title: 'AlertLens',
-    summary: '실행 중 경보 라벨 이상의 위치 진단과 묶기 민감도 분석 시스템',
+    summary: 'Prometheus 알림 라벨이 조용히 깨진 위치를 찾고, 알림 그룹화에 주는 영향을 수치로 보여주는 진단 도구',
+    background:
+      '알림 폭풍을 줄이기 위해 처음에는 머신러닝 기반 알림 그룹화를 구상했지만, Datadog이 같은 기능을 이미 상용화한 것을 확인했습니다. 대신 모든 그룹화 기능이 기대는 전제, "알림 라벨이 정확하다"에 주목했습니다. 라벨은 설정 변경이나 업그레이드로 오류 없이 조용히 깨질 수 있고, 실제 오픈소스 프로젝트에서도 같은 사례가 반복해서 보고되었습니다.',
     context: '캡스톤디자인',
-    period: todo('기간'),
+    period: '7~13주차 (개발 진행 중)',
     team: '개인',
+    role: '설계 · 구현 · 실험 전체',
+    stack: ['Docker Compose', 'Prometheus', 'Alertmanager', 'Python', 'pint'],
+    architecture: {
+      file: 'architecture.svg',
+      caption:
+        '계획 단계 구성도: Docker Compose 위 Prometheus · Alertmanager · 모의 서비스 2개, AlertLens CLI가 두 지점의 경보를 비교해 라벨 결함 위치와 그룹화 민감도(S)를 계산',
+    },
+    contributions: [
+      '알림 폭풍 · 알림 그룹화 관련 도구와 실제 장애 사례 조사 (참고자료 16건)',
+      '머신러닝 기반 알림 그룹화에서 라벨 품질 진단으로 주제 고도화',
+      '라벨 이상 진단 · 알림 묶음 영향 분석 · 실험 검증의 3단 구조 설계',
+      '지도교수 검토를 반영해 7주 안에 완결할 수 있는 범위로 재설계',
+    ],
+    decisions: [
+      {
+        title: '주제 전환',
+        options: '머신러닝 기반 알림 그룹화 vs 그룹화가 기대는 라벨의 품질 진단',
+        decision: '라벨 품질 진단',
+        tradeoff:
+          '머신러닝 그룹화는 Datadog Intelligent Correlation으로 이미 상용화되어 있음. 반면 모든 그룹화 기능의 공통 전제인 라벨 정확성은 기존 도구(pint 등)의 사각지대로 남아 있다고 판단',
+      },
+      {
+        title: '구현 방식',
+        options: '머신러닝 기반 판단 vs 규칙 기반 비교',
+        decision: '정상 시기의 라벨 상태와 비교하는 규칙 기반으로 구현',
+        tradeoff:
+          '결과를 다시 만들 수 있고 판단 이유를 설명할 수 있어야 운영 도구로 신뢰할 수 있음. AI 에이전트가 원인 설정을 찾아 수정안을 제안하는 기능은 향후 확장으로 남김',
+      },
+      {
+        title: '범위 조정',
+        options: 'Kubernetes(kind) + Docker Compose 이원화 vs Docker Compose 단일 환경',
+        decision: 'Docker Compose 단일 환경, 관측점 2곳, 결함 2~3종으로 축소',
+        tradeoff:
+          '남은 7주 안에 동작하는 프로토타입과 신뢰할 수 있는 실험 데이터를 완결하기 위한 선택. 대규모 Kubernetes 클러스터에서의 검증은 후속 과제로 남김',
+      },
+    ],
+    limitations: [
+      '두 개의 서비스로 구성한 실험 환경이라, 대규모 운영 환경으로 결과를 그대로 일반화하기는 어렵습니다.',
+      '라벨 문제의 위치와 영향을 알려줄 뿐, 라벨을 자동으로 고치지는 않습니다.',
+    ],
+    nextStepsLabel: '진행 계획',
+    nextSteps: [
+      '7주차 · Docker Compose 모니터링 환경 구축 (Prometheus + Alertmanager + 모의 서비스 2개), 경보 규칙 · 라우팅 설정',
+      '8주차 · Prometheus · Alertmanager 경보 API 수집기와 2-Point Diff 탐지 엔진 구현 (Python)',
+      '9주차 · 그룹화 민감도(S) 계산 모듈, 라벨 오류 3종(PromQL 누락 · relabel 오류 · 키 충돌) 자동 주입 스크립트',
+      '10주차 · 장애 · 라벨 오류 주입 실험, pint와의 사각지대 비교',
+      '11주차 · B³-F1 · 민감도 지표 분석과 결과 시각화',
+      '12~13주차 · 보고서와 GitHub 정리, CLI 데모와 최종 발표',
+    ],
+  },
+  {
+    slug: 'wafer-defect',
+    category: 'AI',
+    status: 'done',
+    title: 'WM-811K 웨이퍼 결함 분류',
+    summary: '결함 클래스 난이도 기반 증강으로 클래스 불균형 해소',
+    context: '캡스톤디자인 · IC-PBL 기업연계',
+    period: todo('기간'),
+    team: '2명',
     role: todo('역할'),
-    stack: ['Prometheus', 'Alertmanager', 'Docker Compose'],
-    contributions: ['Docker Compose 기반 Prometheus + Alertmanager testbed 구성'],
+    stack: ['Python', 'PyTorch', 'CFG-DDPM', 'MobileNet'],
+    contributions: [todo('내가 한 일')],
+    metrics: [{ label: 'F2-score', value: '0.8647 → 0.8947' }],
+    limitations: ['난이도 계산 수식이 휴리스틱이라 신뢰성이 부족합니다.'],
   },
   {
     slug: 'sentistock',
-    tier: 'sub',
+    category: 'Web',
     status: 'done',
     title: 'SentiStock',
     summary: '뉴스 감성 분석 기반 주식 투자 판단 보조 플랫폼',
@@ -335,23 +401,8 @@ echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
     award: '우수상 (5팀 중 3등)',
   },
   {
-    slug: 'wafer-defect',
-    tier: 'sub',
-    status: 'done',
-    title: 'WM-811K 웨이퍼 결함 분류',
-    summary: '결함 클래스 난이도 기반 증강으로 클래스 불균형 해소',
-    context: '캡스톤디자인 · IC-PBL 기업연계',
-    period: todo('기간'),
-    team: '2명',
-    role: todo('역할'),
-    stack: ['Python', 'PyTorch', 'CFG-DDPM', 'MobileNet'],
-    contributions: [todo('내가 한 일')],
-    metrics: [{ label: 'F2-score', value: '0.8647 → 0.8947' }],
-    limitations: ['난이도 계산 수식이 휴리스틱이라 신뢰성이 부족합니다.'],
-  },
-  {
     slug: 'hami',
-    tier: 'sub',
+    category: 'Desktop',
     status: 'wip',
     title: '햄이 (Hami)',
     summary: '자연어로 대화하며 일정 관리하는 데스크톱 펫 앱',

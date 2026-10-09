@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" font-family="Pretendard, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3f5f4a"/>
+    </marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7a8178"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="640" fill="#ffffff"/>
+
+  <!-- 계획 표시 -->
+  <rect x="1040" y="28" width="132" height="32" rx="16" fill="#fff0c7" stroke="#e5c56b"/>
+  <text x="1106" y="50" font-size="15" font-weight="700" fill="#6b4a06" text-anchor="middle">계획 단계</text>
+
+  <!-- Docker Compose 경계 -->
+  <rect x="40" y="70" width="790" height="530" rx="18" fill="#f7f9f6" stroke="#d4d4d4" stroke-dasharray="6 6"/>
+  <text x="64" y="104" font-size="17" font-weight="700" fill="#3f5f4a">Docker Compose 실험 환경</text>
+
+  <!-- 모의 서비스 -->
+  <rect x="70" y="130" width="210" height="150" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="92" y="166" font-size="19" font-weight="800" fill="#1f2a24">모의 서비스 ×2</text>
+  <text x="92" y="192" font-size="14" fill="#7a8178">service-alpha</text>
+  <text x="92" y="212" font-size="14" fill="#7a8178">service-bravo</text>
+  <text x="92" y="246" font-size="14" fill="#2d352f">메트릭 노출 (/metrics)</text>
+
+  <!-- Prometheus -->
+  <rect x="330" y="130" width="220" height="150" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="352" y="166" font-size="19" font-weight="800" fill="#1f2a24">Prometheus</text>
+  <text x="352" y="194" font-size="14" fill="#2d352f">수집 · 경보 규칙 (expr)</text>
+  <text x="352" y="216" font-size="14" fill="#2d352f">alert_relabel_configs</text>
+  <text x="352" y="250" font-size="13" fill="#7a8178">경보를 만들고 전송</text>
+
+  <!-- Alertmanager -->
+  <rect x="600" y="130" width="200" height="150" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="2"/>
+  <text x="622" y="166" font-size="19" font-weight="800" fill="#1f2a24">Alertmanager</text>
+  <text x="622" y="194" font-size="14" fill="#2d352f">라벨 기준 그룹화</text>
+  <text x="622" y="216" font-size="14" fill="#2d352f">라우팅 (수신자 결정)</text>
+
+  <!-- 서비스 흐름 -->
+  <line x1="280" y1="205" x2="324" y2="205" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="302" y="194" font-size="12" fill="#3f5f4a" text-anchor="middle">scrape</text>
+  <line x1="550" y1="205" x2="594" y2="205" stroke="#3f5f4a" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="572" y="194" font-size="12" fill="#3f5f4a" text-anchor="middle">경보</text>
+
+  <!-- 관측점 -->
+  <circle cx="440" cy="330" r="16" fill="#3f5f4a"/>
+  <text x="440" y="336" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle">1</text>
+  <text x="420" y="326" font-size="14" font-weight="700" fill="#1f2a24" text-anchor="end">관측점 1</text>
+  <text x="420" y="346" font-size="13" fill="#7a8178" text-anchor="end">GET /api/v1/alerts</text>
+  <line x1="440" y1="282" x2="440" y2="312" stroke="#3f5f4a" stroke-width="2"/>
+
+  <circle cx="700" cy="330" r="16" fill="#3f5f4a"/>
+  <text x="700" y="336" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle">2</text>
+  <text x="680" y="326" font-size="14" font-weight="700" fill="#1f2a24" text-anchor="end">관측점 2</text>
+  <text x="680" y="346" font-size="13" fill="#7a8178" text-anchor="end">GET /api/v2/alerts</text>
+  <line x1="700" y1="282" x2="700" y2="312" stroke="#3f5f4a" stroke-width="2"/>
+
+  <!-- 오류 주입기 -->
+  <rect x="70" y="420" width="420" height="150" rx="14" fill="#ffffff" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="92" y="456" font-size="18" font-weight="800" fill="#1f2a24">오류 · 장애 주입기</text>
+  <text x="92" y="486" font-size="14" fill="#2d352f">라벨 오류: PromQL 누락 · relabel 오류 · 키 충돌</text>
+  <text x="92" y="510" font-size="14" fill="#2d352f">장애: HTTP 지연 · DB 중단</text>
+  <text x="92" y="540" font-size="13" fill="#7a8178">정답(언제 무엇을 바꿨는지)을 기록</text>
+  <path d="M175 420 L 175 286" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+  <path d="M478 420 L 520 286" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+
+  <!-- AlertLens CLI -->
+  <rect x="870" y="230" width="300" height="250" rx="14" fill="#ffffff" stroke="#3f5f4a" stroke-width="3"/>
+  <text x="894" y="268" font-size="21" font-weight="800" fill="#1f2a24">AlertLens CLI</text>
+  <text x="894" y="292" font-size="14" fill="#7a8178">Python</text>
+  <text x="894" y="328" font-size="15" font-weight="700" fill="#3f5f4a">2-Point Diff 진단</text>
+  <text x="894" y="350" font-size="13" fill="#2d352f">1에만 있고 2에 없음 → 전송 설정 오류</text>
+  <text x="894" y="370" font-size="13" fill="#2d352f">1부터 라벨 없음 → 경보 규칙 오류</text>
+  <text x="894" y="406" font-size="15" font-weight="700" fill="#3f5f4a">그룹화 민감도</text>
+  <text x="894" y="428" font-size="13" fill="#2d352f">S = S_merge + S_split</text>
+  <text x="894" y="458" font-size="13" fill="#7a8178">결함 위치 · 민감도를 터미널에 출력</text>
+
+  <path d="M456 340 Q 640 400 864 360" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+  <path d="M716 336 Q 790 320 864 320" fill="none" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow-muted)"/>
+  <text x="612" y="400" font-size="13" fill="#7a8178">경보 수집 · 비교</text>
+
+  <!-- 범례 -->
+  <line x1="560" y1="540" x2="600" y2="540" stroke="#3f5f4a" stroke-width="3"/>
+  <text x="610" y="545" font-size="14" fill="#2d352f">서비스 흐름</text>
+  <line x1="560" y1="566" x2="600" y2="566" stroke="#7a8178" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="610" y="571" font-size="14" fill="#2d352f">주입 · 수집</text>
+</svg>

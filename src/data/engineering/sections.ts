@@ -18,8 +18,6 @@ export const engineeringSections = {
     eyebrow: 'PROJECTS',
     title: "What I've Built",
     description: todo('Projects 섹션 소개'),
-    mainLabel: 'Main Projects',
-    subLabel: 'More Projects',
   },
   projectDetail: {
     back: 'Projects',
@@ -39,7 +37,7 @@ export const engineeringSections = {
       lesson: '배운 점',
     },
     decisions: '설계 결정',
-    decisionSteps: { options: '선택지', decision: '결정', tradeoff: '한계 인식' },
+    decisionSteps: { options: '선택지', decision: '결정', tradeoff: '근거 · 한계' },
     results: '결과',
     learnings: '배운 점',
     limitations: '한계',

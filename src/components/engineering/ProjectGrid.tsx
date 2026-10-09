@@ -1,13 +1,10 @@
-// 프로젝트 목록: 메인 프로젝트는 크게, 서브 프로젝트는 짧은 카드로 나눠 보여줍니다.
+// 프로젝트 목록: 모든 프로젝트를 같은 형식의 가로 카드로 나열합니다. 순서는 데이터 파일의 순서를 따릅니다.
 import ProjectCard from '@/components/engineering/ProjectCard';
 import SectionHeader from '@/components/SectionHeader';
 import { projects } from '@/data/engineering/projects';
 import { engineeringSections as sections } from '@/data/engineering/sections';
 
 export default function ProjectGrid() {
-  const mainProjects = projects.filter((project) => project.tier === 'main');
-  const subProjects = projects.filter((project) => project.tier === 'sub');
-
   return (
     <section id="projects" className="content-section" aria-labelledby="projects-title">
       <SectionHeader
@@ -17,17 +14,9 @@ export default function ProjectGrid() {
         titleId="projects-title"
       />
 
-      <h3 className="projects-group-label">{sections.projects.mainLabel}</h3>
-      <div className="projects-grid projects-grid--main">
-        {mainProjects.map((project, index) => (
+      <div className="projects-grid projects-grid--list">
+        {projects.map((project, index) => (
           <ProjectCard key={project.slug} project={project} index={index} />
-        ))}
-      </div>
-
-      <h3 className="projects-group-label">{sections.projects.subLabel}</h3>
-      <div className="projects-grid projects-grid--sub">
-        {subProjects.map((project, index) => (
-          <ProjectCard key={project.slug} project={project} index={mainProjects.length + index} />
         ))}
       </div>
     </section>
