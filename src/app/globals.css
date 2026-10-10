@@ -627,7 +627,8 @@ select {
 .profile-list li::before {
   position: absolute;
   left: 0;
-  top: 0.72rem;
+  /* 첫 줄 가운데: 줄 높이의 절반(1.65em / 2)에서 점 크기의 절반을 뺍니다. */
+  top: calc(0.825em - 0.175rem);
   width: 0.35rem;
   height: 0.35rem;
   border-radius: 999px;
@@ -1308,7 +1309,8 @@ textarea::placeholder {
 }
 
 .about-summary .profile-list li::before {
-  top: 0.78rem;
+  /* 첫 줄 가운데: 줄 높이의 절반(1.7em / 2)에서 점 크기의 절반을 뺍니다. */
+  top: calc(0.85em - 0.21rem);
   width: 0.42rem;
   height: 0.42rem;
   background: color-mix(in srgb, var(--primary) 84%, #ffffff);
@@ -2359,12 +2361,20 @@ body:has(.landing) .portfolio-footer {
 @media (max-width: 767px) {
   .landing {
     --landing-word-size: clamp(2.3rem, 11vw, 3rem);
+    position: relative;
   }
 
+  /* 이름은 흐름에서 빼서, 가운데 선이 이름 높이만큼 아래로 밀리지 않게 합니다. */
   .landing__name--stacked {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
     display: block;
     padding: 2.25rem 1rem 0.5rem;
     text-align: center;
+    pointer-events: none;
   }
 
   .landing-split {
@@ -2377,7 +2387,9 @@ body:has(.landing) .portfolio-footer {
   }
 
   /* 위쪽 문은 단어가 아래(축 쪽)에, 아래쪽 문은 단어가 위(축 쪽)에 오도록 뒤집습니다. */
+  /* 눈으로 보는 가운데는 실제 가운데보다 조금 위라서, 위쪽 문을 살짝 작게 해 가운데 선을 올립니다. */
   .landing-door--engineering {
+    flex-grow: 0.94;
     justify-content: flex-end;
     padding: 2rem 1.25rem 2.75rem;
   }
@@ -2387,6 +2399,7 @@ body:has(.landing) .portfolio-footer {
   }
 
   .landing-door--literature {
+    flex-grow: 1.06;
     justify-content: flex-start;
     padding: 2.75rem 1.25rem 2rem;
   }
@@ -3265,4 +3278,65 @@ body:has(.landing) .portfolio-footer {
     font-size: 0.74rem;
     font-weight: 700;
   }
+}
+
+/* 접어 둔 상세 자료: 제목 줄을 누르면 펼쳐집니다. */
+.project-detail__collapsible {
+  border: 1px solid var(--border-default);
+  border-radius: calc(var(--radius-card) + 4px);
+  background: var(--portfolio-surface);
+}
+
+.project-detail__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.project-detail__summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-detail__summary .project-detail__heading {
+  margin-bottom: 0;
+  font-size: 1.05rem;
+}
+
+.project-detail__summary-hint {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.project-detail__summary-hint::after {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-0.12rem) rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.project-detail__collapsible[open] .project-detail__summary-hint::after {
+  transform: translateY(0.1rem) rotate(-135deg);
+}
+
+.project-detail__summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: calc(var(--radius-card) + 4px);
+}
+
+.project-detail__collapsible-body {
+  min-width: 0;
+  padding: 0 1.1rem 1.1rem;
 }

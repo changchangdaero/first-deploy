@@ -46,6 +46,7 @@ export type ProjectTable = {
   columns: string[];
   rows: string[][];
   caption?: string;
+  collapsed?: boolean; // true면 제목만 보이고, 눌러야 펼쳐집니다.
 };
 
 // 코드 블록: language에 맞춰 문법 강조가 적용됩니다.
@@ -54,6 +55,7 @@ export type ProjectCode = {
   language: 'bash' | 'yaml' | 'dockerfile' | 'python';
   source: string;
   caption?: string;
+  collapsed?: boolean; // true면 제목만 보이고, 눌러야 펼쳐집니다.
 };
 
 // 기술 선택 이유: 왜 이 기술을 골랐는지 1~2줄로 적습니다.
@@ -228,6 +230,7 @@ const allProjects: Project[] = [
     tables: [
       {
         title: '최종 스크립트의 방어 장치',
+        collapsed: true,
         columns: ['겪은 문제', '반영한 장치'],
         rows: [
           ['환경변수 미주입', '`${VAR:?}` 필수값 검증'],
@@ -241,6 +244,7 @@ const allProjects: Project[] = [
     ],
     code: {
       title: '최종 파이프라인 스크립트',
+      collapsed: true,
       language: 'bash',
       caption: 'Jenkins Execute shell에 작성한 최종 스크립트 (원문 그대로)',
       source: `APP="ai-fortune"

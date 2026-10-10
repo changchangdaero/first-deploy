@@ -34,7 +34,28 @@ const LINK_ICONS: Record<LinkKey, IconType> = {
   demo: FiArrowUpRight,
 };
 
-function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
+function DetailSection({
+  title,
+  collapsed = false,
+  children,
+}: {
+  title: string;
+  collapsed?: boolean;
+  children: React.ReactNode;
+}) {
+  // 자세한 자료(긴 표·원문 스크립트)는 접어 두고 제목만 보여줍니다.
+  if (collapsed) {
+    return (
+      <details className="project-detail__section project-detail__collapsible">
+        <summary className="project-detail__summary">
+          <h2 className="project-detail__heading">{title}</h2>
+          <span className="project-detail__summary-hint">{labels.expand}</span>
+        </summary>
+        <div className="project-detail__collapsible-body">{children}</div>
+      </details>
+    );
+  }
+
   return (
     <section className="project-detail__section">
       <h2 className="project-detail__heading">{title}</h2>
@@ -317,7 +338,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
 
       {/* 표: 첫 열은 행 제목. 모바일에서는 행마다 카드처럼 쌓여 가로 스크롤이 생기지 않습니다. */}
       {tables.map((table) => (
-        <DetailSection key={table.title} title={table.title}>
+        <DetailSection key={table.title} title={table.title} collapsed={table.collapsed}>
           <table
             className={
               table.columns.length > 2 ? 'project-detail__table project-detail__table--wide' : 'project-detail__table'
@@ -353,7 +374,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
 
       {/* 코드 */}
       {project.code ? (
-        <DetailSection title={project.code.title}>
+        <DetailSection title={project.code.title} collapsed={project.code.collapsed}>
           <CodeBlock code={project.code} />
         </DetailSection>
       ) : null}
