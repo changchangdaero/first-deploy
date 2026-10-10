@@ -17,7 +17,7 @@ export const engineeringSections = {
   projects: {
     eyebrow: 'PROJECTS',
     title: "What I've Built",
-    description: todo('Projects 섹션 소개'),
+    description: '인프라, AI, 앱 개발 등 직접 진행한 프로젝트입니다.',
   },
   projectDetail: {
     back: 'Projects',
