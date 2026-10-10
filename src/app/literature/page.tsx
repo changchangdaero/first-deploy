@@ -1,6 +1,7 @@
-// Literature 페이지: "/literature"에 문학 소개, 출간물, 활동 이력을 보여줍니다.
+// Literature 페이지: "/literature"에 문학 소개, 출간물, 활동 이력, 연락처를 보여줍니다.
 import type { Metadata } from 'next';
 
+import ContactSection from '@/components/ContactSection';
 import Activities from '@/components/literature/Activities';
 import LitAbout from '@/components/literature/LitAbout';
 import Works from '@/components/literature/Works';
@@ -19,6 +20,7 @@ export default function LiteraturePage() {
         <LitAbout />
         <Works />
         <Activities />
+        <ContactSection />
       </div>
     </main>
   );

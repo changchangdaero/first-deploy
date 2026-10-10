@@ -3340,3 +3340,50 @@ body:has(.landing) .portfolio-footer {
   min-width: 0;
   padding: 0 1.1rem 1.1rem;
 }
+
+/* 연락 섹션: 이메일 주소 카드 (누르면 메일 앱이 열림) */
+.contact-section .section-heading {
+  margin-bottom: 1.7rem;
+}
+
+.contact-card {
+  display: grid;
+  gap: 1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-card);
+  background: var(--portfolio-surface);
+  box-shadow: var(--shadow-sm);
+  padding: clamp(1.2rem, 4vw, 2rem);
+}
+
+.contact-card__email {
+  width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 62%, transparent);
+  color: var(--primary-dark);
+  font-size: clamp(0.96rem, 3.8vw, 1.16rem);
+  font-weight: 740;
+  line-height: 1.55;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.contact-card__email:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.contact-card__email:focus-visible {
+  border-radius: var(--radius-small);
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .contact-card {
+    padding: 1.15rem;
+  }
+}

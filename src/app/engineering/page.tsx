@@ -1,6 +1,7 @@
-// Engineering 페이지: "/engineering"에 엔지니어링 소개, 기술 스택, 프로젝트 목록을 보여줍니다.
+// Engineering 페이지: "/engineering"에 엔지니어링 소개, 기술 스택, 프로젝트 목록, 연락처를 보여줍니다.
 import type { Metadata } from 'next';
 
+import ContactSection from '@/components/ContactSection';
 import EngAbout from '@/components/engineering/EngAbout';
 import EngTechStack from '@/components/engineering/EngTechStack';
 import ProjectGrid from '@/components/engineering/ProjectGrid';
@@ -19,6 +20,7 @@ export default function EngineeringPage() {
         <EngAbout />
         <EngTechStack />
         <ProjectGrid />
+        <ContactSection />
       </div>
     </main>
   );
