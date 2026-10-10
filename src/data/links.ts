@@ -2,7 +2,7 @@
 export const links = {
   github: 'https://github.com/changchangdaero',
   email: 'changchangdaero@naver.com',
-  velog: '',
+  velog: 'https://velog.io/@changchangdaero/posts',
   brunch: 'https://brunch.co.kr/@changchangdaero',
   blog: 'https://blog.naver.com/changchangdaero',
   profile:
