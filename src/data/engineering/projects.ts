@@ -553,7 +553,7 @@ aug_count = budget * weight / total_weight   # 증강 예산 4,024장을 가중�
     team: '개인',
     role: '기획 · 설계 · 개발 전체',
     stack: ['Electron', 'React', 'TypeScript', 'Gemini API', 'electron-store'],
-    thumbnail: 'diary-calendar.png',
+    thumbnail: 'thumbnail.png',
     architecture: {
       file: 'ipc-architecture.png',
       caption:
