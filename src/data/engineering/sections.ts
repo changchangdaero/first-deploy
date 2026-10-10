@@ -1,10 +1,9 @@
 // Engineering 섹션 문구: "/engineering" 페이지의 섹션 제목과 설명을 관리합니다.
-import { todo } from '@/lib/todo';
 
 export const engineeringSections = {
   meta: {
     title: 'Engineering',
-    description: todo('Engineering 페이지 검색/공유 설명'),
+    description: 'Changmin’s engineering work',
   },
   about: {
     eyebrow: 'ENGINEERING',
