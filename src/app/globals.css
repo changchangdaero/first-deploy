@@ -43,34 +43,34 @@
 }
 
 :root[data-theme='dark'] {
-  --background: #0A0A0A;
-  --foreground: #EDEDED;
-  --muted: #BDBDBD;
-  --primary: #a8b89a;
-  --primary-dark: #c4d0b8;
-  --accent: #7f966f;
-  --border: #2A2A2A;
-  --card: #111111;
+  --background: #0f1411;
+  --foreground: #e6ebe5;
+  --muted: #9aa69d;
+  --primary: #a3c4a0;
+  --primary-dark: #c5dcc0;
+  --accent: #6f8f6c;
+  --border: #26302a;
+  --card: #151c18;
 
   --portfolio-bg: var(--background);
   --portfolio-surface: var(--card);
-  --portfolio-surface-muted: #151515;
+  --portfolio-surface-muted: #18201b;
   --text-heading: var(--foreground);
   --text-body: var(--foreground);
   --text-muted: var(--muted);
-  --text-faint: #8F8F8F;
+  --text-faint: #748078;
   --border-default: var(--border);
-  --border-strong: #3A3A3A;
-  --accent-muted: rgba(168, 184, 154, 0.1);
-  --accent-ring: rgba(168, 184, 154, 0.28);
+  --border-strong: #34403a;
+  --accent-muted: rgba(163, 196, 160, 0.1);
+  --accent-ring: rgba(163, 196, 160, 0.28);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.22);
   --shadow-card: 0 14px 34px rgba(0, 0, 0, 0.34);
-  --code-bg: #111111;
-  --code-inline-bg: #1A1A1A;
-  --code-text: #EDEDED;
-  --selection-bg: rgba(168, 184, 154, 0.22);
-  --post-surface: #0F0F0F;
-  --post-border: #2A2A2A;
+  --code-bg: #131a16;
+  --code-inline-bg: #1b241f;
+  --code-text: #e6ebe5;
+  --selection-bg: rgba(163, 196, 160, 0.22);
+  --post-surface: #131a16;
+  --post-border: #26302a;
 }
 
 @theme inline {
@@ -129,8 +129,8 @@ select {
 }
 
 :root[data-theme='dark'] .site-header {
-  background: rgba(10, 10, 10, 0.9);
-  border-bottom-color: rgba(42, 42, 42, 0.86);
+  background: rgba(15, 20, 17, 0.9);
+  border-bottom-color: rgba(38, 48, 42, 0.86);
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.34);
 }
 
@@ -245,8 +245,8 @@ select {
 }
 
 :root[data-theme='dark'] .site-mobile-menu {
-  background: rgba(17, 17, 17, 0.96);
-  border-color: #2A2A2A;
+  background: rgba(21, 28, 24, 0.96);
+  border-color: #26302a;
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
 }
 
@@ -1073,9 +1073,9 @@ select {
 }
 
 :root[data-theme='dark'] .markdown-content {
-  --markdown-body-color: rgba(237, 237, 237, 0.86);
-  --markdown-muted-color: rgba(237, 237, 237, 0.66);
-  --markdown-divider-color: rgba(237, 237, 237, 0.18);
+  --markdown-body-color: rgba(230, 235, 229, 0.86);
+  --markdown-muted-color: rgba(230, 235, 229, 0.66);
+  --markdown-divider-color: rgba(230, 235, 229, 0.18);
 }
 
 .markdown-content > :first-child {
