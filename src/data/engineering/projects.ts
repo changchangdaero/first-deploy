@@ -160,10 +160,10 @@ const allProjects: Project[] = [
     category: 'CI/CD',
     status: 'done',
     title: 'Jenkins 기반 CI/CD 파이프라인 구축',
-    summary: 'Jenkins와 Docker로 빌드 · Docker Hub push를 자동화하고, compose 배포 단계까지 스크립트로 구현',
+    summary: '코드를 올리면 Jenkins가 자동으로 Docker 이미지를 만들어 Docker Hub에 올리도록 만들고, 서버 배포 단계까지 스크립트로 작성한 프로젝트',
     background:
-      'LG CNS 블로그 서비스를 MSA로 전환하는 팀 프로젝트에서 ai-fortune-service의 Jenkins 파이프라인을 맡았습니다. 구축 중 Jenkins가 반복해서 끊기는 장애를 겪었고, 멘토와 함께 docker logs를 확인해 볼륨 마운트 권한 불일치가 원인임을 찾아 해결했습니다.',
-    context: 'LG CNS AM INSPIRE CAMP 3기 · 미니 프로젝트 2차',
+      'LG CNS 블로그 서비스를 여러 개의 작은 서비스로 나누는 팀 프로젝트에서, AI 운세 서비스의 자동 빌드와 배포를 맡았습니다. 작업 중 Jenkins가 계속 끊기는 문제가 있었는데, 멘토와 함께 로그를 살펴보다가 폴더 권한 문제라는 것을 찾아 해결했습니다.',
+    context: 'LG CNS AM INSPIRE CAMP 3기, 미니 프로젝트 2차',
     period: '2025.10.23 ~ 10.29 (1주)',
     team: '7명',
     role: 'CI/CD 파이프라인 구축 담당',
@@ -172,67 +172,67 @@ const allProjects: Project[] = [
     architecture: {
       file: 'architecture.svg',
       caption:
-        'GitHub → EC2 위 Jenkins 컨테이너에서 docker build → Docker Hub push(:빌드번호, :latest) → 같은 EC2에서 docker compose 배포(옵션)',
+        'GitHub에서 코드를 가져와 AWS 서버(EC2)의 Jenkins가 Docker 이미지를 만들고, 빌드 번호와 latest 두 이름으로 Docker Hub에 올립니다. 필요하면 같은 서버에서 바로 실행합니다.',
     },
     contributions: [
-      'EC2에 Jenkins 컨테이너를 구성하고 docker.sock을 마운트해 호스트 Docker로 이미지를 빌드하도록 설정',
-      'Docker Hub Access Token을 Jenkins Credentials에 등록하고 빌드 환경변수로 주입',
-      '빌드 → Docker Hub push(:빌드번호, :latest) → compose 배포로 이어지는 최종 파이프라인 스크립트 작성',
-      '필수값 검증 · 클린 clone · 단계별 로그 등 실패 원인을 빠르게 찾기 위한 방어 장치 반영',
-      '배포 구조를 SSH 원격 배포에서 단일 EC2 로컬 compose 배포로 재설계',
+      'AWS 서버에 Jenkins를 설치하고, Jenkins 안에서 서버의 Docker를 바로 쓸 수 있게 연결했습니다.',
+      'Docker Hub 로그인 정보를 Jenkins에 안전하게 저장하고, 빌드할 때 자동으로 꺼내 쓰도록 했습니다.',
+      '이미지 빌드, Docker Hub 업로드, 서버 실행까지 한 번에 이어지는 최종 스크립트를 작성했습니다.',
+      '실패했을 때 원인을 빨리 찾을 수 있도록, 값이 비어 있는지 미리 확인하고 단계마다 로그를 남기게 했습니다.',
+      '다른 서버에 원격으로 배포하던 방식을, Jenkins가 있는 서버에서 바로 실행하는 방식으로 바꿨습니다.',
     ],
     teamContext:
-      '7명 팀이 3개 세부팀(nGrinder 부하 테스트 / Jenkins CI·CD / GitHub Actions CI)으로 나눠 진행했고, nGrinder와 GitHub Actions는 다른 팀원이 담당했습니다. Jenkins 초기 셋업과 docker.sock 권한 해결, SSH 원격 배포 스크립트 초안은 팀원이 작성했고, 저는 이를 참고해 단일 EC2 로컬 배포 방식의 최종 파이프라인 스크립트를 직접 작성했습니다.',
+      '7명이 세 팀(부하 테스트, Jenkins 자동화, GitHub Actions 자동화)으로 나눠 진행했고, 부하 테스트와 GitHub Actions는 다른 팀원이 맡았습니다. Jenkins 초기 설치와 원격 배포 스크립트 초안은 팀원이 만들었고, 저는 이를 바탕으로 최종 스크립트를 직접 작성했습니다.',
     troubleshooting: [
       {
-        title: '첫 배포 실패: 인증 환경변수 미주입',
+        title: '첫 배포 실패: Docker Hub 로그인 정보가 전달되지 않음',
         symptom:
-          'Docker Hub 계정 환경변수(`DOCKERHUB_USR`, `DOCKERHUB_PSW`)가 비어 `unbound variable` 오류로 스크립트가 중단됨',
+          'Docker Hub 아이디와 비밀번호 값이 비어 있어서 스크립트가 오류로 멈췄습니다.',
         cause:
-          'Jenkins Credentials가 빌드 환경변수로 바인딩되지 않았고, 스크립트가 참조한 변수명(`DOCKERHUB_USR`)과 바인딩한 변수명도 일치하지 않았음. 또 Docker Hub를 구글 계정으로 가입해 비밀번호가 없는 상태였음',
+          '세 가지가 겹쳤습니다. Jenkins에 저장한 로그인 정보가 스크립트로 넘어가지 않았고, 스크립트와 설정의 변수 이름도 서로 달랐습니다. 게다가 Docker Hub를 구글 계정으로 가입해서 비밀번호 자체가 없었습니다.',
         solution:
-          'Docker Hub Access Token을 발급해 Jenkins Credentials에 등록하고, Credentials Binding 플러그인으로 환경변수에 주입. 변수명을 `DOCKERHUB_USER` / `DOCKERHUB_PSW`로 맞추고, 스크립트에 필수 변수 검증 가드(`${VAR:?}`)를 추가',
+          '비밀번호 대신 쓸 수 있는 Docker Hub 토큰을 발급해 Jenkins에 등록하고, 변수 이름을 하나로 맞췄습니다. 값이 비어 있으면 바로 멈추고 알려 주는 확인 코드도 넣었습니다.',
         image: {
           file: 'build1-console-unbound.png',
-          caption: '빌드 #1 콘솔: DOCKERHUB_PSW · DOCKERHUB_USR unbound variable로 실패',
+          caption: '첫 번째 빌드 화면: Docker Hub 로그인 값이 비어 있어 실패',
         },
       },
       {
         title: 'Jenkins 접속 불가와 플러그인 설치 실패',
-        symptom: '8080 포트 접속 시 무한 로딩. 재구축 후에는 플러그인 설치가 극도로 느리고 대부분 실패',
-        response: '환경을 처음부터 재구축(포트 8085로 변경, 보안그룹 재설정)하고 원인 가설을 정리',
+        symptom: 'Jenkins 화면이 끝없이 로딩되고, 다시 설치한 뒤에는 플러그인이 대부분 설치되지 않았습니다.',
+        response: '처음부터 다시 구축하면서 원인 후보를 정리했습니다.',
         hypotheses: [
-          '업데이트 서버 타임아웃',
-          '컨테이너 DNS 불안정',
-          '설치 lock 파일 잔존',
-          '디스크 부족',
-          '`jenkins_home` 권한 꼬임',
-          '플러그인 의존성 충돌',
+          '업데이트 서버 응답 지연',
+          '네트워크 주소 확인 문제',
+          '이전 설치 흔적',
+          '디스크 용량 부족',
+          'Jenkins 폴더 권한 문제',
+          '플러그인끼리 충돌',
         ],
         image: {
           file: 'plugin-install-failed.png',
-          caption: '재구축 후 초기 플러그인 설치에서 대부분의 플러그인이 실패',
+          caption: '다시 설치한 뒤 플러그인 대부분이 설치에 실패한 화면',
         },
       },
       {
-        title: '핵심 원인: 볼륨 마운트 권한 불일치',
-        symptom: '빌드 직전 Jenkins 연결이 다시 끊김',
+        title: '진짜 원인: Jenkins가 자기 폴더에 쓸 권한이 없었음',
+        symptom: '빌드 직전에 Jenkins 연결이 다시 끊겼습니다.',
         cause:
-          '멘토와 함께 docker logs를 확인한 결과, 마운트한 디렉토리의 권한이 Jenkins 실행 사용자와 맞지 않아 read/write 불가 로그가 발생',
+          '멘토와 함께 로그를 확인해 보니, Jenkins가 데이터를 저장하는 폴더에 읽고 쓸 권한이 없었습니다.',
         solution:
-          '마운트할 디렉토리를 미리 만들고, Jenkins 실행 사용자(uid 1000)에게 소유권을 부여한 뒤 재실행 → 정상 가동',
+          '폴더를 미리 만들고 Jenkins에게 권한을 준 뒤 다시 실행하니 정상적으로 동작했습니다.',
         lesson:
-          '2번에서 세운 가설 중 "권한 꼬임"이 실제 원인이었고, 플러그인 설치 실패와 접속 끊김도 같은 원인에서 비롯됐을 가능성이 높았습니다. 이후 장애가 나면 docker logs부터 확인하는 습관이 생겼습니다.',
+          '정리했던 원인 후보 중 권한 문제가 진짜 원인이었고, 플러그인 설치 실패도 같은 이유였을 가능성이 컸습니다. 이후로는 문제가 생기면 로그부터 확인합니다.',
       },
     ],
     decisions: [
       {
         title: '배포 구조 결정',
-        options: 'CI 서버와 서비스 서버를 분리해 SSH로 원격 배포 vs Jenkins가 있는 단일 EC2에 로컬 배포',
+        options: '서버를 둘로 나눠 원격 배포 vs 서버 한 대에서 바로 실행',
         decision:
-          '일정상 "배포 성공"을 최우선으로 두고 단일 EC2 로컬 배포를 선택. 배포 단계를 SSH 방식에서 로컬 compose 방식으로 다시 작성',
+          '1주라는 짧은 일정 안에 배포를 성공시키는 것을 우선해 서버 한 대 방식을 골랐습니다.',
         tradeoff:
-          '단일 EC2는 Jenkins와 서비스가 리소스를 나눠 써서 운영 환경에는 맞지 않음. 실제로 메모리 문제도 의심됐기 때문에, 운영이라면 서버를 분리하는 것이 맞다고 판단',
+          '한 서버에서 Jenkins와 서비스가 자원을 나눠 써서 실제 운영에는 맞지 않습니다. 실제로 메모리 부족도 의심됐기 때문에, 운영 환경이라면 서버를 나누는 게 맞다고 판단했습니다.',
       },
     ],
     tables: [
@@ -304,18 +304,18 @@ fi
 echo "==> DONE. Pushed \${IMAGE}:\${TAG} and \${IMAGE}:latest"`,
     },
     metrics: [
-      { label: 'Docker Hub 이미지 태그', value: '7 · latest' },
-      { label: '두 태그의 digest', value: '0d69a56e1d90 (동일)' },
-      { label: 'push 일자', value: '2025-10-28' },
+      { label: '올라간 이미지', value: '7번, latest' },
+      { label: '두 이미지가 같은지', value: '같은 이미지 (0d69a56e1d90)' },
+      { label: '업로드 날짜', value: '2025-10-28' },
     ],
     limitations: [
-      'compose 배포 단계는 스크립트로 구현했지만, 실제 실행 결과 기록은 남아 있지 않습니다.',
-      '단일 EC2 구성이라 Jenkins와 서비스가 리소스를 나눠 씁니다.',
+      '서버 실행 단계는 스크립트로 만들었지만, 실제로 실행한 기록은 남아 있지 않습니다.',
+      '서버 한 대에서 Jenkins와 서비스가 자원을 나눠 씁니다.',
     ],
     nextSteps: [
-      'CI 서버와 서비스 서버 분리',
-      'docker.sock 마운트 대신 권한을 최소화한 빌드 방식 검토',
-      'deprecated 상태인 openjdk 베이스 이미지를 eclipse-temurin으로 교체',
+      '빌드 서버와 서비스 서버 나누기',
+      'Jenkins에 주는 권한을 줄인 더 안전한 빌드 방식 찾기',
+      '지원이 끝난 기본 이미지(openjdk)를 최신 이미지로 교체',
     ],
     links: {
       issue: 'https://github.com/lgcns2-mini/dcompose/issues/4',
