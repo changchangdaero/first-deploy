@@ -1,6 +1,5 @@
 // 프로젝트 데이터: "/engineering" 목록과 "/engineering/projects/[slug]" 상세 페이지의 내용을 관리합니다.
 // 이미지는 public/projects/[slug]/ 폴더에 넣고 file에 파일명만 적습니다. 파일이 없으면 자동으로 숨겨집니다.
-import { todo } from '@/lib/todo';
 
 export type ProjectStatus = 'done' | 'wip';
 
@@ -547,12 +546,86 @@ aug_count = budget * weight / total_weight   # 증강 예산 4,024장을 가중�
     status: 'wip',
     title: '햄이 (Hami)',
     summary: '자연어로 대화하며 일정 관리하는 데스크톱 펫 앱',
+    background:
+      '일정 앱은 직접 열어야만 확인할 수 있어 자주 잊게 됩니다. 화면 위에 항상 머무는 햄스터가 말을 걸고, 자연어로 일정을 받아 정리해 주는 데스크톱 펫으로 일정 관리의 접근성을 높이고자 했습니다.',
     context: '개인 토이 프로젝트',
-    period: todo('기간'),
+    period: '2026.07 ~ (MS Store 배포 준비 중)',
     team: '개인',
-    role: todo('역할'),
-    stack: ['Electron', 'React', 'TypeScript'],
-    contributions: [todo('내가 한 일')],
+    role: '기획 · 설계 · 개발 전체',
+    stack: ['Electron', 'React', 'TypeScript', 'Gemini API', 'electron-store'],
+    thumbnail: 'diary-calendar.png',
+    architecture: {
+      file: 'ipc-architecture.png',
+      caption:
+        'Renderer(React) → Preload(contextBridge) → IPC → Main Process. Gemini API · 로컬 저장소 · 트레이와 알림은 Main에서만 다룹니다.',
+    },
+    contributions: [
+      '투명 · 프레임 없는 펫 창, 드래그와 위치 복원, 투명 영역 클릭 통과, 시스템 트레이 구현',
+      '7가지 감정 상태 머신과 픽셀아트 애니메이션, 타자기 효과 말풍선',
+      'Gemini API로 자연어 일정 등록 · 수정 · 삭제 대화 구현 (수집 → 확인 → 실행 단계, KST 기준 상대 날짜 계산)',
+      '월간 달력 다이어리, 할 일, 뽀모도로 타이머, AI 감성 일기, 리마인더 알림, 공휴일 표시',
+      'contextBridge · IPC 입력 검증으로 Renderer와 Main의 보안 경계 설계, 단일 인스턴스 보장',
+      'electron-builder로 Windows x64 portable 패키징',
+    ],
+    decisions: [
+      {
+        title: 'AI의 역할',
+        options: '자유 대화 챗봇 vs 자연어를 구조화된 일정 데이터로 바꾸는 도구',
+        decision: '구조화 변환과 감성 피드백(일기 코멘트)으로 역할을 한정',
+        tradeoff: '일정 데이터는 틀리면 안 되기 때문에, AI 출력은 스키마로 검증하고 사용자의 명시적 확인을 거친 뒤에만 저장',
+      },
+      {
+        title: '데이터 저장',
+        options: '서버 · DB vs 로컬 저장소(electron-store)',
+        decision: '서버 없이 로컬에 저장',
+        tradeoff: '개인 일정이라 외부 서버 없이 빠르고 단순하게 동작. 대신 여러 기기 간 동기화는 지원하지 않음',
+      },
+      {
+        title: 'API 키 방식',
+        options: '앱에 키를 내장 vs 사용자가 자신의 Gemini 키를 입력(BYOK)',
+        decision: 'BYOK',
+        tradeoff: '배포 앱에 비밀값을 넣지 않음. 단, 입력받은 키를 아직 암호화하지 않고 저장하고 있어 배포 전 개선이 필요',
+      },
+    ],
+    troubleshooting: [
+      {
+        title: '반복 함수 호출로 인한 API 오류와 응답 지연',
+        symptom: '일정 등록 대화 중 AI가 필요한 정보를 확인하려 함수를 반복 호출해 API 요청 제한(Rate Limit)에 걸리고 응답이 지연됨',
+        cause: '같은 요청이 중복 실행되고, 대화가 끝나기 전에 여러 함수 호출이 동시에 발생',
+        solution:
+          '한 번의 요청에서 실행할 수 있는 함수 호출 범위를 제한하고, 요청 큐로 Gemini 호출을 한 번에 하나씩 직렬화. Rate Limit 응답에는 최대 3회 재시도, 타임아웃과 예외 처리 추가',
+        image: { file: 'ts-request-queue.png', caption: '요청 큐로 동시 호출을 제어한 과정' },
+      },
+      {
+        title: '모호한 자연어 표현으로 인한 일정 정보 누락',
+        symptom: "'금요일쯤 약속', '다음 주에 병원' 같은 표현에서 날짜 · 시간이 빠지거나 파싱에 실패",
+        cause: 'AI 응답 형식이 일정하지 않아, 임의로 해석하면 잘못된 일정 데이터가 만들어짐',
+        solution:
+          '응답 스키마(필수 필드 · 대화 단계)를 정의해 검증하고, 정보가 모호하면 추가 질문. 저장 전에는 내용을 요약해 사용자가 명확히 승인한 경우에만 등록',
+        image: { file: 'ts-schema-validation.png', caption: '스키마 검증과 확인 단계로 잘못된 등록을 막은 과정' },
+      },
+    ],
+    screenshots: [
+      { file: 'pet-state-machine.png', caption: '픽셀아트 캐릭터 상태 머신 (idle · sleep · 반응형 감정)', fit: 'contain' },
+      { file: 'nl-to-schedule.png', caption: '자연어 입력을 구조화된 일정 데이터와 감성 코멘트로 변환', fit: 'contain' },
+    ],
+    learnings: [
+      'LLM 출력은 그대로 믿지 않고 스키마 검증과 사용자 확인을 거쳐야 실제 데이터로 쓸 수 있다는 점을 배웠습니다.',
+      '외부 API 호출은 요청 제한을 전제로 큐 · 재시도 · 타임아웃을 설계해야 안정적으로 동작한다는 것을 경험했습니다.',
+    ],
+    limitations: [
+      '사용자가 입력한 Gemini API 키를 아직 암호화하지 않고 로컬에 저장합니다.',
+      'Windows 전용이며, 현재는 개발자 본인만 사용하고 있습니다.',
+    ],
+    nextStepsLabel: '진행 계획 (MS Store 배포)',
+    nextSteps: [
+      'API 키를 Electron safeStorage로 암호화해 저장',
+      'electron-builder에 MSIX 패키징 대상 추가',
+      'GitHub Actions로 typecheck → build → MSIX 생성 자동화',
+      'Partner Center 등록, 개인정보처리방침 · 스토어 등록 정보 준비',
+      'Store 제출 · 인증 후 출시, 이후 버전 관리와 업데이트 배포',
+    ],
+    links: { github: 'https://github.com/changchangdaero/hamsterdiary' },
   },
 ];
 
