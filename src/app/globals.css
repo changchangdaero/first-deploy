@@ -3420,11 +3420,16 @@ body:has(.landing) .portfolio-footer {
   }
 
   .contact-card__link {
-    gap: 0.8rem;
+    gap: 0.7rem;
   }
 
   .contact-card__icon {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.3rem;
+    height: 2.3rem;
+  }
+
+  /* 좁은 휴대폰에서도 주소 끝 글자가 잘리지 않도록 화면 폭에 맞춰 줄입니다. */
+  .contact-card__email {
+    font-size: clamp(0.8rem, 4.1vw, 1.1rem);
   }
 }
