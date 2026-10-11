@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import RevealObserver from '@/components/RevealObserver';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import { getInitialTheme } from '@/lib/theme';
@@ -44,6 +45,9 @@ export const metadata: Metadata = {
   },
 };
 
+const REVEAL_INIT_SCRIPT =
+  "if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('reveal-ready')";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -52,11 +56,17 @@ export default async function RootLayout({
   const initialTheme = await getInitialTheme();
 
   return (
-    <html lang="ko" data-theme={initialTheme} style={{ colorScheme: initialTheme }}>
+    // suppressHydrationWarning: 아래 head 스크립트가 그리기 전에 html에 reveal-ready 클래스를 붙이기 때문입니다.
+    <html lang="ko" data-theme={initialTheme} style={{ colorScheme: initialTheme }} suppressHydrationWarning>
+      <head>
+        {/* 스크롤 리빌 준비: 첫 화면이 그려지기 전에 숨김 상태를 켜서, 보였다가 사라지는 깜빡임을 막습니다. */}
+        <script dangerouslySetInnerHTML={{ __html: REVEAL_INIT_SCRIPT }} />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         <SiteHeader initialTheme={initialTheme} />
         {children}
         <SiteFooter />
+        <RevealObserver />
       </body>
     </html>
   );

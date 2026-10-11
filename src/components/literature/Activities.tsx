@@ -7,7 +7,7 @@ import { literatureSections as sections } from '@/data/literature/sections';
 
 function ActivityCard({ activity }: { activity: LiteratureActivity }) {
   return (
-    <article className="activity-showcase-card">
+    <article className="activity-showcase-card" data-reveal>
       <div className="activity-showcase-card__image-frame">
         <Image
           src={activity.image}

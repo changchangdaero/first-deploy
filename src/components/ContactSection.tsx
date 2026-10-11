@@ -9,7 +9,7 @@ export default function ContactSection() {
     <section id="contact" className="content-section contact-section" aria-labelledby="contact-title">
       <SectionHeader eyebrow="CONTACT" title="Email" titleId="contact-title" />
 
-      <div className="contact-card">
+      <div className="contact-card" data-reveal>
         <a className="contact-card__link" href={`mailto:${links.email}`} aria-label={`${links.email}로 이메일 보내기`}>
           <span className="contact-card__icon" aria-hidden="true">
             <FiMail focusable="false" />

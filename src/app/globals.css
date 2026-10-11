@@ -3433,3 +3433,62 @@ body:has(.landing) .portfolio-footer {
     font-size: clamp(0.8rem, 4.1vw, 1.1rem);
   }
 }
+
+/* 스크롤 리빌: data-reveal 요소가 화면에 들어오면 아래에서 살짝 올라오며 나타납니다. (RevealObserver)
+   카드의 마우스 올림 효과(transform)와 겹치지 않도록 등장 움직임은 translate 속성으로 처리합니다. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 var(--reveal-distance);
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.reveal-ready {
+  --reveal-distance: 20px;
+}
+
+.reveal-ready [data-reveal]:not(.is-revealed) {
+  opacity: 0;
+}
+
+/* 안전장치: 감시 스크립트가 2.5초 안에 시작되지 않으면 숨긴 요소를 그냥 보여줍니다. */
+@keyframes reveal-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+.reveal-ready:not(.reveal-active) [data-reveal]:not(.is-revealed) {
+  animation: reveal-failsafe 0s linear 2.5s forwards;
+}
+
+.reveal-ready [data-reveal].is-revealed {
+  animation: reveal-up 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (max-width: 767px) {
+  .reveal-ready {
+    --reveal-distance: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal]:not(.is-revealed) {
+    opacity: 1;
+  }
+
+  .reveal-ready [data-reveal].is-revealed {
+    animation: none;
+  }
+}
+
+@media print {
+  .reveal-ready [data-reveal]:not(.is-revealed) {
+    opacity: 1;
+  }
+}

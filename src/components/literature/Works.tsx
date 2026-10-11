@@ -10,6 +10,7 @@ function WorkCard({ work }: { work: Work }) {
     <a
       href={work.href}
       className="publication-card"
+      data-reveal
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${work.title} 외부 링크 열기`}

@@ -9,7 +9,7 @@ function SkillCard({ skill }: { skill: Skill }) {
   const SkillIcon = skill.icon;
 
   return (
-    <span className="tech-skill-card">
+    <span className="tech-skill-card" data-reveal>
       {typeof SkillIcon === 'string' ? (
         <Image
           src={SkillIcon}
@@ -37,7 +37,7 @@ export default function EngTechStack() {
       />
       {techStackGroups.map((group) => (
         <div key={group.title} className="tech-stack-group">
-          <h3>{group.title}</h3>
+          <h3 data-reveal>{group.title}</h3>
           <div className="tech-skill-grid">
             {group.skills.map((skill) => (
               <SkillCard key={skill.name} skill={skill} />

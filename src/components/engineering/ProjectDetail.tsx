@@ -46,7 +46,7 @@ function DetailSection({
   // 자세한 자료(긴 표·원문 스크립트)는 접어 두고 제목만 보여줍니다.
   if (collapsed) {
     return (
-      <details className="project-detail__section project-detail__collapsible">
+      <details className="project-detail__section project-detail__collapsible" data-reveal>
         <summary className="project-detail__summary">
           <h2 className="project-detail__heading">{title}</h2>
           <span className="project-detail__summary-hint">{labels.expand}</span>
@@ -57,7 +57,7 @@ function DetailSection({
   }
 
   return (
-    <section className="project-detail__section">
+    <section className="project-detail__section" data-reveal>
       <h2 className="project-detail__heading">{title}</h2>
       {children}
     </section>
@@ -82,17 +82,19 @@ function Figure({
   image,
   priority,
   fallbackAlt,
+  reveal,
 }: {
   slug: string;
   image: ProjectImage;
   priority?: boolean;
   fallbackAlt?: string;
+  reveal?: boolean;
 }) {
   const src = projectImagePath(slug, image.file);
   const alt = image.caption || fallbackAlt || '';
 
   return (
-    <figure className="project-detail__figure">
+    <figure className="project-detail__figure" data-reveal={reveal || undefined}>
       <a
         href={src}
         target="_blank"
@@ -219,7 +221,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
       </Link>
 
       {/* ① 요약 */}
-      <header className="project-detail__header">
+      <header className="project-detail__header" data-reveal>
         <div className="project-detail__meta">
           <span className={`project-status project-status--${project.status}`}>
             {PROJECT_STATUS_LABELS[project.status]}
@@ -239,11 +241,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
 
       {/* 대표 사진: 목록 카드의 썸네일을 상세 페이지 맨 위에도 크게 보여줍니다. */}
       {showHero && heroImage ? (
-        <Figure slug={slug} image={heroImage} fallbackAlt={`${project.title} 대표 화면`} priority />
+        <Figure slug={slug} image={heroImage} fallbackAlt={`${project.title} 대표 화면`} priority reveal />
       ) : null}
 
       {/* ② 기본 정보 */}
-      <dl className="project-detail__facts">
+      <dl className="project-detail__facts" data-reveal>
         {(['period', 'team', 'role'] as const).map((key) => (
           <div key={key} className="project-detail__fact">
             <dt>{labels.facts[key]}</dt>
@@ -428,7 +430,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
       ) : null}
 
       {/* 이전 / 다음 프로젝트 */}
-      <nav className="project-detail__pager" aria-label="프로젝트 이동">
+      <nav className="project-detail__pager" aria-label="프로젝트 이동" data-reveal>
         {previous ? (
           <Link href={`/engineering/projects/${previous.slug}`} className="project-detail__pager-link">
             <span>← {labels.previous}</span>

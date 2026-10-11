@@ -13,7 +13,7 @@ export default function LitAbout() {
   return (
     <section id="about" className="content-section" aria-labelledby="lit-about-title">
       <SectionHeader eyebrow={sections.about.eyebrow} title={sections.about.title} titleId="lit-about-title" />
-      <div className={hasImage ? 'about-summary' : 'about-summary about-summary--no-image'}>
+      <div className={hasImage ? 'about-summary' : 'about-summary about-summary--no-image'} data-reveal>
         {hasImage ? (
           <div className="about-summary__image">
             <Image src={profile.image} alt={`${profile.name} 프로필 사진`} width={180} height={180} priority />

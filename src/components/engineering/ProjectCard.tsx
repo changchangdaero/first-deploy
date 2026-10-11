@@ -30,7 +30,9 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
   const image = pickCardImage(project);
 
   return (
-    <Link href={`/engineering/projects/${project.slug}`} className="showcase-project-card showcase-project-card--link">
+    <Link href={`/engineering/projects/${project.slug}`} className="showcase-project-card showcase-project-card--link"
+      data-reveal
+    >
       <div className="showcase-project-card__media">
         {image ? (
           <Image

@@ -8,7 +8,7 @@ type SectionHeaderProps = {
 
 export default function SectionHeader({ eyebrow, title, description, titleId }: SectionHeaderProps) {
   return (
-    <div className="section-heading">
+    <div className="section-heading" data-reveal>
       <p className="section-eyebrow">{eyebrow}</p>
       <h2 id={titleId} className="section-title">
         {title}
