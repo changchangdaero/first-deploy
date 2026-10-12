@@ -12,7 +12,6 @@ export const engineeringProfile = {
     'LG CNS AM INSPIRE CAMP 3기 DevOps 과정 수료',
     'Comento Linux 운영 직무 부트캠프 수료',
     '교내 AI 학술동아리 ORCA 1기 부원',
-    '교내 1인 창업동아리 선정 (창창대로)',
   ],
   links: [
     { label: 'GitHub', icon: 'github', href: links.github },
