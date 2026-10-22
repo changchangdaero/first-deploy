@@ -142,13 +142,21 @@ export default function VisitorStatsCard({
     }
 
     let isMounted = true;
+    const searchParams = new URLSearchParams(window.location.search);
 
     void fetch('/api/visitors', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ visitorId }),
+      body: JSON.stringify({
+        visitorId,
+        landingPath: window.location.pathname,
+        referrer: document.referrer,
+        utmSource: searchParams.get('utm_source'),
+        utmMedium: searchParams.get('utm_medium'),
+        utmCampaign: searchParams.get('utm_campaign'),
+      }),
     })
       .then(async (response) => {
         const result = (await response.json()) as VisitorStats & { error?: string };

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { logoutAdminAction } from '@/app/admin/auth-actions';
 
 const navItems = [
+  { href: '/admin/visitors', label: '방문자' },
   { href: '/admin/categories', label: '카테고리' },
   { href: '/admin/subcategories', label: '서브카테고리' },
   { href: '/admin/posts', label: '포스트' },
